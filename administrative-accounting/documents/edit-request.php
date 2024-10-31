@@ -1,0 +1,193 @@
+<?php include('main_header/header.php'); ?>
+<!-- ============================================================== -->
+<!-- end navbar -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- left sidebar -->
+<!-- ============================================================== -->
+<?php include('left_sidebar/sidebar.php'); ?>
+<!-- ============================================================== -->
+<!-- end left sidebar -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper">
+    <div class="container-fluid  dashboard-content">
+        <!-- ============================================================== -->
+        <!-- pageheader -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header">
+                    <h2 class="pageheader-title"><i class="fa fa-fw fa-file"></i> Edit Request </h2>
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Request</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end pageheader -->
+        <!-- ============================================================== -->
+        <?php
+        include '../init/model/config/connection2.php';
+        $control_no = $_GET['request'];
+        $student_number = $_GET['student-number'];
+
+        // Prepare and execute the query
+        $sql = "SELECT * FROM `tbl_documentrequest` WHERE `control_no` = ? AND `student_id` = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $control_no, $student_number); // Use "ss" for string parameters
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Fetch the single record
+        if ($row = $result->fetch_assoc()) {
+        ?>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card influencer-profile-data">
+                        <div class="card-body">
+                            <div class="" id="message"></div>
+                            <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right"><i class="fa fa-file"></i> Request Info</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Control No.</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input data-parsley-type="alphanum" type="text" value="<?= $row['control_no']; ?>" name="control_no" required="" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Student ID</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input data-parsley-type="alphanum" value="<?= $row['student_id']; ?>" name="student_id" type="text" required="" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Student Name</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input data-parsley-type="alphanum" value="<?= $row['first_name']; ?> <?= $row['last_name']; ?>" name="student_name" type="text" required="" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Document Name</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input data-parsley-type="alphanum" value="<?= $row['document_name']; ?>" type="text" name="document_name" required="" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Date Request</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input data-parsley-type="alphanum" value="<?= strftime('%Y-%m-%d', strtotime($row['date_request'])); ?>" type="date" name="date_request" required="" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <?php
+                                $user_id = $_SESSION['user_id'];
+                                $conn = new class_model();
+                                $user = $conn->user_account($user_id);
+                                ?>
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Processing Officer</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input data-parsley-type="alphanum" value="<?= ucfirst($user['complete_name']); ?>" type="text" name="processing_officer" required="" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Status</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <select data-parsley-type="alphanum" id="accounting_status" required="" class="form-control">
+                                            <option value="<?= $row['accounting_status']; ?>" hidden><?= $row['accounting_status']; ?></option>
+                                            <option value="Paid" style="background-color: orange;color: #fff">Pending Payment</option>
+                                            <!-- <option value="Waiting for Payment" style="background-color: skyblue;color: #fff">Waiting for Payment</option> -->
+                                            <option value="Declined" style="background-color: red;color: #fff">Declined</option>
+                                            <option value="Verified" style="background-color: green;color: #fff">Verified</option>
+                                        </select>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="form-group row text-right">
+                            <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
+                                <input name="request_id" value="<?= $row['request_id']; ?>" type="hidden">
+                                <button type="button" class="btn btn-space btn-primary" id="edit-request">Update</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        <?php } else { ?>
+            <div class="alert alert-danger">No record found for this request.</div>
+        <?php } ?>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- end main wrapper -->
+<!-- ============================================================== -->
+<!-- Optional JavaScript -->
+<script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../assets/vendor/parsley/parsley.js"></script>
+<script src="../assets/libs/js/main-js.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let btn = document.querySelector('#edit-request');
+        btn.addEventListener('click', () => {
+
+            const control_no = document.querySelector('input[name=control_no]').value;
+            const student_id = document.querySelector('input[name=student_id]').value;
+            const document_name = document.querySelector('input[name=document_name]').value;
+            const date_request = document.querySelector('input[name=date_request]').value;
+            const processing_officer = document.querySelector('input[name=processing_officer]').value;
+            const accounting_status = $('#accounting_status option:selected').val();
+            const request_id = document.querySelector('input[name=request_id]').value;
+
+            var data = new FormData();
+            data.append('control_no', control_no);
+            data.append('student_id', student_id);
+            data.append('document_name', document_name);
+            data.append('date_request', date_request);
+            data.append('processing_officer', processing_officer);
+            data.append('accounting_status', accounting_status);
+            data.append('request_id', request_id);
+
+            if (control_no === '' || student_id === '' || document_name === '' || date_request === '' || processing_officer === '' || accounting_status === '' || request_id === '') {
+                $('#message').html('<div class="alert alert-danger">All fields are required!</div>');
+            } else {
+                $.ajax({
+                    url: '../init/controllers/edit_request.php',
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $("#message").html(response);
+                        window.scrollTo(0, 0);
+                    },
+                    error: function(response) {
+                        console.log("Failed");
+                    }
+                });
+            }
+
+        });
+    });
+</script>
+
+</body>
+
+</html>
