@@ -1,0 +1,16 @@
+{
+    "name": "markd/ecolumbanodocz",
+    "description": "Mark Dave Canoy email: Markdavecanoy1@gmail.com",
+    "autoload": {
+        "psr-4": {
+            "Markd\\Ecolumbanodocz\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mcdivine2",
+            "email": "146824292+mcdivine2@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
