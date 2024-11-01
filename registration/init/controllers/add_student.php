@@ -1,31 +1,31 @@
 <?php
-  require_once "../model/class_model.php";
+require_once "../model/class_model.php";
 
- function createRandomIDnumber() {
- 	$chars = "003232303232023232023456789";
- 	srand((double)microtime()*1000000);
- 	$i = 0;
- 	$ran = '' ;
- 	while ($i <= 7) {
+function createRandomIDnumber()
+{
+    $chars = "003232303232023232023456789";
+    srand((float)microtime() * 1000000);
+    $i = 0;
+    $ran = '';
+    while ($i <= 7) {
 
- 		$num = rand() % 33;
+        $num = rand() % 33;
 
- 		$tmp = substr($chars, $num, 1);
+        $tmp = substr($chars, $num, 1);
 
- 		$ran = $ran . $tmp;
+        $ran = $ran . $tmp;
 
- 		$i++;
+        $i++;
+    }
+    return $ran;
+}
 
- 	}
- 	return $ran;
- }
 
-
- if (isset($_POST)) {
+if (isset($_POST)) {
     $conn = new class_model();
 
     // Validate and sanitize input fields
-    $studentID_no = isset($_POST['studentID_no']) ? trim($_POST['studentID_no']) : null; // Optional field
+    $student_id = isset($_POST['student_id']) ? trim($_POST['student_id']) : null; // Optional field
     $first_name = trim($_POST['first_name']);
     $middle_name = trim($_POST['middle_name']);
     $last_name = trim($_POST['last_name']);
@@ -55,7 +55,7 @@
             $id_upload = "student_uploads/" . $file_name;
 
             // Insert student information into the database
-            $stud = $conn->register($studentID_no, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status, $is_highschool);
+            $stud = $conn->register($student_id, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status, $is_highschool);
 
             if ($stud == TRUE) {
                 echo '<div class="alert alert-success">Student Registered Successfully!</div><script> setTimeout(function() { window.location.reload(); }, 1000); </script>';
@@ -69,5 +69,3 @@
         echo '<div class="alert alert-danger">No file uploaded or upload error.</div>';
     }
 }
-?>
-
