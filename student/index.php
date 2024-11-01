@@ -21,20 +21,20 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Metrics -->
         <div class="row">
-            <?php 
+            <?php
             $student_id = $_SESSION['student_id'];
-            $conn = new class_model(); 
+            $conn = new class_model();
             ?>
-            
+
             <!-- Pending Request -->
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
-                        <?php 
-                        $cstudent = $conn->count_numberoftotalreceived($student_id); 
+                        <?php
+                        $cstudent = $conn->count_numberoftotalreceived($student_id);
                         foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
                                 <h5 class="text-muted">Pending Request</h5>
@@ -53,8 +53,8 @@
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
-                        <?php 
-                        $cstudent = $conn->count_numberoftotalpending($student_id); 
+                        <?php
+                        $cstudent = $conn->count_numberoftotalpending($student_id);
                         foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
                                 <h5 class="text-muted">Waiting for Payment</h5>
@@ -73,8 +73,8 @@
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
-                        <?php 
-                        $cstudent = $conn->count_numberofreleased($student_id); 
+                        <?php
+                        $cstudent = $conn->count_numberofreleased($student_id);
                         foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
                                 <h5 class="text-muted">Completed</h5>
@@ -91,8 +91,8 @@
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
-                        <?php 
-                        $cstudent = $conn->count_declined($student_id); 
+                        <?php
+                        $cstudent = $conn->count_declined($student_id);
                         foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
                                 <h5 class="text-muted">Declined</h5>
@@ -104,6 +104,24 @@
                         <?php endforeach; ?>
                     </div>
                     <a href="declined.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $cstudent = $conn->count_verified($student_id);
+                        foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted">Processing</h5>
+                                <h2 class="mb-0"><?= $row['count_verified']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color: white;"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="verified.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
         </div>
@@ -129,4 +147,5 @@
     });
 </script>
 </body>
+
 </html>
