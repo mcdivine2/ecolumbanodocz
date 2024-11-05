@@ -325,6 +325,19 @@ class class_model
 		}
 		return $data;
 	}
+	public function fetchAll_verified($student_id)
+	{
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Verified' ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $student_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
 
 	public function fetchAll_payments($student_id)
 	{
@@ -354,6 +367,7 @@ class class_model
 		return $data;
 	}
 
+
 	public function edit_payment($document_controlno, $total_amount, $amount_paid, $date_ofpayment, $proof_ofpayment, $status, $payment_id)
 	{
 		$sql = "UPDATE `tbl_payment` SET  `document_controlno` = ?, `total_amount` = ?, `amount_paid` = ?, `date_ofpayment` = ?, `proof_ofpayment` = ?, `status` = ?  WHERE payment_id = ?";
@@ -370,7 +384,7 @@ class class_model
 	{
 		$sql = "DELETE FROM tbl_payment WHERE payment_id = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("i", $document_id);
+		$stmt->bind_param("i", $payment_id);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
