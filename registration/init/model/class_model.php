@@ -109,7 +109,7 @@ class class_model
 
 	public function add_student($IDnumber, $first_name, $middle_name, $last_name, $course, $year_level, $date_ofbirth, $gender, $complete_address, $email_address, $mobile_number, $username, $password, $status)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_student` (`student_id`, `first_name`, `middle_name`, `last_name`, `course`, `year_level`, `date_ofbirth`, `gender`, `complete_address`, `email_address`, `mobile_number`, `username`, `password`, `account_status`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_student` (`studentID_no`, `first_name`, `middle_name`, `last_name`, `course`, `year_level`, `date_ofbirth`, `gender`, `complete_address`, `email_address`, `mobile_number`, `username`, `password`, `account_status`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
 		$stmt->bind_param("ssssssssssssss", $IDnumber, $first_name, $middle_name, $last_name, $course, $year_level, $date_ofbirth, $gender, $complete_address, $email_address, $mobile_number, $username, $password, $status);
 		if ($stmt->execute()) {
 			$stmt->close();
@@ -120,7 +120,7 @@ class class_model
 
 	public function register($IDnumber, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_verification` (`student_id`, `first_name`, `middle_name`, `last_name`, `complete_address`, `email_address`, `mobile_number`, `id_upload`, `account_status`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_verification` (`studentID_no`, `first_name`, `middle_name`, `last_name`, `complete_address`, `email_address`, `mobile_number`, `id_upload`, `account_status`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
 		$stmt->bind_param("sssssssss", $IDnumber, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status);
 		if ($stmt->execute()) {
 			$stmt->close();
@@ -142,45 +142,17 @@ class class_model
 		return $data;
 	}
 
-	public function edit_student($student_id, $first_name, $middle_name, $last_name, $course, $year_level, $date_ofbirth, $gender, $complete_address, $email_address, $mobile_number, $username, $password, $account_status)
+	public function edit_student($studentID_no, $first_name, $middle_name, $last_name, $course, $year_level, $date_ofbirth, $gender, $complete_address, $email_address, $mobile_number, $username, $password, $account_status, $student_id)
 	{
-		$sql = "UPDATE `tbl_student` 
-            SET `student_id` = ?, 
-                `first_name` = ?, 
-                `middle_name` = ?, 
-                `last_name` = ?, 
-                `course` = ?, 
-                `year_level` = ?, 
-                `date_ofbirth` = ?, 
-                `gender` = ?, 
-                `complete_address` = ?, 
-                `email_address` = ?, 
-                `mobile_number` = ?, 
-                `username` = ?, 
-                `password` = ?, 
-                `account_status` = ?  
-            WHERE `student_id` = ?";
-
+		$sql = "UPDATE `tbl_student` SET   `studentID_no` = ?,   `first_name` = ?, `middle_name` = ?, `last_name` = ?, `course` = ?, `year_level` = ?, `date_ofbirth` = ?, `gender` = ?, `complete_address` = ?, `email_address` = ?, `mobile_number` = ?, `username` = ?, `password` = ?, `account_status` = ?  WHERE student_id = ?";
 		$stmt = $this->conn->prepare($sql);
-
-		if (!$stmt) {
-			// Handle statement preparation failure
-			die("Statement preparation failed: " . $this->conn->error);
-		}
-
-		$stmt->bind_param("ssssssssssssssi", $student_id, $first_name, $middle_name, $last_name, $course, $year_level, $date_ofbirth, $gender, $complete_address, $email_address, $mobile_number, $username, $password, $account_status, $student_id);
-
+		$stmt->bind_param("ssssssssssssssi", $studentID_no, $first_name, $middle_name, $last_name, $course, $year_level, $date_ofbirth, $gender, $complete_address, $email_address, $mobile_number, $username, $password, $account_status, $student_id);
 		if ($stmt->execute()) {
 			$stmt->close();
+			$this->conn->close();
 			return true;
-		} else {
-			// Handle query execution failure
-			echo "Error executing query: " . $stmt->error;
-			$stmt->close();
-			return false;
 		}
 	}
-
 
 	public function delete_student($student_id)
 	{
@@ -246,11 +218,11 @@ class class_model
 		return $data;
 	}
 
-	public function edit_request($control_no, $student_id, $document_name, $no_ofcopies, $date_request, $date_releasing, $processing_officer, $status, $request_id)
+	public function edit_request($control_no, $studentID_no, $document_name, $no_ofcopies, $date_request, $date_releasing, $processing_officer, $status, $request_id)
 	{
-		$sql = "UPDATE `tbl_documentrequest` SET  `control_no` = ?, `student_id` = ?, `document_name` = ?, `no_ofcopies` = ?, `date_request` = ?, `date_releasing` = ?, `processing_officer` = ?, `status` = ?  WHERE request_id = ?";
+		$sql = "UPDATE `tbl_documentrequest` SET  `control_no` = ?, `studentID_no` = ?, `document_name` = ?, `no_ofcopies` = ?, `date_request` = ?, `date_releasing` = ?, `processing_officer` = ?, `status` = ?  WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("ssssssssi", $control_no, $student_id, $document_name, $no_ofcopies, $date_request, $date_releasing, $processing_officer, $status, $request_id);
+		$stmt->bind_param("ssssssssi", $control_no, $studentID_no, $document_name, $no_ofcopies, $date_request, $date_releasing, $processing_officer, $status, $request_id);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();

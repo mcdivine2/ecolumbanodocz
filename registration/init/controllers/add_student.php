@@ -8,24 +8,25 @@ function createRandomIDnumber()
     $i = 0;
     $ran = '';
     while ($i <= 7) {
-
-        $num = rand() % 33;
-
+        $num = rand() % strlen($chars);
         $tmp = substr($chars, $num, 1);
-
         $ran = $ran . $tmp;
-
         $i++;
     }
     return $ran;
 }
 
-
 if (isset($_POST)) {
     $conn = new class_model();
 
     // Validate and sanitize input fields
-    $student_id = isset($_POST['student_id']) ? trim($_POST['student_id']) : null; // Optional field
+    $studentID_no = isset($_POST['studentID_no']) ? trim($_POST['studentID_no']) : null; // Optional field
+
+    // Only generate a new ID if the user did not provide one
+    if (empty($studentID_no)) {
+        $studentID_no = createRandomIDnumber();
+    }
+
     $first_name = trim($_POST['first_name']);
     $middle_name = trim($_POST['middle_name']);
     $last_name = trim($_POST['last_name']);
@@ -40,7 +41,7 @@ if (isset($_POST)) {
         $file_tmp_path = $_FILES['id_upload']['tmp_name'];
         $file_name = addslashes($_FILES['id_upload']['name']);
         $file_size = $_FILES['id_upload']['size'];
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/student/student_uploads/";
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/Online-Document-Request-System-main/student/student_uploads/";
 
         // Ensure the upload directory exists
         if (!is_dir($upload_dir)) {
@@ -55,12 +56,13 @@ if (isset($_POST)) {
             $id_upload = "student_uploads/" . $file_name;
 
             // Insert student information into the database
-            $stud = $conn->register($student_id, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status, $is_highschool);
+            $stud = $conn->register($studentID_no, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status, $is_highschool);
 
             if ($stud == TRUE) {
                 echo '<div class="alert alert-success">Student Registered Successfully!</div><script> setTimeout(function() { window.location.reload(); }, 1000); </script>';
             } else {
-                echo '<div class="alert alert-danger">Registration Failed!</div><script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';
+                echo '<div class="alert alert-danger">Registration Failed!</div>';
+                echo "Error: " . $conn->error;
             }
         } else {
             echo '<div class="alert alert-danger">Failed to move uploaded file.</div>';

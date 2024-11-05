@@ -130,8 +130,8 @@
                             <div class="form-row">
                                 <!-- EDP Number -->
                                 <div class="form-group col-md-6">
-                                    <label for="student_id"><i class="fa fa-id-card"></i> EDP Number</label>
-                                    <input type="text" name="student_id" class="form-control" placeholder="Enter EDP Number (Optional)">
+                                    <label for="studentID_no"><i class="fa fa-id-card"></i> EDP Number</label>
+                                    <input type="text" name="studentID_no" class="form-control" placeholder="Enter EDP Number (Optional)">
                                 </div>
 
                                 <!-- First Name -->
@@ -372,7 +372,7 @@
                     e.preventDefault(); // Prevent form from submitting traditionally
 
                     // Capture form field values
-                    var student_id = $(this).find('input[name="student_id"]').val();
+                    var studentID_no = $(this).find('input[name="studentID_no"]').val();
                     var first_name = $(this).find('input[name="first_name"]').val();
                     var middle_name = $(this).find('input[name="middle_name"]').val();
                     var last_name = $(this).find('input[name="last_name"]').val();
@@ -383,7 +383,7 @@
 
                     // Create FormData object and append form data
                     var formData = new FormData(this);
-                    formData.append('student_id', student_id);
+                    formData.append('studentID_no', studentID_no);
                     formData.append('first_name', first_name);
                     formData.append('middle_name', middle_name);
                     formData.append('last_name', last_name);
