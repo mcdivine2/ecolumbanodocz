@@ -203,16 +203,35 @@
                                                 // Hidden div for request type radio buttons
                                                 echo '<div id="requestType' . ($index + 1) . '" class="mt-2" style="display:none;">';
 
-                                                // Radio buttons for 1st request and re-issuance
-                                                echo '<div class="form-check">';
-                                                echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="1st request" required>';
-                                                echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">1st Request</label>';
-                                                echo '</div>';
+                                                if ($document['document_name'] === 'Certificate') {
+                                                    // Radio buttons for "as unit earn", "as graduate", and "other (please specify)"
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="as unit earn" required>';
+                                                    echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">As Unit Earn</label>';
+                                                    echo '</div>';
 
-                                                echo '<div class="form-check">';
-                                                echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="re-issuance" required>';
-                                                echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">Re-Issuance</label>';
-                                                echo '</div>';
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="as graduate" required>';
+                                                    echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">As Graduate</label>';
+                                                    echo '</div>';
+
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type3_' . ($index + 1) . '" value="other" required>';
+                                                    echo '<label class="form-check-label" for="request_type3_' . ($index + 1) . '">Other (please specify)</label>';
+                                                    echo '<input type="text" name="other_specify_' . ($index + 1) . '" placeholder="Please specify" class="form-control mt-2" style="display:none;" id="other_specify' . ($index + 1) . '">';
+                                                    echo '</div>';
+                                                } else {
+                                                    // Original radio buttons for non-certification documents
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="1st request" required>';
+                                                    echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">1st Request</label>';
+                                                    echo '</div>';
+
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="re-issuance" required>';
+                                                    echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">Re-Issuance</label>';
+                                                    echo '</div>';
+                                                }
 
                                                 echo '</div>'; // Close request type div
 
@@ -222,6 +241,7 @@
                                             echo "No documents found.";
                                         }
                                         ?>
+
 
 
                                     </div>
