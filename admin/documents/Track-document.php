@@ -91,7 +91,7 @@
                                             case "Released":
                                                 echo '<span class="badge bg-success text-white">Verified</span>';
                                                 break;
-                                            case "Received":
+                                            case "Pending Request":
                                                 echo '<span class="badge bg-warning text-white">Pending Request</span>';
                                                 break;
                                             case "Declined":
@@ -126,4 +126,5 @@
 <!-- ============================================================== -->
 <!-- Optional JavaScript -->
 </body>
+
 </html>
