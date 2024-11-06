@@ -69,7 +69,7 @@
                                                 <div class="form-group row">
                                                     <label class="col-12 col-sm-3 col-form-label text-sm-right">Subject: </label>
                                                     <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" value="Your request for <?= $row['document_name']; ?> is now on process." name="subject" required="" placeholder="" class="form-control" readonly>
+                                                        <input data-parsley-type="alphanum" type="text" value="Your request for <?= $row['document_name']; ?> is now on process." name="subject" required="" placeholder="" class="form-control" >
                                                     </div>
                                                 </div>
 

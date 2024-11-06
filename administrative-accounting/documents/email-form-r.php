@@ -78,7 +78,7 @@
                                 <div class="form-group row">
                                     <label class="col-12 col-sm-3 col-form-label text-sm-right">Message: </label>
                                     <div class="col-12 col-sm-8 col-lg-6">
-                                        <textarea name="body" required="" class="form-control" readonly>
+                                        <textarea name="body" required="" class="form-control" >
 Hello, 
 This is to inform you that your request for <?= $row['document_name']; ?> has been received. 
 Your Reference Number is <?= $row['control_no']; ?>.

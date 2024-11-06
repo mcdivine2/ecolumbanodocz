@@ -66,7 +66,7 @@
                                                 <div class="form-group row">
                                                     <label class="col-12 col-sm-3 col-form-label text-sm-right">Subject: </label>
                                                     <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" value="Released <?= $row['document_name']; ?>" name="subject" required="" placeholder="" class="form-control" readonly>
+                                                        <input data-parsley-type="alphanum" type="text" value="Released <?= $row['document_name']; ?>" name="subject" required="" placeholder="" class="form-control" >
                                                     </div>
                                                 </div>
 
@@ -74,7 +74,7 @@
                                                     <label class="col-12 col-sm-3 col-form-label text-sm-right">Message: </label>
                                                     <div class="col-12 col-sm-8 col-lg-6">
                                                        
-                                                    <textarea data-parsley-type="alphanum" type="text" name="body" required="" placeholder="" class="form-control" readonly> Hello, This is a test! Your <?= $row['document_name']; ?> has been released! Thank you for your patience.
+                                                    <textarea data-parsley-type="alphanum" type="text" name="body" required="" placeholder="" class="form-control" > Hello, This is a test! Your <?= $row['document_name']; ?> has been released! Thank you for your patience.
                                                 </textarea>
                                                    
                                                 
