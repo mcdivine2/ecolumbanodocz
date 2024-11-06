@@ -94,7 +94,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-user"></i></span>
                         </div>
-                        <input class="form-control form-control-lg" id="username" alt="username" type="text" placeholder="Username" autocomplete="off">
+                        <input class="form-control form-control-lg" id="username" alt="username" type="text" placeholder="Email" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group">

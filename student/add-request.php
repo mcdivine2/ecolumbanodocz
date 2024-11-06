@@ -122,7 +122,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>Birthdate</label>
-                                        <input type="text" name="birthdate" class="form-control" placeholder="dd/mm/yyyy">
+                                        <input type="date" name="birthdate" class="form-control" placeholder="dd/mm/yyyy">
                                     </div>
                                 </div>
 
@@ -203,16 +203,35 @@
                                                 // Hidden div for request type radio buttons
                                                 echo '<div id="requestType' . ($index + 1) . '" class="mt-2" style="display:none;">';
 
-                                                // Radio buttons for 1st request and re-issuance
-                                                echo '<div class="form-check">';
-                                                echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="1st request" required>';
-                                                echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">1st Request</label>';
-                                                echo '</div>';
+                                                if ($document['document_name'] === 'Certificate') {
+                                                    // Radio buttons for "as unit earn", "as graduate", and "other (please specify)"
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="as unit earn" required>';
+                                                    echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">As Unit Earn</label>';
+                                                    echo '</div>';
 
-                                                echo '<div class="form-check">';
-                                                echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="re-issuance" required>';
-                                                echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">Re-Issuance</label>';
-                                                echo '</div>';
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="as graduate" required>';
+                                                    echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">As Graduate</label>';
+                                                    echo '</div>';
+
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type3_' . ($index + 1) . '" value="other" required onclick="showSpecifyInput(' . ($index + 1) . ')">';
+                                                    echo '<label class="form-check-label" for="request_type3_' . ($index + 1) . '">Other (please specify)</label>';
+                                                    echo '</div>';
+                                                    echo '<input type="text" name="other_specify_' . ($index + 1) . '" placeholder="Please specify" class="form-control mt-2" style="display:none;" id="other_specify' . ($index + 1) . '">';
+                                                } else {
+                                                    // Original radio buttons for non-certification documents
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="1st request" required>';
+                                                    echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">1st Request</label>';
+                                                    echo '</div>';
+
+                                                    echo '<div class="form-check">';
+                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="re-issuance" required>';
+                                                    echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">Re-Issuance</label>';
+                                                    echo '</div>';
+                                                }
 
                                                 echo '</div>'; // Close request type div
 
@@ -221,11 +240,11 @@
                                         } else {
                                             echo "No documents found.";
                                         }
+
                                         ?>
-
-
                                     </div>
                                 </div>
+
 
                                 <!-- Request Date and Mode -->
                                 <div class="row mt-3">
@@ -389,15 +408,23 @@
                         const copies = $(this).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
 
                         // Get request type for this document, matching the unique index
-                        const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+                        let requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
                         if (!requestType) {
                             return showError(`Please select a request type for document ${docName}.`);
                         }
 
-                        // Collect document name and request type separately
+                        // Check if "other" is selected and concatenate with input value if present
+                        if (requestType === 'other') {
+                            const otherSpecifyValue = $(`input[name="other_specify_${docIndex}"]`).val().trim();
+                            if (otherSpecifyValue) {
+                                requestType = `other: ${otherSpecifyValue}`; // Concatenate "other" with the user input
+                            }
+                        }
+
+                        // Append document data to FormData
                         formData.append('document_name[]', docName); // Append document name
                         formData.append('no_ofcopies[]', copies); // Append number of copies
-                        formData.append('request_type[]', requestType); // Append request type separately
+                        formData.append('request_type[]', requestType); // Append request type, including "other" with input
 
                         // Format the document string for display in the modal
                         formattedDocuments.push(`${index + 1}. ${docName} (x${copies}), ${requestType}`);
@@ -415,6 +442,7 @@
                     $('#modalTotalAmount').text(`₱${total.toFixed(2)}`);
                     $('#paymentModal').modal('show');
                 });
+
 
                 $('#confirmSubmit').click(function() {
                     if (formData) {
@@ -472,6 +500,29 @@
             })();
             print_r($_POST); // This will help you inspect the incoming data
             exit;
+        </script>
+        <script>
+            function showSpecifyInput(index) {
+                var specifyInput = document.getElementById('other_specify' + index);
+                specifyInput.style.display = 'block';
+                specifyInput.required = true; // Make the input required when shown
+            }
+
+            // Add event listeners to hide the input if other radio buttons are selected
+            document.addEventListener('DOMContentLoaded', function() {
+                var radioButtons = document.querySelectorAll('.form-check-input');
+                radioButtons.forEach(function(radio) {
+                    radio.addEventListener('change', function() {
+                        var index = this.name.split('_')[2]; // Extract index from radio name
+                        var specifyInput = document.getElementById('other_specify' + index);
+                        if (this.value !== 'other') {
+                            specifyInput.style.display = 'none';
+                            specifyInput.required = false;
+                            specifyInput.value = ''; // Clear the input when not needed
+                        }
+                    });
+                });
+            });
         </script>
 
 

@@ -74,7 +74,7 @@
                                                     <label class="col-12 col-sm-3 col-form-label text-sm-right">Message: </label>
                                                     <div class="col-12 col-sm-8 col-lg-6">
                                                        
-                                                    <textarea data-parsley-type="alphanum" type="text" name="body" required="" placeholder="" class="form-control" readonly> Hello, This is a test! Your request for <?= $row['document_name']; ?> has been received with Reference # <?= $row['control_no']; ?>.
+                                                    <textarea data-parsley-type="alphanum" type="text" name="body" required="" placeholder="" class="form-control" > Hello, This is a test! Your request for <?= $row['document_name']; ?> has been received with Reference # <?= $row['control_no']; ?>.
 
                                                 </textarea>
                                                    
