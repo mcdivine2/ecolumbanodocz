@@ -122,7 +122,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>Birthdate</label>
-                                        <input type="text" name="birthdate" class="form-control" placeholder="dd/mm/yyyy">
+                                        <input type="date" name="birthdate" class="form-control" placeholder="dd/mm/yyyy">
                                     </div>
                                 </div>
 
