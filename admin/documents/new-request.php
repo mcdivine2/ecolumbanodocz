@@ -49,6 +49,7 @@
                                         <th scope="col">Date Requested</th>
                                         <th scope="col">Control No.</th>
                                         <th scope="col">Student ID</th>
+                                        <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
                                         <th scope="col">Mode Request</th>
                                         <th scope="col">Processing Officer</th>
@@ -57,32 +58,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                        $conn = new class_model();
-                                        $docrequest = $conn->fetchAll_newrequest();
+                                    <?php
+                                    $conn = new class_model();
+                                    $docrequest = $conn->fetchAll_newrequest();
                                     ?>
                                     <?php foreach ($docrequest as $row) { ?>
                                         <tr>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
+                                            <td><?= $row['first_name']; ?> <?= $row['first_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= $row['mode_request']; ?></td>
                                             <td><?= $row['processing_officer']; ?></td>
                                             <td>
-                                                <?php 
-                                                  if ($row['registrar_status'] === "Pending") {
-                                                      echo '<span class="badge bg-primary text-white">Pending</span>'; // Blue for pending
-                                                  } else if ($row['registrar_status'] === "Received") {
-                                                      echo '<span class="badge bg-info text-white">Received</span>'; // Light blue for received
-                                                  } else if ($row['registrar_status'] === "Waiting for Payment") {
-                                                      echo '<span class="badge bg-warning text-dark">Waiting for Payment</span>'; // Yellow for waiting, dark text for contrast
-                                                  } else if ($row['registrar_status'] === "Verified") {
-                                                      echo '<span class="badge bg-success text-white">Verified</span>'; // Green for verified
-                                                  } else if ($row['registrar_status'] === "Declined") {
-                                                      echo '<span class="badge bg-danger text-white">Declined</span>'; // Red for declined
-                                                  }
-                                                ?> 
+                                                <?php
+                                                if ($row['registrar_status'] === "Pending") {
+                                                    echo '<span class="badge bg-primary text-white">Pending</span>'; // Blue for pending
+                                                } else if ($row['registrar_status'] === "Received") {
+                                                    echo '<span class="badge bg-info text-white">Received</span>'; // Light blue for received
+                                                } else if ($row['registrar_status'] === "Waiting for Payment") {
+                                                    echo '<span class="badge bg-warning text-dark">Waiting for Payment</span>'; // Yellow for waiting, dark text for contrast
+                                                } else if ($row['registrar_status'] === "Verified") {
+                                                    echo '<span class="badge bg-success text-white">Verified</span>'; // Green for verified
+                                                } else if ($row['registrar_status'] === "Declined") {
+                                                    echo '<span class="badge bg-danger text-white">Declined</span>'; // Red for declined
+                                                }
+                                                ?>
                                             </td>
                                             <td class="align-right">
                                                 <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit request">
@@ -145,66 +147,70 @@
 <script src="../assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
 <script src="../assets/vendor/datatables/js/data-table.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-    var firstName = $('#firstName').text();
-    var lastName = $('#lastName').text();
-    var initials = firstName.charAt(0) + lastName.charAt(0);
-    $('#profileImage').text(initials);
-});
-</script>
-<script>
-$(document).ready(function() {
-    load_data();
-    
-    function load_data() {
-        $(document).on('click', '.delete', function() {
-            var request_id = $(this).attr("data-id");
-            if (confirm("Are you sure want to remove this data?")) {
-                $.ajax({
-                    url: "../init/controllers/delete_request.php",
-                    method: "POST",
-                    data: { request_id: request_id },
-                    success: function(response) {
-                        $("#message").html(response);
-                    },
-                    error: function() {
-                        console.log("Failed");
-                    }
-                });
-            }
-        });
-    }
-});
-</script>
-
-<script>
-$(document).ready(function() {
-    function load_unseen_notification(view = '') {
-        $.ajax({
-            url: "../init/controllers/fetch.php",
-            method: "POST",
-            data: { view: view },
-            dataType: "json",
-            success: function(data) {
-                $('.dropdown-menu_1').html(data.notification);
-                if (data.unseen_notification > 0) {
-                    $('.count').html(data.unseen_notification);
-                }
-            }
-        });
-    }
-    
-    load_unseen_notification();
-
-    $(document).on('click', '.dropdown-toggle', function() {
-        $('.count').html('');
-        load_unseen_notification('yes');
+    $(document).ready(function() {
+        var firstName = $('#firstName').text();
+        var lastName = $('#lastName').text();
+        var initials = firstName.charAt(0) + lastName.charAt(0);
+        $('#profileImage').text(initials);
     });
+</script>
+<script>
+    $(document).ready(function() {
+        load_data();
 
-    setInterval(function() {
+        function load_data() {
+            $(document).on('click', '.delete', function() {
+                var request_id = $(this).attr("data-id");
+                if (confirm("Are you sure want to remove this data?")) {
+                    $.ajax({
+                        url: "../init/controllers/delete_request.php",
+                        method: "POST",
+                        data: {
+                            request_id: request_id
+                        },
+                        success: function(response) {
+                            $("#message").html(response);
+                        },
+                        error: function() {
+                            console.log("Failed");
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        function load_unseen_notification(view = '') {
+            $.ajax({
+                url: "../init/controllers/fetch.php",
+                method: "POST",
+                data: {
+                    view: view
+                },
+                dataType: "json",
+                success: function(data) {
+                    $('.dropdown-menu_1').html(data.notification);
+                    if (data.unseen_notification > 0) {
+                        $('.count').html(data.unseen_notification);
+                    }
+                }
+            });
+        }
+
         load_unseen_notification();
-    }, 5000);
-});
+
+        $(document).on('click', '.dropdown-toggle', function() {
+            $('.count').html('');
+            load_unseen_notification('yes');
+        });
+
+        setInterval(function() {
+            load_unseen_notification();
+        }, 5000);
+    });
 </script>
 </body>
 
