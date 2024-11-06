@@ -102,15 +102,19 @@
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Status</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
-                                               <select name="status" class="form-control">
+                                               <select name="status" id="status" class="form-control" onchange="updateEmailBody()">
                                                    <option value="<?= $row['status']; ?>" hidden><?= $row['status']; ?></option>
-                                                   <option value="Received">Pending Request</option>
+                                                   <option value="Pending Request">Pending Request</option>
                                                    <option value="Declined">Declined</option>
                                                    <option value="Verified">Verified</option>
                                                    <option value="Released">Released</option>
                                                </select>
                                            </div>
                                        </div>
+
+                                       <!-- Hidden Fields to Store PHP Data for JavaScript -->
+                                       <input type="hidden" id="documentName" value="<?= $row['document_name']; ?>">
+                                       <input type="hidden" id="controlNo" value="<?= $row['control_no']; ?>">
 
                                        <!-- Email Form Section -->
                                        <div class="form-group row">
@@ -122,14 +126,14 @@
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Subject:</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
-                                               <input type="text" value="Request received for <?= $row['document_name']; ?>" name="subject" class="form-control">
+                                               <input type="text" value="Request Update for <?= $row['document_name']; ?>" name="subject" class="form-control">
                                            </div>
                                        </div>
 
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Message:</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
-                                               <textarea name="body" class="form-control">Hello, This is a test! Your request for <?= $row['document_name']; ?> has been received with Reference # <?= $row['control_no']; ?>.</textarea>
+                                               <textarea name="body" id="emailBody" class="form-control"></textarea>
                                            </div>
                                        </div>
 
@@ -148,6 +152,40 @@
                <?php } ?>
            </div>
        </div>
+       <!-- JavaScript for Updating the Textarea -->
+       <script type="text/javascript">
+           function updateEmailBody() {
+               // Get status, document name, and control number from the hidden inputs and status dropdown
+               const status = document.getElementById("status").value;
+               const documentName = document.getElementById("documentName").value;
+               const controlNo = document.getElementById("controlNo").value;
+
+               let message = "Hello, This is a test! ";
+
+               switch (status) {
+                   case "Pending Request":
+                       message += `Your request for ${documentName} has been marked as Pending with Reference # ${controlNo}.`;
+                       break;
+                   case "Declined":
+                       message += `We regret to inform you that your request for ${documentName} has been Declined. Reference # ${controlNo}.`;
+                       break;
+                   case "Verified":
+                       message += `Your request for ${documentName} has been Verified with Reference # ${controlNo}.`;
+                       break;
+                   case "Released":
+                       message += `Your request for ${documentName} has been Released. Please check your email for further instructions. Reference # ${controlNo}.`;
+                       break;
+                   default:
+                       message = "";
+               }
+
+               document.getElementById("emailBody").value = message;
+           }
+
+           // Initialize the email body with the current status when the page loads
+           document.addEventListener("DOMContentLoaded", updateEmailBody);
+       </script>
+
 
 
        <!-- ============================================================== -->
@@ -167,7 +205,6 @@
            });
        </script>
        <!-- dont ando -->
-
 
        <script>
            document.addEventListener('DOMContentLoaded', () => {
