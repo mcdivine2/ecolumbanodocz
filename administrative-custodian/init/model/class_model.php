@@ -567,7 +567,7 @@ class class_model
 
 	public function count_numberoftotalreceived()
 	{
-		$sql = "SELECT COUNT(request_id) as count_received FROM tbl_documentrequest WHERE custodian_status = 'Received'";
+		$sql = "SELECT COUNT(request_id) as count_received FROM tbl_documentrequest WHERE custodian_status = 'Pending'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
