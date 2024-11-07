@@ -116,6 +116,9 @@
                                                     case 'Paid':
                                                         echo '<span class="badge bg-warning text-white">Paid</span>';
                                                         break;
+                                                    case 'Pending':
+                                                        echo '<span class="badge bg-warning text-white">Pending</span>';
+                                                        break;
                                                     case 'Declined':
                                                         echo '<span class="badge bg-danger text-white">Declined</span>';
                                                         break;
