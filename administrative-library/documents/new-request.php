@@ -71,7 +71,7 @@
                              <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                              <td><?= $row['control_no']; ?></td>
                              <td><?= $row['student_id']; ?></td>
-                             <td><?= $row['first_name']; ?> <?= $row['first_name']; ?></td>
+                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                              <td><?= $row['document_name']; ?></td>
                              <!-- <td>
                                <?php
