@@ -25,13 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_types = isset($_POST['request_type']) ? $_POST['request_type'] : [];
 
     // Initialize status fields
-    $registrar_status = "Received";
-    $custodian_status = "Received";
-    $dean_status = "Received";
-    $library_status = "Received";
-    $accounting_status = "Waiting for Payment";
-
-
+    $registrar_status = "Pending";
+    $custodian_status = "Pending";
+    $dean_status = "Pending";
+    $library_status = "Pending";
+    $accounting_status = " ";
 
     // Input validation
     $errors = []; // Store validation errors
@@ -78,10 +76,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $copies = isset($no_ofcopies[$index]) ? (int)$no_ofcopies[$index] : 1;
         $request_type = isset($request_types[$index]) ? $request_types[$index] : null;
 
+        // Handle "other (please specify)" input if applicable
+        $other_input_name = 'other_specify_' . ($index + 1);
+        if ($request_type === 'other' && isset($_POST[$other_input_name]) && !empty(trim($_POST[$other_input_name]))) {
+            // Concatenate "other" with the inputted string
+            $request_type = "other: " . trim($_POST[$other_input_name]);
+        }
+
         // Validate request type for the current document
         if (empty($request_type)) {
             $errors[] = "Request type is missing for document $document_name.";
-            break; // Stop processing this document
+            break; // Stop processing if a request type is missing
         }
 
         // Create the document string with name, number of copies, and request type

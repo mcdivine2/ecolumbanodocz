@@ -44,16 +44,16 @@
                                         <th>Document Name</th>
                                         <th>Date Request</th>
                                         <th>Status</th>
-                                        <th>Payment</th>
+                                        <!-- <th>Clearance</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                        $student_id = $_SESSION['student_id'];
-                                        $conn = new class_model();
-                                        $docrequest = $conn->fetchAll_pendingrequest($student_id);
-                                        foreach ($docrequest as $row): 
+                                    <?php
+                                    $student_id = $_SESSION['student_id'];
+                                    $conn = new class_model();
+                                    $docrequest = $conn->fetchAll_pendingrequest($student_id);
+                                    foreach ($docrequest as $row):
                                     ?>
                                         <tr>
                                             <td><?= $row['control_no']; ?></td>
@@ -62,26 +62,27 @@
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td>
-                                                <?php 
-                                                    $status = $row['registrar_status'];
-                                                    $badge_class = match ($status) {
-                                                        "Processing" => "info",
-                                                        "Waiting for Payment" => "danger",
-                                                        "Releasing" => "success",
-                                                        "Received" => "warning",
-                                                        default => "secondary"
-                                                    };
-                                                    echo "<span class='badge bg-$badge_class text-white'>$status</span>";
+                                                <?php
+                                                $status = $row['registrar_status'];
+                                                $badge_class = match ($status) {
+                                                    "Processing" => "info",
+                                                    "Waiting for Payment" => "danger",
+                                                    "Releasing" => "success",
+                                                    "Pending" => "warning",
+                                                    default => "secondary"
+                                                };
+                                                echo "<span class='badge bg-$badge_class text-white'>$status</span>";
                                                 ?>
                                             </td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#paymentModal"
-                                                    data-control-no="<?= $row['control_no']; ?>"
-                                                    data-document-name="<?= $row['document_name']; ?>"
-                                                    data-total-amount="<?= $row['price']; ?>">
-                                                    <i class="fa fa-credit-card"></i> Pay
-                                                </button>
-                                            </td>
+                                            <!-- <td class="align-right">
+                                                <div class="box">
+                                                    <div class="four">
+                                                        <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
+                                                            Clearance
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td> -->
                                             <td>
                                                 <a href="javascript:;" data-id="<?= $row['request_id']; ?>" class="text-secondary delete">
                                                     <i class="fa fa-trash-alt"></i>
@@ -107,7 +108,7 @@
 <script src="../asset/libs/js/main-js.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Generate initials for profile image
         const firstName = $('#firstName').text();
         const lastName = $('#lastName').text();
@@ -115,12 +116,14 @@
         $('#profileImage').text(initials);
 
         // Delete request
-        $('.delete').on('click', function () {
+        $('.delete').on('click', function() {
             const request_id = $(this).data('id');
             if (confirm("Are you sure you want to remove this data?")) {
-                $.post("../init/controllers/delete_request.php", { request_id }, function (response) {
+                $.post("../init/controllers/delete_request.php", {
+                    request_id
+                }, function(response) {
                     $("#message").html(response);
-                }).fail(function () {
+                }).fail(function() {
                     console.error("Failed to delete request.");
                 });
             }
@@ -128,7 +131,9 @@
 
         // Load unseen notifications
         function loadUnseenNotifications(view = '') {
-            $.post("../init/controllers/fetch.php", { view }, function (data) {
+            $.post("../init/controllers/fetch.php", {
+                view
+            }, function(data) {
                 $('.dropdown-menu_1').html(data.notification);
                 if (data.unseen_notification > 0) {
                     $('.count').html(data.unseen_notification);
@@ -137,7 +142,7 @@
         }
 
         loadUnseenNotifications();
-        $('.dropdown-toggle').on('click', function () {
+        $('.dropdown-toggle').on('click', function() {
             $('.count').html('');
             loadUnseenNotifications('yes');
         });
@@ -147,4 +152,5 @@
 </script>
 
 </body>
+
 </html>

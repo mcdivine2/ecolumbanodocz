@@ -1,24 +1,10 @@
 <?php include('main_header/header.php'); ?>
-<!-- ============================================================== -->
-<!-- end navbar -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- left sidebar -->
-<!-- ============================================================== -->
 <?php include('left_sidebar/sidebar.php'); ?>
-<!-- ============================================================== -->
-<!-- end left sidebar -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- wrapper  -->
-<!-- ============================================================== -->
+
 <div class="dashboard-wrapper">
     <div class="container-fluid dashboard-content">
-        <!-- ============================================================== -->
-        <!-- pageheader -->
-        <!-- ============================================================== -->
         <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-12">
                 <div class="page-header">
                     <h2 class="pageheader-title"><i class="fa fa-fw fa-file"></i> Document Request</h2>
                     <div class="page-breadcrumb">
@@ -32,92 +18,80 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- end pageheader -->
-        <!-- ============================================================== -->
 
         <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-12">
                 <div class="card">
                     <h5 class="card-header">Request Information</h5>
                     <div class="card-body">
                         <div id="message"></div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered first" attribute="data-show-print" type="boo lean">
+                            <table class="table table-striped table-bordered first" data-show-print="true">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Date Requested</th>
-                                        <th scope="col">Control No.</th>
-                                        <th scope="col">Student ID</th>
-                                        <th scope="col">Student Name</th>
-                                        <th scope="col">Document Name</th>
-                                        <th scope="col">Mode Request</th>
-                                        <th scope="col">Date Declined</th>
-                                        <th scope="col">Processing Officer</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Clearance</th>
-                                        <th scope="col">Action</th>
+                                        <th>Date Requested</th>
+                                        <th>Control No.</th>
+                                        <th>Student ID</th>
+                                        <th>Student Name</th>
+                                        <th>Document Name</th>
+                                        <th>Mode Request</th>
+                                        <!-- <th>Date Releasing</th> -->
+                                        <th>Processing Officer</th>
+                                        <th>Status</th>
+                                        <!-- <th>Clearance</th> -->
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                        $conn = new class_model();
-                                        $docrequest = $conn->fetchAll_declined();
+                                    <?php
+                                    $conn = new class_model();
+                                    $docrequest = $conn->fetchAll_declined();
+                                    foreach ($docrequest as $row) {
+                                        // Check if all required statuses are verified
+                                        $all_verified = ($row['library_status'] === 'Verified' &&
+                                            $row['dean_status'] === 'Verified' &&
+                                            $row['custodian_status'] === 'Verified' &&
+                                            $row['accounting_status'] === 'Verified');
+
+                                        $clearance_text = $all_verified ? 'Complete' : 'Incomplete';
+                                        $clearance_class = $all_verified ? 'btn-success' : 'btn-primary';
                                     ?>
-                                    <?php foreach ($docrequest as $row) { ?>
                                         <tr>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
-                                            <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
+                                            <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= $row['mode_request']; ?></td>
-                                            <td>
-                                                <?php 
-                                                    if ($row['date_releasing'] === "") {
-                                                        echo "";
-                                                    } else if ($row['date_releasing'] === $row['date_releasing']) {
-                                                        echo date("M d, Y", strtotime($row['date_releasing']));
-                                                    }
-                                                ?>
-                                            </td>
+                                            <!-- <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td> -->
                                             <td><?= $row['processing_officer']; ?></td>
                                             <td>
-                                                <?php 
-                                                  if ($row['registrar_status'] === "Pending") {
-                                                      echo '<span class="badge bg-primary text-white">Pending</span>'; // Blue for pending
-                                                  } else if ($row['registrar_status'] === "Received") {
-                                                      echo '<span class="badge bg-info text-white">Received</span>'; // Light blue for received
-                                                  } else if ($row['registrar_status'] === "Waiting for Payment") {
-                                                      echo '<span class="badge bg-warning text-dark">Waiting for Payment</span>'; // Yellow for waiting, dark text for contrast
-                                                  } else if ($row['registrar_status'] === "Verified") {
-                                                      echo '<span class="badge bg-success text-white">Verified</span>'; // Green for verified
-                                                  } else if ($row['registrar_status'] === "Declined") {
-                                                      echo '<span class="badge bg-danger text-white">Declined</span>'; // Red for declined
-                                                  }
-                                                ?> 
+                                                <?php
+                                                $status_badges = [
+                                                    "Processing" => "primary",
+                                                    "Releasing" => "info",
+                                                    "Waiting for Payment" => "warning",
+                                                    "Verified" => "success",
+                                                    "Declined" => "danger"
+                                                ];
+                                                $status_text = $row['registrar_status'];
+                                                $badge_class = isset($status_badges[$status_text]) ? $status_badges[$status_text] : 'secondary';
+                                                echo "<span class='badge bg-{$badge_class} text-white'>{$status_text}</span>";
+                                                ?>
                                             </td>
-                                            <!-- clearance -->
-                                            <td class="align-right">
-                                                <div class="box">
-                                                    <div class="four">
-                                                    <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
-                                                        Clearance
-                                                    </a>
-                                                    </div> 
-                                                </div>
-                                            </td>
-                                            <td class="align-right">
-                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit request">
+                                            <!-- <td>
+                                                <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm <?= $clearance_class; ?> text-xs"
+                                                    data-toggle="tooltip"
+                                                    title="Clearance">
+                                                    <?= $clearance_text; ?>
+                                                </a>
+                                            </td> -->
+                                            <td>
+                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
                                                     <i class="fa fa-edit"></i>
                                                 </a> |
-                                                <!-- <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit request">
-                                                    <i class="fa fa-eye"></i>
-                                                </a> | -->
-                                                <!-- <a href="javascript:;" data-id="<?= $row['request_id']; ?>" class="text-secondary font-weight-bold text-xs delete" data-toggle="tooltip" data-original-title="Delete request">
-                                                    <i class="fa fa-trash-alt"></i>
-                                                </a> | -->
-                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Send email">
+                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Send email">
                                                     <i class="fa fa-envelope"></i>
                                                 </a>
                                             </td>
@@ -129,105 +103,55 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- end responsive table -->
-            <!-- ============================================================== -->
         </div>
     </div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- ============================================================== -->
-<!-- end main wrapper -->
-<!-- ============================================================== -->
-<!-- Optional JavaScript -->
+
+<!-- Scripts -->
 <script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="../assets/vendor/custom-js/jquery.multi-select.html"></script>
 <script src="../assets/libs/js/main-js.js"></script>
 <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
 <script src="../assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
-<script src="../assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-<script src="../assets/vendor/datatables/js/data-table.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    var firstName = $('#firstName').text();
-    var lastName = $('#lastName').text();
-    var initials = firstName.charAt(0) + lastName.charAt(0);
-    $('#profileImage').text(initials);
-});
-</script>
+
 <script>
-$(document).ready(function() {
-    load_data();
-    
-    function load_data() {
-        $(document).on('click', '.delete', function() {
-            var request_id = $(this).attr("data-id");
-            if (confirm("Are you sure want to remove this data?")) {
-                $.ajax({
-                    url: "../init/controllers/delete_request.php",
-                    method: "POST",
-                    data: { request_id: request_id },
-                    success: function(response) {
-                        $("#message").html(response);
-                    },
-                    error: function() {
-                        console.log("Failed");
-                    }
+    $(document).ready(function() {
+        // Display initials in profile image
+        let initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
+        $('#profileImage').text(initials);
+
+        // Handle delete request
+        $('.delete').on('click', function() {
+            let request_id = $(this).data("id");
+            if (confirm("Are you sure you want to remove this data?")) {
+                $.post("../init/controllers/delete_request.php", {
+                    request_id
+                }, function(response) {
+                    $("#message").html(response);
+                }).fail(function() {
+                    console.log("Failed");
                 });
             }
         });
-    }
-});
-</script>
 
-<script>
-$(document).ready(function() {
-    function load_unseen_notification(view = '') {
-        $.ajax({
-            url: "../init/controllers/fetch.php",
-            method: "POST",
-            data: { view: view },
-            dataType: "json",
-            success: function(data) {
+        // Load unseen notifications
+        function load_unseen_notification(view = '') {
+            $.post("../init/controllers/fetch.php", {
+                view
+            }, function(data) {
                 $('.dropdown-menu_1').html(data.notification);
-                if (data.unseen_notification > 0) {
-                    $('.count').html(data.unseen_notification);
-                }
-            }
-        });
-    }
-    
-    load_unseen_notification();
+                if (data.unseen_notification > 0) $('.count').html(data.unseen_notification);
+            }, 'json');
+        }
 
-    $(document).on('click', '.dropdown-toggle', function() {
-        $('.count').html('');
-        load_unseen_notification('yes');
-    });
-
-    setInterval(function() {
         load_unseen_notification();
-    }, 5000);
-});
+        $('.dropdown-toggle').on('click', function() {
+            $('.count').html('');
+            load_unseen_notification('yes');
+        });
+
+        setInterval(load_unseen_notification, 5000);
+    });
 </script>
 </body>
 
