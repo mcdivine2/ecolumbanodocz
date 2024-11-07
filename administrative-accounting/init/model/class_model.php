@@ -342,6 +342,18 @@ class class_model
 		}
 		return $data;
 	}
+	public function fetchAll_pendingpaid()
+	{
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Pending' ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
 	public function fetchAll_declined()
 	{
 		// Modify the SQL query to only fetch rows where the status is 'Paid'
@@ -532,6 +544,33 @@ class class_model
 			return array();
 		}
 	}
+	public function fetchAll_paymentpending()
+	{
+		$sql = "SELECT tbl_payment.*, 
+                   CONCAT(tbl_students.first_name, ', ' ,tbl_students.middle_name, ' ' ,tbl_students.last_name) AS student_name 
+            FROM tbl_payment
+            INNER JOIN tbl_students ON tbl_students.student_id = tbl_payment.student_id 
+            INNER JOIN tbl_documentrequest ON tbl_documentrequest.control_no = tbl_payment.control_no
+            WHERE tbl_documentrequest.accounting_status = 'Pending' 
+            ORDER BY tbl_payment.student_id DESC";
+
+		$stmt = $this->conn->prepare($sql);
+		if ($stmt) {
+			$stmt->execute();
+			$result = $stmt->get_result();
+			$data = array();
+
+			while ($row = $result->fetch_assoc()) {
+				$data[] = $row;
+			}
+			$stmt->close();
+			return $data;
+		} else {
+			return array();
+		}
+	}
+
+
 
 
 	public function edit_payment($control_no, $total_amount, $amount_paid, $date_ofpayment, $proof_ofpayment, $status, $payment_id)
@@ -675,7 +714,7 @@ class class_model
 
 	public function count_numberoftotalpending()
 	{
-		$sql = "SELECT COUNT(request_id) as count_pending FROM tbl_documentrequest WHERE accounting_status = 'Waiting for Payment'";
+		$sql = "SELECT COUNT(request_id) as count_pending FROM tbl_documentrequest WHERE accounting_status = 'Pending'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -713,6 +752,7 @@ class class_model
 		}
 		return $data;
 	}
+
 
 	public function count_numberofreleased()
 	{
