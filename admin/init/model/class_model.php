@@ -369,7 +369,7 @@ class class_model
 
 	public function fetchAll_newrequest()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'Pending Request' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'Pending' ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -434,15 +434,76 @@ class class_model
 
 	public function edit_request($control_no, $student_id, $document_name, $date_request, $date_releasing, $processing_officer, $registrar_status, $request_id)
 	{
-		$sql = "UPDATE `tbl_documentrequest` SET  `control_no` = ?, `student_id` = ?, `document_name` = ?,  `date_request` = ?, `date_releasing` = ?, `processing_officer` = ?, `registrar_status` = ?  WHERE request_id = ?";
+		$sql = "UPDATE `tbl_documentrequest` 
+            SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, 
+                `date_releasing` = ?, `processing_officer` = ?, `registrar_status` = ? 
+            WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
+		if (!$stmt) {
+			// Handle error if prepare() fails
+			die("Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error);
+		}
+
 		$stmt->bind_param("sssssssi", $control_no, $student_id, $document_name, $date_request, $date_releasing, $processing_officer, $registrar_status, $request_id);
+
 		if ($stmt->execute()) {
 			$stmt->close();
-			$this->conn->close();
 			return true;
+		} else {
+			// Handle error if execute() fails
+			error_log("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+			$stmt->close();
+			return false;
 		}
 	}
+
+	public function get_statuses($request_id)
+	{
+		$sql = "SELECT registrar_status, dean_status, library_status, custodian_status 
+            FROM tbl_documentrequest 
+            WHERE request_id = ?";
+		$stmt = $this->conn->prepare($sql);
+		if (!$stmt) {
+			// Handle error if prepare() fails
+			die("Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error);
+		}
+
+		$stmt->bind_param("i", $request_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result) {
+			$statuses = $result->fetch_assoc();
+		} else {
+			$statuses = null;
+			error_log("Get result failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+
+		$stmt->close();
+		return $statuses;
+	}
+
+	public function update_accounting_status($request_id, $status)
+	{
+		$sql = "UPDATE tbl_documentrequest 
+            SET accounting_status = ? 
+            WHERE request_id = ?";
+		$stmt = $this->conn->prepare($sql);
+		if (!$stmt) {
+			// Handle error if prepare() fails
+			die("Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error);
+		}
+
+		$stmt->bind_param("si", $status, $request_id);
+		if (!$stmt->execute()) {
+			// Handle error if execute() fails
+			error_log("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+		}
+
+		$stmt->close();
+	}
+
+
 
 	public function delete_request($request_id)
 	{
@@ -675,7 +736,7 @@ class class_model
 
 	public function count_numberoftotalreceived()
 	{
-		$sql = "SELECT COUNT(request_id) as count_received FROM tbl_documentrequest WHERE registrar_status = 'Pending Request'";
+		$sql = "SELECT COUNT(request_id) as count_received FROM tbl_documentrequest WHERE registrar_status = 'Pending'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();

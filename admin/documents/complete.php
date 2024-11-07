@@ -69,7 +69,7 @@
                                                 <?php
                                                 $status_badges = [
                                                     "Processing" => "primary",
-                                                    "Releasing" => "info",
+                                                    "Released" => "success",
                                                     "Waiting for Payment" => "warning",
                                                     "Verified" => "success",
                                                     "Declined" => "danger"
@@ -88,9 +88,9 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
+                                                <!-- <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
                                                     <i class="fa fa-edit"></i>
-                                                </a> |
+                                                </a> | -->
                                                 <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Send email">
                                                     <i class="fa fa-envelope"></i>
                                                 </a>

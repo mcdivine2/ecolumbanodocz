@@ -1,24 +1,10 @@
 <?php include('main_header/header.php'); ?>
-<!-- ============================================================== -->
-<!-- end navbar -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- left sidebar -->
-<!-- ============================================================== -->
 <?php include('left_sidebar/sidebar.php'); ?>
-<!-- ============================================================== -->
-<!-- end left sidebar -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- wrapper  -->
-<!-- ============================================================== -->
+
 <div class="dashboard-wrapper">
     <div class="container-fluid dashboard-content">
-        <!-- ============================================================== -->
-        <!-- pageheader -->
-        <!-- ============================================================== -->
         <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-12">
                 <div class="page-header">
                     <h2 class="pageheader-title"><i class="fa fa-fw fa-eye"></i> Track Document</h2>
                     <div class="page-breadcrumb">
@@ -32,12 +18,9 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- end pageheader -->
-        <!-- ============================================================== -->
 
         <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-12">
                 <div class="card influencer-profile-data">
                     <div class="card-body">
                         <div id="message"></div>
@@ -49,18 +32,14 @@
                             </div>
 
                             <?php
-                            // Check if request and student ID are passed in URL
                             if (isset($_GET['request']) && isset($_GET['student-number'])) {
                                 $request_id = $_GET['request'];
                                 $student_id = $_GET['student-number'];
 
-                                // Instantiate the class and fetch the specific document request
                                 $conn = new class_model();
                                 $document = $conn->fetch_document_by_id($student_id, $request_id);
 
-                                // Check if data is retrieved
                                 if ($document) {
-                                    // Display each department's status
                                     $departments = [
                                         'library' => 'LIBRARY',
                                         'custodian' => 'CUSTODIAN',
@@ -70,42 +49,28 @@
                                     ];
 
                                     foreach ($departments as $key => $label) {
-                                        echo '<div class="form-group row">';
-                                        echo '<label class="col-12 col-sm-2 col-form-label text-sm-left">' . $label . ':</label>';
-                                        echo '<div class="col-12 col-form-label col-sm-1 col-sm-1">';
-
                                         $status = $document[$key . '_status'];
-                                        switch ($status) {
-                                            case "Pending":
-                                                echo '<span class="badge bg-warning text-white">Pending</span>';
-                                                break;
-                                            case "Waiting for Payment":
-                                                echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
-                                                break;
-                                            case "Processing":
-                                                echo '<span class="badge bg-success text-white">Processing</span>';
-                                                break;
-                                            case "Verified":
-                                                echo '<span class="badge bg-success text-white">Verified</span>';
-                                                break;
-                                            case "Released":
-                                                echo '<span class="badge bg-success text-white">Verified</span>';
-                                                break;
-                                            case "Pending Request":
-                                                echo '<span class="badge bg-warning text-white">Pending Request</span>';
-                                                break;
-                                            case "Declined":
-                                                echo '<span class="badge bg-danger text-white">Declined</span>';
-                                                break;
-                                            default:
-                                                echo '<span class="badge bg-secondary text-white">Unknown Status</span>';
-                                        }
-
-                                        echo '</div>';
-                                        echo '<div class="col-12 col-sm-6 ml-5">';
-                                        echo '<input data-parsley-type="alphanum" type="text" value="Your request for ' . htmlspecialchars($document['document_name']) . ' is ' . htmlspecialchars($status) . ', please comply." name="subject" required="" class="form-control" readonly>';
-                                        echo '</div>';
-                                        echo '</div>';
+                                        $badge_classes = [
+                                            "Pending" => "bg-warning",
+                                            "Waiting for Payment" => "bg-info",
+                                            "Processing" => "bg-success",
+                                            "Verified" => "bg-success",
+                                            "Released" => "bg-success",
+                                            "Pending Request" => "bg-warning",
+                                            "Declined" => "bg-danger"
+                                        ];
+                                        $badge_class = $badge_classes[$status] ?? 'bg-secondary';
+                            ?>
+                                        <div class="form-group row">
+                                            <label class="col-12 col-sm-2 col-form-label text-sm-left"><?= $label; ?>:</label>
+                                            <div class="col-12 col-sm-1">
+                                                <span class="badge <?= $badge_class; ?> text-white"><?= htmlspecialchars($status); ?></span>
+                                            </div>
+                                            <div class="col-12 col-sm-6 ml-5">
+                                                <input type="text" value="Your request for <?= htmlspecialchars($document['document_name']); ?> is <?= htmlspecialchars($status); ?>, please comply." class="form-control" readonly>
+                                            </div>
+                                        </div>
+                            <?php
                                     }
                                 } else {
                                     echo '<p>No document found!</p>';
@@ -121,10 +86,6 @@
         </div>
     </div>
 </div>
-<!-- ============================================================== -->
-<!-- end main wrapper -->
-<!-- ============================================================== -->
-<!-- Optional JavaScript -->
 </body>
 
 </html>

@@ -44,7 +44,7 @@
                                         <th>Document Name</th>
                                         <th>Date Request</th>
                                         <th>Status</th>
-                                        <th>Clearance</th>
+                                        <!-- <th>Clearance</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -68,13 +68,13 @@
                                                     "Processing" => "info",
                                                     "Waiting for Payment" => "danger",
                                                     "Releasing" => "success",
-                                                    "Received" => "warning",
+                                                    "Pending" => "warning",
                                                     default => "secondary"
                                                 };
                                                 echo "<span class='badge bg-$badge_class text-white'>$status</span>";
                                                 ?>
                                             </td>
-                                            <td class="align-right">
+                                            <!-- <td class="align-right">
                                                 <div class="box">
                                                     <div class="four">
                                                         <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
@@ -82,7 +82,7 @@
                                                         </a>
                                                     </div>
                                                 </div>
-                                            </td>
+                                            </td> -->
                                             <td>
                                                 <a href="javascript:;" data-id="<?= $row['request_id']; ?>" class="text-secondary delete">
                                                     <i class="fa fa-trash-alt"></i>

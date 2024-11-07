@@ -92,25 +92,27 @@
             <!-- /. metric -->
         </div>
         <div class="row ">
+            <!-- here -->
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
                         <?php
                         $conn = new class_model();
-                        $cstudent = $conn->count_numberoftotalrequest();
+                        $cstudent = $conn->count_complete();
                         ?>
                         <?php foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Number of total request</b></h5>
-                                <h2 class="mb-0"><?= $row['count_request']; ?></h2>
+                                <h5 class="text-muted"><b>Complete</b></h5>
+                                <h2 class="mb-0"><?= $row['count_complete']; ?></h2>
                             </div>
                             <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-layer-group fa-fw fa-sm text-info" style="color:white !important"></i>
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <a href="request.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                    <a href="complete.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
+
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                 <div class="card">
@@ -141,22 +143,22 @@
                     <div class="card-body">
                         <?php
                         $conn = new class_model();
-                        $cstudent = $conn->count_complete();
+                        $cstudent = $conn->count_numberoftotalrequest();
                         ?>
                         <?php foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Complete</b></h5>
-                                <h2 class="mb-0"><?= $row['count_complete']; ?></h2>
+                                <h5 class="text-muted"><b>Number of total request</b></h5>
+                                <h2 class="mb-0"><?= $row['count_request']; ?></h2>
                             </div>
                             <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
+                                <i class="fa fa-layer-group fa-fw fa-sm text-info" style="color:white !important"></i>
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <a href="complete.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                    <a href="request.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
-
             </div>
+
         </div>
 
         <h5 class="card-header">Request Status Reports</h5>

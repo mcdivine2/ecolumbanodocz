@@ -47,50 +47,46 @@
                                     $conn = new class_model();
                                     $docrequest = $conn->fetchAll_documentrequest();
                                     foreach ($docrequest as $row) {
-                                        // Check if all required statuses are verified
+                                        // Determine clearance button properties
                                         $all_verified = ($row['library_status'] === 'Verified' &&
                                             $row['dean_status'] === 'Verified' &&
                                             $row['custodian_status'] === 'Verified' &&
                                             $row['accounting_status'] === 'Verified');
+                                        $clearance_text = $row['registrar_status'] === 'Declined' ? 'Cancel' : ($all_verified ? 'Complete' : 'Incomplete');
+                                        $clearance_class = $row['registrar_status'] === 'Declined' ? 'btn-danger' : ($all_verified ? 'btn-success' : 'btn-primary');
 
-                                        $clearance_text = $all_verified ? 'Complete' : 'Incomplete';
-                                        $clearance_class = $all_verified ? 'btn-success' : 'btn-primary';
+                                        // Define status badge classes
+                                        $status_badges = [
+                                            "Pending Request" => "primary",
+                                            "Released" => "success",
+                                            "Pending" => "warning",
+                                            "Verified" => "success",
+                                            "Declined" => "danger"
+                                        ];
+                                        $status_text = $row['registrar_status'];
+                                        $badge_class = $status_badges[$status_text] ?? 'secondary';
                                     ?>
                                         <tr>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
-                                            <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
-                                            <td><?= $row['document_name']; ?></td>
-                                            <td><?= $row['mode_request']; ?></td>
+                                            <td><?= htmlspecialchars($row['first_name'] . " " . $row['last_name']); ?></td>
+                                            <td><?= htmlspecialchars($row['document_name']); ?></td>
+                                            <td><?= htmlspecialchars($row['mode_request']); ?></td>
                                             <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td>
-                                            <td><?= $row['processing_officer']; ?></td>
-                                            <td>
-                                                <?php
-                                                $status_badges = [
-                                                    "Processing" => "primary",
-                                                    "Releasing" => "info",
-                                                    "Waiting for Payment" => "warning",
-                                                    "Verified" => "success",
-                                                    "Declined" => "danger"
-                                                ];
-                                                $status_text = $row['registrar_status'];
-                                                $badge_class = isset($status_badges[$status_text]) ? $status_badges[$status_text] : 'secondary';
-                                                echo "<span class='badge bg-{$badge_class} text-white'>{$status_text}</span>";
-                                                ?>
-                                            </td>
+                                            <td><?= htmlspecialchars($row['processing_officer']); ?></td>
+                                            <td><span class='badge bg-<?= $badge_class; ?> text-white'><?= $status_text; ?></span></td>
                                             <td>
                                                 <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
                                                     class="btn btn-sm <?= $clearance_class; ?> text-xs"
-                                                    data-toggle="tooltip"
-                                                    title="Clearance">
+                                                    data-toggle="tooltip" title="Clearance">
                                                     <?= $clearance_text; ?>
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
+                                                <!-- <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
                                                     <i class="fa fa-edit"></i>
-                                                </a> |
+                                                </a> | -->
                                                 <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Send email">
                                                     <i class="fa fa-envelope"></i>
                                                 </a>
