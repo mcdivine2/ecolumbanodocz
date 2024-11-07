@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $custodian_status = "Pending";
     $dean_status = "Pending";
     $library_status = "Pending";
-    $accounting_status = "Waiting for Payment";
+    $accounting_status = " ";
 
     // Input validation
     $errors = []; // Store validation errors

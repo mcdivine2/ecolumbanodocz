@@ -68,8 +68,8 @@
                                                     "Received" => "bg-warning text-white",
                                                     "Declined" => "bg-danger text-white"
                                                 ];
-                                                $status_class = $status_classes[$row['registrar_status']] ?? 'bg-secondary text-white';
-                                                echo "<span class='badge $status_class'>{$row['registrar_status']}</span>";
+                                                $status_class = $status_classes[$row['accounting_status']] ?? 'bg-secondary text-white';
+                                                echo "<span class='badge $status_class'>{$row['accounting_status']}</span>";
                                                 ?>
                                             </td>
                                             <td>
