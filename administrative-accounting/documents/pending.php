@@ -98,7 +98,7 @@
                                     }
 
                                     $conn = new class_model();
-                                    $payments = $conn->fetchAll_paymentrequest();
+                                    $payments = $conn->fetchAll_paymentpending();
                                     foreach ($payments as $row) { ?>
                                         <tr>
                                             <td><?= ucwords($row['student_id']); ?></td>
