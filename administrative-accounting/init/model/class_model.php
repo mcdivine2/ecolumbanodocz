@@ -462,16 +462,41 @@ class class_model
 
 			// If both queries succeed, commit the transaction
 			$this->conn->commit();
-			$this->conn->close();
 
 			return true;
 		} catch (Exception $e) {
 			// If there's any error, rollback the transaction
 			$this->conn->rollback();
-			$this->conn->close();
 
 			return false;
 		}
+	}
+
+	public function get_statuses($request_id)
+	{
+		if (!$this->conn) {
+			throw new Exception("Database connection is closed.");
+		}
+
+		$sql = "SELECT registrar_status, dean_status, library_status, custodian_status FROM tbl_documentrequest WHERE request_id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $request_id);
+		$stmt->execute();
+		$result = $stmt->get_result()->fetch_assoc();
+		$stmt->close();
+
+		return $result;
+	}
+
+
+	// Update accounting_status
+	public function update_accounting_status($request_id, $new_status)
+	{
+		$sql = "UPDATE tbl_documentrequest SET accounting_status = ? WHERE request_id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("si", $new_status, $request_id);
+		$stmt->execute();
+		$stmt->close();
 	}
 
 

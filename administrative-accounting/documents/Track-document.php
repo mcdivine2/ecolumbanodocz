@@ -88,11 +88,14 @@
                                             case "Verified":
                                                 echo '<span class="badge bg-success text-white">Verified</span>';
                                                 break;
+                                            case "Released":
+                                                echo '<span class="badge bg-success text-white">Released</span>';
+                                                break;
                                             case "Received":
                                                 echo '<span class="badge bg-warning text-white">Pending Request</span>';
                                                 break;
                                             case "Declined":
-                                                echo '<span class="badge bg-danger text-white">Reject</span>';
+                                                echo '<span class="badge bg-danger text-white">Declined</span>';
                                                 break;
                                             default:
                                                 echo '<span class="badge bg-secondary text-white">Unknown Status</span>';
