@@ -8,10 +8,10 @@ if (isset($_POST)) {
 	$student_id = trim($_POST['student_id']);
 	$document_name = trim($_POST['document_name']);
 	$date_request = trim($_POST['date_request']);
-	$custodian_status = trim($_POST['custodian_status']);
+	$dean_status = trim($_POST['dean_status']);
 	$request_id = trim($_POST['request_id']);
 
-	$request = $conn->edit_request($control_no, $student_id, $document_name, $date_request, $custodian_status, $request_id);
+	$request = $conn->edit_request($control_no, $student_id, $document_name, $date_request, $dean_status, $request_id);
 
 	if ($request == TRUE) {
 		// Check if all statuses are "Verified"

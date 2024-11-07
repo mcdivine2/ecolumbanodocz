@@ -55,20 +55,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                        $conn = new class_model();
-                                        $docrequest = $conn->fetchAll_documentrequest();
+                                    <?php
+                                    $conn = new class_model();
+                                    $docrequest = $conn->fetchAll_documentrequest();
                                     ?>
                                     <?php foreach ($docrequest as $row) { ?>
-                                    <tr>
-                                        <td><?= date("M d, Y", strtotime($row['date_releasing'])); ?></td>
-                                        <td><?= $row['control_no']; ?></td>
-                                        <td><?= $row['student_id']; ?></td>
-                                        <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
-                                        <td><?= $row['document_name']; ?></td>
-                                        <td><?= $row['processing_officer']; ?></td>
-                                        <td>
-                                            <?php 
+                                        <tr>
+                                            <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
+                                            <td><?= $row['control_no']; ?></td>
+                                            <td><?= $row['student_id']; ?></td>
+                                            <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
+                                            <td><?= $row['document_name']; ?></td>
+                                            <td><?= $row['processing_officer']; ?></td>
+                                            <td>
+                                                <?php
                                                 if ($row['library_status'] === "Pending") {
                                                     echo '<span class="badge bg-info text-white">Pending</span>';
                                                 } elseif ($row['library_status'] === "Received") {
@@ -80,33 +80,33 @@
                                                 } elseif ($row['library_status'] === "Verified") {
                                                     echo '<span class="badge bg-success text-white">Verified</span>';
                                                 }
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" 
-                                               class="btn btn-sm btn-primary text-xs" 
-                                               data-toggle="tooltip" 
-                                               data-original-title="Clearance">
-                                                Clearance
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <?php if ($row['library_status'] !== "Verified") { ?>
-                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" 
-                                                   class="text-secondary font-weight-bold text-xs" 
-                                                   data-toggle="tooltip" 
-                                                   data-original-title="Edit Request">
-                                                    <i class="fa fa-edit"></i>
-                                                </a> |
-                                            <?php } ?>
-                                            <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" 
-                                               class="text-secondary font-weight-bold text-xs" 
-                                               data-toggle="tooltip" 
-                                               data-original-title="Send Email">
-                                                <i class="fa fa-envelope"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm btn-primary text-xs"
+                                                    data-toggle="tooltip"
+                                                    data-original-title="Clearance">
+                                                    Clearance
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <?php if ($row['library_status'] !== "Verified") { ?>
+                                                    <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                        class="text-secondary font-weight-bold text-xs"
+                                                        data-toggle="tooltip"
+                                                        data-original-title="Edit Request">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a> |
+                                                <?php } ?>
+                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="text-secondary font-weight-bold text-xs"
+                                                    data-toggle="tooltip"
+                                                    data-original-title="Send Email">
+                                                    <i class="fa fa-envelope"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
@@ -122,21 +122,21 @@
 <!-- Modal -->
 <!-- ============================================================== -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">...</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">...</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- ============================================================== -->
@@ -154,42 +154,45 @@
 <script src="../assets/vendor/datatables/js/data-table.js"></script>
 
 <script>
-$(document).ready(function(){
-    var firstName = $('#firstName').text();
-    var lastName = $('#lastName').text();
-    var initials = firstName.charAt(0) + lastName.charAt(0);
-    $('#profileImage').text(initials);
-});
+    $(document).ready(function() {
+        var firstName = $('#firstName').text();
+        var lastName = $('#lastName').text();
+        var initials = firstName.charAt(0) + lastName.charAt(0);
+        $('#profileImage').text(initials);
+    });
 </script>
 
 <script>
-$(document).ready(function(){
-    function load_unseen_notification(view = '') {
-        $.ajax({
-            url: "../init/controllers/fetch.php",
-            method: "POST",
-            data: { view: view },
-            dataType: "json",
-            success: function(data) {
-                $('.dropdown-menu_1').html(data.notification);
-                if (data.unseen_notification > 0) {
-                    $('.count').html(data.unseen_notification);
+    $(document).ready(function() {
+        function load_unseen_notification(view = '') {
+            $.ajax({
+                url: "../init/controllers/fetch.php",
+                method: "POST",
+                data: {
+                    view: view
+                },
+                dataType: "json",
+                success: function(data) {
+                    $('.dropdown-menu_1').html(data.notification);
+                    if (data.unseen_notification > 0) {
+                        $('.count').html(data.unseen_notification);
+                    }
                 }
-            }
+            });
+        }
+
+        load_unseen_notification();
+
+        $(document).on('click', '.dropdown-toggle', function() {
+            $('.count').html('');
+            load_unseen_notification('yes');
         });
-    }
 
-    load_unseen_notification();
-
-    $(document).on('click', '.dropdown-toggle', function() {
-        $('.count').html('');
-        load_unseen_notification('yes');
+        setInterval(function() {
+            load_unseen_notification();
+        }, 5000);
     });
-
-    setInterval(function() { 
-        load_unseen_notification(); 
-    }, 5000);
-});
 </script>
 </body>
+
 </html>

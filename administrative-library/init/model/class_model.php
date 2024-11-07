@@ -336,11 +336,11 @@ class class_model
 		return $result->fetch_assoc();  // Fetch a single row
 	}
 
-	public function edit_request($control_no, $student_id, $document_name, $date_request, $custodian_status, $request_id)
+	public function edit_request($control_no, $student_id, $document_name, $date_request, $library_status, $request_id)
 	{
-		$sql = "UPDATE `tbl_documentrequest` SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, `custodian_status` = ? WHERE request_id = ?";
+		$sql = "UPDATE `tbl_documentrequest` SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, `library_status` = ? WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("sssssi", $control_no, $student_id, $document_name, $date_request, $custodian_status, $request_id);
+		$stmt->bind_param("sssssi", $control_no, $student_id, $document_name, $date_request, $library_status, $request_id);
 
 		if ($stmt->execute()) {
 			$stmt->close();
@@ -349,6 +349,21 @@ class class_model
 		$stmt->close();
 		return false;
 	}
+
+	public function send_decline_email($email_address, $subject, $body)
+	{
+		$headers = "From: no-reply@yourdomain.com\r\n";
+		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
+		// Send email
+		if (mail($email_address, $subject, $body, $headers)) {
+			return true;
+		} else {
+			error_log("Failed to send email to " . $email_address);
+			return false;
+		}
+	}
+
 
 	// Fetch the current statuses for the request
 	public function get_statuses($request_id)
