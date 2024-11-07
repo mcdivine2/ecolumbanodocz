@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_types = isset($_POST['request_type']) ? $_POST['request_type'] : [];
 
     // Initialize status fields
-    $registrar_status = "Received";
-    $custodian_status = "Received";
-    $dean_status = "Received";
-    $library_status = "Received";
+    $registrar_status = "Pending";
+    $custodian_status = "Pending";
+    $dean_status = "Pending";
+    $library_status = "Pending";
     $accounting_status = "Waiting for Payment";
 
     // Input validation

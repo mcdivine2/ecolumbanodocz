@@ -75,7 +75,7 @@
     <!-- As a heading -->
     <nav class="navbar navbar-dark bg-primary" style="background: rgb(17,10,134);
             background: linear-gradient(90deg, rgba(1,68,33) 0%, rgba(18,53,36) 28%, rgba(0,102,0) 100%);">
-       
+
     </nav>
 
 
@@ -83,43 +83,47 @@
     <!-- login page  -->
     <!-- ============================================================== -->
     <div class="splash-container" style="margin-top: 50px">
-    <div class="card">
-        <div class="card-header text-center">
-            <img class="scc_logo" src="asset/images/scc_logo.png" alt="SCC_logo" height="200px">
-        </div>
-        <div class="card-body">
-            <form method="post" name="login_sform">
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+        <div class="card">
+            <div class="card-header text-center">
+                <img class="scc_logo" src="asset/images/scc_logo.png" alt="SCC_logo" height="200px">
+            </div>
+            <div class="card-body">
+                <form method="post" name="login_sform">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            <input class="form-control form-control-lg" id="username" alt="username" type="text" placeholder="Email" autocomplete="off">
                         </div>
-                        <input class="form-control form-control-lg" id="username" alt="username" type="text" placeholder="Email" autocomplete="off">
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <input class="form-control form-control-lg" id="password" type="password" alt="password" placeholder="Password" autocomplete="off">
                         </div>
-                        <input class="form-control form-control-lg" id="password" type="password" alt="password" placeholder="Password" autocomplete="off">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="custom-control custom-checkbox">
-                        <input class="custom-control-input" type="checkbox" id="remember" onclick="myFunction()">
-                        <span class="custom-control-label">Show Password</span>
-                        <a href="http://ecolumbanodocz.com/registration/" class="register">Register</a>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-lg btn-block button1" value="Sign in" id="btn-student" name="btn-student">Sign in</button>
-                </div>
-                <div class="form-group" id="alert-msg"></div>
-            </form>
+                    <div class="form-group">
+                        <label class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="remember" onclick="myFunction()">
+                            <span class="custom-control-label">Show Password</span>
+                            <a href="http://ecolumbanodocz.com/registration/" class="register">Register</a>
+
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-block button1" value="Sign in" id="btn-student" name="btn-student">Sign in</button>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-block button1" name="btn-student"><a href="http://ecolumbanodocz.com/admin/" class="register">Admin</a></button>
+                    </div>
+                    <div class="form-group" id="alert-msg"></div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 
     <!-- ============================================================== -->
@@ -128,16 +132,18 @@
     <!-- Optional JavaScript -->
 
     <script src="../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
-<script src="../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
-<script src="../asset/vendor/parsley/parsley.js"></script>
-<script src="../asset/libs/js/main-js.js"></script>
+    <script src="../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+    <script src="../asset/vendor/parsley/parsley.js"></script>
+    <script src="../asset/libs/js/main-js.js"></script>
     <script type="text/javascript">
-        document.oncontextmenu = document.body.oncontextmenu = function () { return false; }//disable right click
+        document.oncontextmenu = document.body.oncontextmenu = function() {
+            return false;
+        } //disable right click
     </script>
     <script type="text/javascript">
-        jQuery(function () {
-            $('form[name="login_sform"]').on('submit', function (e) {
+        jQuery(function() {
+            $('form[name="login_sform"]').on('submit', function(e) {
                 e.preventDefault();
 
                 var u_username = $(this).find('input[alt="username"]').val();
@@ -148,18 +154,18 @@
                     $('#alert-msg').html('<div class="alert alert-danger"> Required Username and Password!</div>');
                 } else {
                     $.ajax({
-                        type: 'POST',
-                        url: 'init/controllers/login_process.php',
-                        data: {
-                            username: u_username,
-                            password: p_password
-                            // status: s_status
-                        },
-                        beforeSend: function () {
-                            $('#alert-msg').html('');
-                        }
-                    })
-                        .done(function (t) {
+                            type: 'POST',
+                            url: 'init/controllers/login_process.php',
+                            data: {
+                                username: u_username,
+                                password: p_password
+                                // status: s_status
+                            },
+                            beforeSend: function() {
+                                $('#alert-msg').html('');
+                            }
+                        })
+                        .done(function(t) {
                             if (t == 0) {
                                 $('#alert-msg').html('<div class="alert alert-danger">Incorrect username or password!</div>');
                             } else {

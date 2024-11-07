@@ -259,7 +259,7 @@ class class_model
 
 	public function fetchAll_pendingrequest($student_id)
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Received' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Pending' ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
@@ -435,7 +435,7 @@ class class_model
 
 	public function count_numberoftotalreceived($student_id)
 	{
-		$sql = "SELECT COUNT(request_id) as count_received FROM tbl_documentrequest WHERE student_id = ? AND registrar_status = 'Received'";
+		$sql = "SELECT COUNT(request_id) as count_received FROM tbl_documentrequest WHERE student_id = ? AND registrar_status = 'Pending'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
