@@ -573,65 +573,67 @@ class class_model
 		$mode_request,
 		$student_id
 	) {
-		// Ensure the connection is active
-		if ($this->conn->ping()) {
-			// Prepare the SQL statement with 20 placeholders
-			$stmt = $this->conn->prepare("INSERT INTO tbl_documentrequest 
-						(first_name, middle_name, last_name, complete_address, birthdate, 
-						course, email_address, control_no, document_name, price, request_type, 
-						date_request, registrar_status, custodian_status, dean_status, 
-						library_status, accounting_status, purpose, mode_request, student_id) 
-						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-			if ($stmt === false) {
-				die('Prepare failed: (' . $this->conn->errno . ') ' . $this->conn->error);
-			}
-
-			// Bind parameters: 19 strings and 1 integer for student_id
-			$stmt->bind_param(
-				"sssssssssssssssssssi",
-				$first_name,
-				$middle_name,
-				$last_name,
-				$complete_address,
-				$birthdate,
-				$course,
-				$email_address,
-				$control_no,
-				$document_name,
-				$price,
-				$request_type,
-				$date_request,
-				$registrar_status,
-				$custodian_status,
-				$dean_status,
-				$library_status,
-				$accounting_status,
-				$purpose,
-				$mode_request,
-				$student_id
-			);
-
-			// Execute the statement
-			if ($stmt->execute()) {
-				$stmt->close();
-				return true;
-			} else {
-				// Log or handle errors as needed
-				error_log('Execute failed: (' . $stmt->errno . ') ' . $stmt->error);
-				$stmt->close();
-				return false;
-			}
-		} else {
-			// Handle lost connection
+		// Check if the connection is active
+		if (!$this->conn->ping()) {
 			die('MySQL connection lost');
 		}
+
+		// Set dean_status based on specific document name
+		if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document_name)) {
+			$dean_status = "Pending";
+		} else {
+			$dean_status = "Not Included";
+		}
+
+		// Prepare the SQL statement
+		$stmt = $this->conn->prepare(
+			"INSERT INTO tbl_documentrequest 
+			(first_name, middle_name, last_name, complete_address, birthdate, course, 
+			 email_address, control_no, document_name, price, request_type, date_request, 
+			 registrar_status, custodian_status, dean_status, library_status, 
+			 accounting_status, purpose, mode_request, student_id) 
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		);
+
+		if (!$stmt) {
+			die('Prepare failed: ' . $this->conn->error);
+		}
+
+		// Bind parameters
+		$stmt->bind_param(
+			"sssssssssssssssssssi",
+			$first_name,
+			$middle_name,
+			$last_name,
+			$complete_address,
+			$birthdate,
+			$course,
+			$email_address,
+			$control_no,
+			$document_name,
+			$price,
+			$request_type,
+			$date_request,
+			$registrar_status,
+			$custodian_status,
+			$dean_status,
+			$library_status,
+			$accounting_status,
+			$purpose,
+			$mode_request,
+			$student_id
+		);
+
+		// Execute the statement and handle result
+		if ($stmt->execute()) {
+			$stmt->close();
+			return true;
+		} else {
+			error_log('Execute failed: ' . $stmt->error);
+			$stmt->close();
+			return false;
+		}
 	}
-
-
-
-
-
 
 
 	public function add_myrequest($control_no, $student_id, $document_name, $date_releasing, $ref_number, $proof_ofpayment, $Verified)
