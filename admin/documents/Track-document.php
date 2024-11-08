@@ -43,11 +43,13 @@
                                     $departments = [
                                         'library' => 'LIBRARY',
                                         'custodian' => 'CUSTODIAN',
-                                        'dean' => 'DEAN',
+                                        // 'dean' => 'DEAN',        
                                         'accounting' => 'ACCOUNTING',
                                         'registrar' => 'REGISTRAR'
                                     ];
-
+                                    if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+                                        $departments['dean'] = 'DEAN';
+                                    }
                                     foreach ($departments as $key => $label) {
                                         $status = $document[$key . '_status'];
                                         $badge_classes = [
