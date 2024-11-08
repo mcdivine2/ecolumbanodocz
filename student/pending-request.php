@@ -68,7 +68,7 @@
                                                     "Processing" => "info",
                                                     "Waiting for Payment" => "danger",
                                                     "Releasing" => "success",
-                                                    "Received" => "warning",
+                                                    "Pending" => "warning",
                                                     default => "secondary"
                                                 };
                                                 echo "<span class='badge bg-$badge_class text-white'>$status</span>";

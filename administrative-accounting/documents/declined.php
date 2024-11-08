@@ -159,7 +159,7 @@
                                             <td>
                                                 <?php
                                                 if ($row['status'] === "Declined") {
-                                                    echo '<span class="badge bg-danger text-white">Reject</span>';
+                                                    echo '<span class="badge bg-danger text-white">Declined</span>';
                                                 }
                                                 ?>
                                             </td>
