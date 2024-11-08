@@ -99,10 +99,13 @@
                                 $departments = [
                                     'library' => ['Library', 'fa-book'],
                                     'custodian' => ['Custodian', 'fa-user-shield'],
-                                    'dean' => ['Dean', 'fa-chalkboard-teacher'],
+                                    // 'dean' => ['Dean', 'fa-chalkboard-teacher'],
                                     'accounting' => ['Accounting', 'fa-calculator'],
                                     'registrar' => ['Registrar', 'fa-clipboard-list']
                                 ];
+                                if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+                                    $departments['dean'] = 'DEAN';
+                                }
 
                                 echo '<div class="d-flex justify-content-between flex-wrap">';
                                 foreach ($departments as $key => $info) {
