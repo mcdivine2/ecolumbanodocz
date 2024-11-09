@@ -211,16 +211,25 @@ class class_model
 
 	public function fetchAll_documentrequest()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest";
+		$sql = "SELECT * FROM tbl_documentrequest WHERE dean_status IN ('Pending', 'Verified')";
 		$stmt = $this->conn->prepare($sql);
+
+		if ($stmt === false) {
+			die('Prepare failed: ' . $this->conn->error);
+		}
+
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$data = array();
+
 		while ($row = $result->fetch_assoc()) {
 			$data[] = $row;
 		}
+
+		$stmt->close();
 		return $data;
 	}
+
 
 	public function print_documentrequest()
 	{
@@ -320,11 +329,11 @@ class class_model
 	}
 
 
-	public function edit_request($control_no, $student_id, $document_name, $date_request, $custodian_status, $request_id)
+	public function edit_request($control_no, $student_id, $document_name, $date_request, $dean_status, $request_id)
 	{
-		$sql = "UPDATE `tbl_documentrequest` SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, `custodian_status` = ? WHERE request_id = ?";
+		$sql = "UPDATE `tbl_documentrequest` SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, `dean_status` = ? WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("sssssi", $control_no, $student_id, $document_name, $date_request, $custodian_status, $request_id);
+		$stmt->bind_param("sssssi", $control_no, $student_id, $document_name, $date_request, $dean_status, $request_id);
 
 		if ($stmt->execute()) {
 			$stmt->close();
@@ -524,7 +533,7 @@ class class_model
 
 	public function count_numberoftotalrequest()
 	{
-		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest";
+		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE dean_status IN ('Verified', 'Pending', 'Declined')";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -534,6 +543,7 @@ class class_model
 		}
 		return $data;
 	}
+
 
 	public function count_numberoftotalpending()
 	{

@@ -24,17 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($request) {
         // Check if all statuses are "Verified"
-        $statuses = $conn->get_statuses($request_id);
-        if (
-            isset($statuses['registrar_status'], $statuses['dean_status'], $statuses['library_status'], $statuses['custodian_status']) &&
-            $statuses['registrar_status'] === "Verified" &&
-            $statuses['dean_status'] === "Verified" &&
-            $statuses['library_status'] === "Verified" &&
-            $statuses['custodian_status'] === "Verified"
-        ) {
-            // Update accounting_status to "Waiting for Payment"
-            $conn->update_accounting_status($request_id, "Waiting for Payment");
-        }
+
 
         // Send email if status is "Declined"
         if ($accounting_status === "Declined") {
