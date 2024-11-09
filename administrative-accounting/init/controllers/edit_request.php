@@ -13,24 +13,8 @@ if (isset($_POST)) {
 
 	$request = $conn->edit_request($control_no, $student_id, $document_name, $date_request, $accounting_status, $request_id);
 
-	if ($request == TRUE) {
-		// Check if all statuses are "Verified"
-		$statuses = $conn->get_statuses($request_id);
-		if (
-			$statuses['registrar_status'] == "Verified" &&
-			$statuses['dean_status'] == "Verified" &&
-			$statuses['library_status'] == "Verified" &&
-			$statuses['custodian_status'] == "Verified"
-		) {
-
-			// Update accounting_status to "Waiting for Payment"
-			$conn->update_accounting_status($request_id, "Waiting for Payment");
-		}
-
-		echo '<div class="alert alert-success">Edit Request Successfully!</div>
-              <script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';
-	} else {
-		echo '<div class="alert alert-danger">Edit Request Failed!</div>
-              <script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';
-	}
+	echo '<div class="alert alert-success">Edit Request Successfully!</div>
+	          <script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';
+	echo '<div class="alert alert-danger">Edit Request Failed!</div>
+	          <script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';
 }
