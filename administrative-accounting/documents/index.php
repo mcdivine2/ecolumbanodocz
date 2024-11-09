@@ -29,7 +29,7 @@
                         ?>
                         <?php foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Pending</b></h5>
+                                <h5 class="text-muted"><b>Waiting for Payment</b></h5>
                                 <h2 class="mb-0"><?= $row['count_pending']; ?></h2>
                             </div>
                             <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
