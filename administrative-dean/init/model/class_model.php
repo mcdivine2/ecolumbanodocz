@@ -346,7 +346,7 @@ class class_model
 	// Fetch the current statuses for the request
 	public function get_statuses($request_id)
 	{
-		$sql = "SELECT registrar_status, dean_status, library_status, dean_status FROM tbl_documentrequest WHERE request_id = ?";
+		$sql = "SELECT registrar_status, dean_status, library_status, custodian_status FROM tbl_documentrequest WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $request_id);
 		$stmt->execute();
