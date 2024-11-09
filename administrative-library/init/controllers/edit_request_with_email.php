@@ -20,7 +20,7 @@ if (isset($_POST)) {
         $statuses = $conn->get_statuses($request_id);
         if (
             $statuses['registrar_status'] === "Verified" &&
-            $statuses['dean_status'] === "Verified" &&
+            ($statuses['dean_status'] == "Verified" || $statuses['dean_status'] == "Not Included") &&
             $statuses['library_status'] === "Verified" &&
             $statuses['custodian_status'] === "Verified"
         ) {
