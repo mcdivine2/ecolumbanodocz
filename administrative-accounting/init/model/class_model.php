@@ -281,7 +281,7 @@ class class_model
 
 	public function fetchAll_newrequest()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Received' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Waiting for Payment' ";
 
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
@@ -344,7 +344,7 @@ class class_model
 	}
 	public function fetchAll_pendingpaid()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Pending' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Waiting for Payment' ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -551,7 +551,7 @@ class class_model
             FROM tbl_payment
             INNER JOIN tbl_students ON tbl_students.student_id = tbl_payment.student_id 
             INNER JOIN tbl_documentrequest ON tbl_documentrequest.control_no = tbl_payment.control_no
-            WHERE tbl_documentrequest.accounting_status = 'Pending' 
+            WHERE tbl_documentrequest.accounting_status = 'Waiting for Payment' 
             ORDER BY tbl_payment.student_id DESC";
 
 		$stmt = $this->conn->prepare($sql);
@@ -714,7 +714,7 @@ class class_model
 
 	public function count_numberoftotalpending()
 	{
-		$sql = "SELECT COUNT(request_id) as count_pending FROM tbl_documentrequest WHERE accounting_status = 'Pending'";
+		$sql = "SELECT COUNT(request_id) as count_pending FROM tbl_documentrequest WHERE accounting_status = 'Waiting for Payment'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
