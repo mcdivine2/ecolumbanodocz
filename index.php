@@ -117,7 +117,8 @@
                         <button class="btn btn-lg btn-block button1" value="Sign in" id="btn-student" name="btn-student">Sign in</button>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-lg btn-block button1" name="btn-student"><a href="http://ecolumbanodocz.com/admin/" class="register">Admin</a></button>
+                        <button><a href="http://ecolumbanodocz.com/admin/">Admin</a></button>
+
                     </div>
                     <div class="form-group" id="alert-msg"></div>
                 </form>
