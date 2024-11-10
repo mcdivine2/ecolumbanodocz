@@ -68,12 +68,7 @@
                                                    <td><?= $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']; ?></td>
                                                    <td><?= $row['mobile_number']; ?></td>
                                                    <td><?= $row['email_address']; ?></td>
-                                                   <td>
-                                                       <a href="https://ecolumbanodocz.com/student/student_uploads/<?php echo $row['id_upload']; ?>" target="_blank">
-                                                           <img src="https://ecolumbanodocz.com/student/student_uploads/<?php echo $row['id_upload']; ?>" width="75">
-                                                       </a>
-                                                   </td>
-
+                                                   <td><a href="../../student/<?php echo $row['id_upload'] ?>" target="_blank"><img src="../../student/<?php echo $row['id_upload'] ?>" width=75></a></td>
                                                    <td class="align-right">
                                                        <a href="create-account.php?student=<?= $row['student_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                                                            <i class="fa fa-edit"></i>
