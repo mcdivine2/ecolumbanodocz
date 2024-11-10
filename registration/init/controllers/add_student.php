@@ -41,7 +41,7 @@ if (isset($_POST)) {
         $file_tmp_path = $_FILES['id_upload']['tmp_name'];
         $file_name = addslashes($_FILES['id_upload']['name']);
         $file_size = $_FILES['id_upload']['size'];
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/Online-Document-Request-System-main/student/student_uploads/";
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/student/student_uploads/";
 
         // Ensure the upload directory exists
         if (!is_dir($upload_dir)) {
