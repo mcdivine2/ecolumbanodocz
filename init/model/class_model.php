@@ -571,7 +571,7 @@ class class_model
 		$accounting_status,
 		$purpose,
 		$mode_request,
-    $recent_image,
+    	$recent_image,
 		$student_id
 	) {
 		// Check if the connection is active
@@ -592,7 +592,7 @@ class class_model
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
 			 email_address, control_no, document_name, price, request_type, date_request, 
 			 registrar_status, custodian_status, dean_status, library_status, 
-			 accounting_status, purpose, mode_request, student_id) 
+			 accounting_status, purpose, mode_request, recent_image, student_id, ) 
 			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
@@ -622,7 +622,7 @@ class class_model
 			$accounting_status,
 			$purpose,
 			$mode_request,
-      $recent_image,
+      		$recent_image,
 			$student_id
 		);
 
