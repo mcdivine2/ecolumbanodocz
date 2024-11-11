@@ -571,25 +571,26 @@ class class_model
 		$accounting_status,
 		$purpose,
 		$mode_request,
-		$student_id
+		$student_id,
+		$recent_image // New parameter for file path
 	) {
 		// Ensure the connection is active
 		if ($this->conn->ping()) {
-			// Prepare the SQL statement with 20 placeholders
+			// Prepare the SQL statement with 21 placeholders
 			$stmt = $this->conn->prepare("INSERT INTO tbl_documentrequest 
 						(first_name, middle_name, last_name, complete_address, birthdate, 
 						course, email_address, control_no, document_name, price, request_type, 
 						date_request, registrar_status, custodian_status, dean_status, 
-						library_status, accounting_status, purpose, mode_request, student_id) 
-						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+						library_status, accounting_status, purpose, mode_request, student_id, recent_image) 
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	
 			if ($stmt === false) {
 				die('Prepare failed: (' . $this->conn->errno . ') ' . $this->conn->error);
 			}
-
-			// Bind parameters: 19 strings and 1 integer for student_id
+	
+			// Bind parameters: 20 strings and 1 integer for student_id
 			$stmt->bind_param(
-				"sssssssssssssssssssi",
+				"sssssssssssssssssssis",
 				$first_name,
 				$middle_name,
 				$last_name,
@@ -609,9 +610,10 @@ class class_model
 				$accounting_status,
 				$purpose,
 				$mode_request,
-				$student_id
+				$student_id,
+				$recent_image // Bind new parameter
 			);
-
+	
 			// Execute the statement
 			if ($stmt->execute()) {
 				$stmt->close();
@@ -627,6 +629,7 @@ class class_model
 			die('MySQL connection lost');
 		}
 	}
+	
 
 
 

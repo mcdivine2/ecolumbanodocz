@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $middle_name = trim($_POST['middle_name']);
     $last_name = trim($_POST['last_name']);
     $complete_address = trim($_POST['complete_address']);
-    $price = str_replace('₱', '', trim($_POST['price'])); // Remove ₱ symbol
+    $price = str_replace('₱', '', trim($_POST['price']));
     $birthdate = trim($_POST['birthdate']);
     $course = trim($_POST['course']);
     $email_address = trim($_POST['email_address']);
@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $student_id = trim($_POST['student_id']);
 
     // Array inputs
-    $document_names = isset($_POST['document_name']) ? $_POST['document_name'] : [];
-    $no_ofcopies = isset($_POST['no_ofcopies']) ? $_POST['no_ofcopies'] : [];
-    $purposes = isset($_POST['purpose']) ? $_POST['purpose'] : [];
-    $request_types = isset($_POST['request_type']) ? $_POST['request_type'] : [];
+    $document_names = $_POST['document_name'] ?? [];
+    $no_ofcopies = $_POST['no_ofcopies'] ?? [];
+    $purposes = $_POST['purpose'] ?? [];
+    $request_types = $_POST['request_type'] ?? [];
 
     // Initialize status fields
     $registrar_status = "Pending";
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accounting_status = " ";
 
     // Input validation
-    $errors = []; // Store validation errors
+    $errors = [];
 
     // Required fields validation
     if (empty($first_name)) $errors[] = 'First name is required!';
@@ -62,49 +62,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Invalid email address!';
     }
 
+    // Handle file upload and check if the image is required
+    if (empty($_FILES["upload_recent"]["name"])) {
+        $errors[] = 'Recent image is required!';
+    } else {
+        $recent_image = null;
+        if ($_FILES["upload_recent"]["error"] === UPLOAD_ERR_OK) {
+            $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/ecolumbanodocz/student/student_uploads/";
+            $file_name = uniqid() . '-' . basename($_FILES["upload_recent"]["name"]);
+            $target_file = $target_dir . $file_name;
+
+            // Check if the file is a valid image or PDF
+            $file_type = mime_content_type($_FILES["upload_recent"]["tmp_name"]);
+            $allowed_types = ['image/jpeg', 'image/png', 'application/pdf'];
+
+            if (in_array($file_type, $allowed_types)) {
+                if (!is_dir($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+
+                if (move_uploaded_file($_FILES["upload_recent"]["tmp_name"], $target_file)) {
+                    $recent_image = "student_uploads/" . $file_name;
+                } else {
+                    $errors[] = 'Failed to upload file!';
+                }
+            } else {
+                $errors[] = 'Invalid file type! Only JPG, PNG, and PDF files are allowed.';
+            }
+        }
+    }
+
     // If there are validation errors, display them
     if (!empty($errors)) {
         echo '<div class="alert alert-danger">' . implode('<br>', $errors) . '</div>';
-        exit; // Stop further processing
+        exit;
     }
 
     // Process requests
     $documents = [];
     $request_type_entries = [];
     foreach ($document_names as $index => $document_name) {
-        // Get the corresponding number of copies and request type for this document
-        $copies = isset($no_ofcopies[$index]) ? (int)$no_ofcopies[$index] : 1;
-        $request_type = isset($request_types[$index]) ? $request_types[$index] : null;
+        $copies = $no_ofcopies[$index] ?? 1;
+        $request_type = $request_types[$index] ?? null;
 
         // Handle "other (please specify)" input if applicable
         $other_input_name = 'other_specify_' . ($index + 1);
-        if ($request_type === 'other' && isset($_POST[$other_input_name]) && !empty(trim($_POST[$other_input_name]))) {
-            // Concatenate "other" with the inputted string
+        if ($request_type === 'other' && !empty(trim($_POST[$other_input_name]))) {
             $request_type = "other: " . trim($_POST[$other_input_name]);
         }
 
-        // Validate request type for the current document
         if (empty($request_type)) {
             $errors[] = "Request type is missing for document $document_name.";
-            break; // Stop processing if a request type is missing
+            break;
         }
 
-        // Create the document string with name, number of copies, and request type
         $documents[] = "$document_name (x$copies)";
         $request_type_entries[] = ($index + 1) . ". $request_type";
     }
 
-    // If validation errors exist after processing, display them
     if (!empty($errors)) {
         echo '<div class="alert alert-danger">' . implode('<br>', $errors) . '</div>';
-        exit; // Stop further processing
+        exit;
     }
 
-    // Join the documents and request types with a line break for saving
     $document_string = implode("<br>", $documents);
     $request_type_string = implode("<br>", $request_type_entries);
 
-    // Add request to the database
     $request = $conn->add_request(
         $first_name,
         $middle_name,
@@ -114,21 +137,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $course,
         $email_address,
         $control_no,
-        $document_string, // Use the concatenated document string
+        $document_string,
         $price,
-        $request_type_string, // Store the request types here
-        $date_request, // Pass the date request here
+        $request_type_string,
+        $date_request,
         $registrar_status,
         $custodian_status,
         $dean_status,
         $library_status,
         $accounting_status,
-        implode(", ", $purposes), // Ensure purpose is a string
+        implode(", ", $purposes),
         $mode_request,
-        $student_id
+        $student_id,
+        $recent_image
     );
 
-    // Check if the request was successful
     if ($request) {
         echo '<div class="alert alert-success">Request added successfully!</div>';
         echo '<script>setTimeout(function() { window.history.go(-1); }, 1000);</script>';
@@ -137,3 +160,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo '<script>setTimeout(function() { window.history.go(-1); }, 1000);</script>';
     }
 }
+?>
