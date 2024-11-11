@@ -27,9 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Initialize status fields
     $registrar_status = "Pending";
     $custodian_status = "Pending";
-    $dean_status = "Pending";
+    $dean_status = " ";
     $library_status = "Pending";
-    $accounting_status = " ";
+    $accounting_status = "Pending";
 
     // Input validation
     $errors = [];

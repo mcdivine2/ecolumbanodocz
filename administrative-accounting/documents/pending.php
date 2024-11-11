@@ -2,9 +2,15 @@
 <!-- ============================================================== -->
 <!-- end navbar -->
 <!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- left sidebar -->
+<!-- ============================================================== -->
 <?php include('left_sidebar/sidebar.php'); ?>
 <!-- ============================================================== -->
 <!-- end left sidebar -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- wrapper  -->
 <!-- ============================================================== -->
 <div class="dashboard-wrapper">
     <div class="container-fluid  dashboard-content">
@@ -14,9 +20,7 @@
         <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="page-header">
-                    <h2 class="pageheader-title">
-                        <i class="fa fa-fw fa-file"></i> Document Request
-                    </h2>
+                    <h2 class="pageheader-title"><i class="fa fa-fw fa-file"></i> Document Request </h2>
                     <div class="page-breadcrumb">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
@@ -48,6 +52,7 @@
                                         <th scope="col">Student ID</th>
                                         <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
+                                        <!-- <th scope="col">Date Releasing</th> -->
                                         <th scope="col">Processing Officer</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Clearance</th>
@@ -57,54 +62,57 @@
                                 <tbody>
                                     <?php
                                     $conn = new class_model();
-                                    $docrequest = $conn->fetchAll_documentrequest();
+                                    $docrequest = $conn->fetchAll_newrequest();
                                     ?>
-                                    <?php foreach ($docrequest as $row) { ?>
+                                    <?php foreach ($docrequest as $row) {
+
+                                    ?>
                                         <tr>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
+                                            <!-- <td>
+                               <?php
+                                        if ($row['date_releasing'] === "") {
+                                            echo "";
+                                        } else if ($row['date_releasing'] === $row['date_releasing']) {
+                                            echo date("M d, Y", strtotime($row['date_releasing']));
+                                        }
+                                ?>
+                             </td> -->
                                             <td><?= $row['processing_officer']; ?></td>
                                             <td>
                                                 <?php
                                                 if ($row['library_status'] === "Pending") {
                                                     echo '<span class="badge bg-info text-white">Pending</span>';
-                                                } elseif ($row['library_status'] === "Received") {
+                                                } else if ($row['library_status'] === "Received") {
                                                     echo '<span class="badge bg-warning text-white">Received</span>';
-                                                } elseif ($row['library_status'] === "Declined") {
-                                                    echo '<span class="badge bg-danger text-white">Declined</span>';
-                                                } elseif ($row['library_status'] === "Waiting for Payment") {
-                                                    echo '<span class="badge bg-warning text-white">Waiting for Payment</span>';
-                                                } elseif ($row['library_status'] === "Verified") {
+                                                } else if ($row['library_status'] === "Waiting for Payment") {
+                                                    echo '<span class="badge bg-danger text-white">Waiting for Payment</span>';
+                                                } else if ($row['library_status'] === "Verified") {
                                                     echo '<span class="badge bg-success text-white">Verified</span>';
                                                 }
                                                 ?>
                                             </td>
-                                            <td>
-                                                <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
-                                                    class="btn btn-sm btn-primary text-xs"
-                                                    data-toggle="tooltip"
-                                                    data-original-title="Clearance">
+                                            <td class="align-right">
+                                                <a href="Track-document.php?request=<?= $row['control_no']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
                                                     Clearance
                                                 </a>
                                             </td>
-                                            <td>
-                                                <?php if ($row['library_status'] !== "Verified") { ?>
-                                                    <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
-                                                        class="text-secondary font-weight-bold text-xs"
-                                                        data-toggle="tooltip"
-                                                        data-original-title="Edit Request">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a> |
-                                                <?php } ?>
-                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
-                                                    class="text-secondary font-weight-bold text-xs"
-                                                    data-toggle="tooltip"
-                                                    data-original-title="Send Email">
+
+                                            <td class="align-right">
+                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                                    <i class="fa fa-edit"></i>
+                                                </a> |
+                                                <!-- <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                                          <i class="fa fa-eye"></i>
+                                                        </a> | -->
+                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                                                     <i class="fa fa-envelope"></i>
-                                                </a>
+                                                </a> |
+
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -114,13 +122,16 @@
                     </div>
                 </div>
             </div>
+            <!-- ============================================================== -->
+            <!-- end responsive table -->
+            <!-- ============================================================== -->
         </div>
-    </div>
-</div>
 
-<!-- ============================================================== -->
+    </div>
+
+</div>
+</div>
 <!-- Modal -->
-<!-- ============================================================== -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -130,7 +141,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">...</div>
+            <div class="modal-body">
+                ...
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Save changes</button>
@@ -138,11 +151,9 @@
         </div>
     </div>
 </div>
-
 <!-- ============================================================== -->
 <!-- end main wrapper -->
 <!-- ============================================================== -->
-
 <!-- Optional JavaScript -->
 <script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
@@ -152,18 +163,52 @@
 <script src="../assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
 <script src="../assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
 <script src="../assets/vendor/datatables/js/data-table.js"></script>
-
-<script>
+<script type="text/javascript">
     $(document).ready(function() {
         var firstName = $('#firstName').text();
         var lastName = $('#lastName').text();
-        var initials = firstName.charAt(0) + lastName.charAt(0);
-        $('#profileImage').text(initials);
+        var intials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
+        var profileImage = $('#profileImage').text(intials);
+    });
+</script>
+<script>
+    $(document).ready(function() {
+
+        load_data();
+
+        var count = 1;
+
+        function load_data() {
+            $(document).on('click', '.delete', function() {
+
+                var request_id = $(this).attr("data-id");
+                // console.log("================get course_id================");
+                // console.log(course_id);
+                if (confirm("Are you sure want to remove this data?")) {
+                    $.ajax({
+                        url: "../init/controllers/delete_request.php",
+                        method: "POST",
+                        data: {
+                            request_id: request_id
+                        },
+                        success: function(response) {
+
+                            $("#message").html(response);
+                        },
+                        error: function(response) {
+                            console.log("Failed");
+                        }
+                    })
+                }
+            });
+        }
+
     });
 </script>
 
 <script>
     $(document).ready(function() {
+
         function load_unseen_notification(view = '') {
             $.ajax({
                 url: "../init/controllers/fetch.php",
@@ -189,8 +234,9 @@
         });
 
         setInterval(function() {
-            load_unseen_notification();
+            load_unseen_notification();;
         }, 5000);
+
     });
 </script>
 </body>

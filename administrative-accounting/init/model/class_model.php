@@ -281,7 +281,7 @@ class class_model
 
 	public function fetchAll_newrequest()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Received' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Waiting for Payment' ";
 
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
@@ -333,6 +333,18 @@ class class_model
 	public function fetchAll_released()
 	{
 		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Released' ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function fetchAll_pendingpaid()
+	{
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE accounting_status = 'Waiting for Payment' ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -415,63 +427,72 @@ class class_model
 			return array();
 		}
 	}
-	public function fetch_document_by_id($control_no, $student_id)
+	public function fetch_document_by_id($student_id, $control_no)
 	{
-		$sql = "SELECT * FROM tbl_documentrequest WHERE control_no = ? AND student_id = ?";
-		$stmt = $this->conn->prepare($sql);
-
+		$stmt = $this->conn->prepare("SELECT * FROM tbl_documentrequest WHERE student_id = ? AND control_no = ?");
 		if (!$stmt) {
-			die("SQL Error: " . $this->conn->error);
+			die("Prepare failed: " . $this->conn->error);
 		}
-
-		$stmt->bind_param("ii", $control_no, $student_id);
+		$stmt->bind_param("is", $student_id, $control_no);  // "is" indicates integer and string
 		$stmt->execute();
 		$result = $stmt->get_result();
-
-		return $result->fetch_assoc();  // Fetch a single row
+		return $result->fetch_assoc();
 	}
+
 
 
 	public function edit_request($control_no, $student_id, $document_name, $date_request, $accounting_status, $request_id)
 	{
-		// Begin the transaction
 		$this->conn->begin_transaction();
 
 		try {
-			// First update the tbl_documentrequest
+			// Update tbl_documentrequest
 			$sql = "UPDATE `tbl_documentrequest` SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, `accounting_status` = ? WHERE `request_id` = ?";
 			$stmt = $this->conn->prepare($sql);
 			$stmt->bind_param("sssssi", $control_no, $student_id, $document_name, $date_request, $accounting_status, $request_id);
-
 			if (!$stmt->execute()) {
 				throw new Exception("Failed to update tbl_documentrequest");
 			}
-
 			$stmt->close();
 
-			// Now update the corresponding status in tbl_payment based on the control_no
+			// Update status in tbl_payment based on control_no
 			$sql_payment = "UPDATE `tbl_payment` SET `status` = ? WHERE `control_no` = ?";
 			$stmt_payment = $this->conn->prepare($sql_payment);
 			$stmt_payment->bind_param("ss", $accounting_status, $control_no);
-
 			if (!$stmt_payment->execute()) {
 				throw new Exception("Failed to update tbl_payment");
 			}
-
 			$stmt_payment->close();
 
-			// If both queries succeed, commit the transaction
+			// Commit transaction
 			$this->conn->commit();
-			$this->conn->close();
-
 			return true;
 		} catch (Exception $e) {
-			// If there's any error, rollback the transaction
+			// Rollback transaction if there is an error
 			$this->conn->rollback();
-			$this->conn->close();
-
 			return false;
 		}
+	}
+
+	// Get current statuses for the request
+	public function get_statuses($request_id)
+	{
+		$sql = "SELECT registrar_status, dean_status, library_status, custodian_status FROM tbl_documentrequest WHERE request_id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $request_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		return $result->fetch_assoc();
+	}
+
+	// Update accounting_status
+	public function update_accounting_status($request_id, $new_status)
+	{
+		$sql = "UPDATE tbl_documentrequest SET accounting_status = ? WHERE request_id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("si", $new_status, $request_id);
+		$stmt->execute();
+		$stmt->close();
 	}
 
 
@@ -523,6 +544,33 @@ class class_model
 			return array();
 		}
 	}
+	public function fetchAll_paymentpending()
+	{
+		$sql = "SELECT tbl_payment.*, 
+                   CONCAT(tbl_students.first_name, ', ' ,tbl_students.middle_name, ' ' ,tbl_students.last_name) AS student_name 
+            FROM tbl_payment
+            INNER JOIN tbl_students ON tbl_students.student_id = tbl_payment.student_id 
+            INNER JOIN tbl_documentrequest ON tbl_documentrequest.control_no = tbl_payment.control_no
+            WHERE tbl_documentrequest.accounting_status = 'Waiting for Payment' 
+            ORDER BY tbl_payment.student_id DESC";
+
+		$stmt = $this->conn->prepare($sql);
+		if ($stmt) {
+			$stmt->execute();
+			$result = $stmt->get_result();
+			$data = array();
+
+			while ($row = $result->fetch_assoc()) {
+				$data[] = $row;
+			}
+			$stmt->close();
+			return $data;
+		} else {
+			return array();
+		}
+	}
+
+
 
 
 	public function edit_payment($control_no, $total_amount, $amount_paid, $date_ofpayment, $proof_ofpayment, $status, $payment_id)
@@ -704,6 +752,7 @@ class class_model
 		}
 		return $data;
 	}
+
 
 	public function count_numberofreleased()
 	{

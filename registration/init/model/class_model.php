@@ -234,7 +234,7 @@ class class_model
 	{
 		$sql = "DELETE FROM tbl_documentrequest WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("i", $document_id);
+		$stmt->bind_param("i", $request_id);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
@@ -271,7 +271,7 @@ class class_model
 	{
 		$sql = "DELETE FROM tbl_payment WHERE payment_id = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("i", $document_id);
+		$stmt->bind_param("i", $payment_id);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
