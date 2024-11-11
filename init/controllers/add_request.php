@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $recent_image = null;
         if ($_FILES["upload_recent"]["error"] === UPLOAD_ERR_OK) {
-            $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/ecolumbanodocz/student/student_uploads/";
+            $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/student/student_uploads/";
             $file_name = uniqid() . '-' . basename($_FILES["upload_recent"]["name"]);
             $target_file = $target_dir . $file_name;
 

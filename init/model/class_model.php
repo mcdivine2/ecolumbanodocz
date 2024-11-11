@@ -602,7 +602,7 @@ class class_model
 
 		// Bind parameters
 		$stmt->bind_param(
-			"ssssssssssssssssssssi",
+			"sssssssssssssssssssis",
 			$first_name,
 			$middle_name,
 			$last_name,
