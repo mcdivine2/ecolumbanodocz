@@ -297,26 +297,34 @@
 
         <!-- Payment Details Modal (add this at the bottom of your main PHP file) -->
         <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Payment Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Student Name: </strong> <span id="modalStudentName"></span></p>
-                        <p><strong>Control No.: </strong> <span id="modalControlNo"></span></p>
-                        <p><strong>Document Name: </strong> <span id="modalDocumentName"></span></p>
-                        <p><strong>Mode: </strong> <span id="modalMode"></span></p>
-                        <p><strong>Total Amount: </strong> <span id="modalTotalAmount"></span></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" id="confirmSubmit" class="btn btn-primary">Confirm</button>
-                    </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Payment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Student Name: </strong> <span id="modalStudentName"></span></p>
+                <p><strong>Control No.: </strong> <span id="modalControlNo"></span></p>
+                <p><strong>Document Name: </strong> <span id="modalDocumentName"></span></p>
+                <p><strong>Mode: </strong> <span id="modalMode"></span></p>
+                <p><strong>Total Amount: </strong> <span id="modalTotalAmount"></span></p>
+
+                <!-- File Upload Section -->
+                <div class="mt-3">
+                    <label for="upload_recent" class="form-label"><strong>Upload Recent 2x2</strong></label>
+                    <input type="file" class="form-control" id="upload_recent" name="upload_recent" accept=".jpg, .jpeg, .png, .pdf">
+                    <small class="form-text text-muted">Accepted formats: JPG, PNG, PDF</small>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmSubmit" class="btn btn-primary">Confirm</button>
+            </div>
         </div>
+    </div>
+</div>
+
 
         <!-- ============================================================== -->
         <!-- end main wrapper -->
@@ -340,143 +348,162 @@
         </script>
 
         <script>
-            $(document).ready(function() {
-                let formData = null;
-                const deliveryFee = 50;
+           $(document).ready(function() {
+    let formData = null;
+    const deliveryFee = 50;
 
-                // Toggle visibility of quantity input and request type when checkbox is checked/unchecked
-                $('input[name="document_name[]"]').change(function() {
-                    const docIndex = this.id.replace('document_name', ''); // Get the document index
-                    const qtyDiv = `#quantity${docIndex}`; // Quantity div
-                    const requestTypeDiv = `#requestType${docIndex}`; // Request type div
+    // Toggle visibility of quantity input and request type when checkbox is checked/unchecked
+    $('input[name="document_name[]"]').change(function() {
+        const docIndex = this.id.replace('document_name', ''); // Get the document index
+        const qtyDiv = `#quantity${docIndex}`; // Quantity div
+        const requestTypeDiv = `#requestType${docIndex}`; // Request type div
 
-                    if (this.checked) {
-                        $(qtyDiv).show();
-                        $(requestTypeDiv).show();
-                    } else {
-                        $(qtyDiv).hide().find('input').val(''); // Hide and clear quantity input
-                        $(requestTypeDiv).hide(); // Hide request type div
-                        $(`input[name="request_type_${docIndex}"]`).prop('checked', false); // Uncheck request type radio buttons
-                    }
+        if (this.checked) {
+            $(qtyDiv).show();
+            $(requestTypeDiv).show();
+        } else {
+            $(qtyDiv).hide().find('input').val(''); // Hide and clear quantity input
+            $(requestTypeDiv).hide(); // Hide request type div
+            $(`input[name="request_type_${docIndex}"]`).prop('checked', false); // Uncheck request type radio buttons
+        }
 
-                    calculateTotal(); // Recalculate total
-                });
+        calculateTotal(); // Recalculate total
+    });
 
-                // Toggle other purpose input visibility
-                $('#otherPurposeCheckbox').change(function() {
-                    $('#otherPurposeInput').toggle(this.checked).val('');
-                });
+    // Listen for changes on the request type radio buttons to recalculate total
+    $(document).on('change', 'input[type="radio"][name^="request_type_"]', function() {
+        calculateTotal();
+    });
 
-                // Show/hide delivery fee section and recalculate total
-                $('#mode_request').change(function() {
-                    $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
-                    calculateTotal();
-                });
+    // Toggle other purpose input visibility
+    $('#otherPurposeCheckbox').change(function() {
+        $('#otherPurposeInput').toggle(this.checked).val('');
+    });
 
-                // Calculate total amount
-                function calculateTotal() {
-                    let total = $('input[name="document_name[]"]:checked').get().reduce((sum, doc) => {
-                        const copies = +$(doc).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
-                        return sum + parseFloat($(doc).data('price')) * copies;
-                    }, 0);
+    // Show/hide delivery fee section and recalculate total
+    $('#mode_request').change(function() {
+        $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
+        calculateTotal();
+    });
 
-                    if ($('#mode_request').val() === 'Delivery') total += deliveryFee;
-                    $('input[name="price"]').val(total.toFixed(2));
-                    return total;
+    // Calculate total amount
+    function calculateTotal() {
+        let total = $('input[name="document_name[]"]:checked').get().reduce((sum, doc) => {
+            const docIndex = doc.id.replace('document_name', '');
+            const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+
+            // Skip adding price if "1st Request" is selected
+            if (requestType === '1st request') {
+                return sum;
+            }
+
+            const copies = +$(doc).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
+            return sum + parseFloat($(doc).data('price')) * copies;
+        }, 0);
+
+        if ($('#mode_request').val() === 'Delivery') total += deliveryFee;
+        $('input[name="price"]').val(total > 0 ? `₱${total.toFixed(2)}` : '₱0');
+        return total;
+    }
+
+    // Form submission logic
+    $('#submitForm').click(function(e) {
+        e.preventDefault();
+        formData = new FormData($('form[name="docu_forms"]')[0]);
+
+        const selectedDocs = $('input[name="document_name[]"]:checked');
+        if (!selectedDocs.length) return showError('Please select at least one document.');
+        if (!$('#course').val()) return showError('Please select a course.');
+
+        formData.delete('document_name[]');
+        formData.delete('no_ofcopies[]');
+        formData.delete('request_type[]');
+
+        let formattedDocuments = [];
+
+        selectedDocs.each(function(index) {
+            const docIndex = this.id.replace('document_name', ''); // Get the index for each selected document
+
+            // Get document name and number of copies
+            const docName = this.value;
+            const copies = $(this).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
+
+            // Get request type for this document, matching the unique index
+            let requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+            if (!requestType) {
+                return showError(`Please select a request type for document ${docName}.`);
+            }
+
+            // Check if "other" is selected and concatenate with input value if present
+            if (requestType === 'other') {
+                const otherSpecifyValue = $(`input[name="other_specify_${docIndex}"]`).val().trim();
+                if (otherSpecifyValue) {
+                    requestType = `other: ${otherSpecifyValue}`; // Concatenate "other" with the user input
                 }
+            }
 
-                // Form submission logic
-                $('#submitForm').click(function(e) {
-                    e.preventDefault();
-                    formData = new FormData($('form[name="docu_forms"]')[0]);
+            // Append document data to FormData
+            formData.append('document_name[]', docName); // Append document name
+            formData.append('no_ofcopies[]', copies); // Append number of copies
+            formData.append('request_type[]', requestType); // Append request type, including "other" with input
 
-                    const selectedDocs = $('input[name="document_name[]"]:checked');
-                    if (!selectedDocs.length) return showError('Please select at least one document.');
-                    if (!$('#course').val()) return showError('Please select a course.');
+            // Format the document string for display in the modal
+            formattedDocuments.push(`${index + 1}. ${docName} (x${copies}), ${requestType}`);
+        });
 
-                    formData.delete('document_name[]');
-                    formData.delete('no_ofcopies[]');
-                    formData.delete('request_type[]');
+        const total = calculateTotal();
+        formData.append('price', total);
+        formData.append('course', $('#course').val());
 
-                    let formattedDocuments = [];
+        // Handle file upload
+        const file = $('#upload_recent')[0].files[0];
+        if (file) {
+            formData.append('upload_recent', file);
+        }
 
-                    selectedDocs.each(function(index) {
-                        const docIndex = this.id.replace('document_name', ''); // Get the index for each selected document
+        // Populate and show the modal
+        $('#modalStudentName').text(`${getField('first_name')} ${getField('middle_name')} ${getField('last_name')}`);
+        $('#modalControlNo').text(getField('control_no'));
+        $('#modalDocumentName').html(formattedDocuments.join('<br>')); // Display formatted document list
+        $('#modalMode').text($('#mode_request').val());
+        $('#modalTotalAmount').text(`₱${total > 0 ? total.toFixed(2) : '0'}`);
+        $('#paymentModal').modal('show');
+    });
 
-                        // Get document name and number of copies
-                        const docName = this.value;
-                        const copies = $(this).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
-
-                        // Get request type for this document, matching the unique index
-                        let requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
-                        if (!requestType) {
-                            return showError(`Please select a request type for document ${docName}.`);
-                        }
-
-                        // Check if "other" is selected and concatenate with input value if present
-                        if (requestType === 'other') {
-                            const otherSpecifyValue = $(`input[name="other_specify_${docIndex}"]`).val().trim();
-                            if (otherSpecifyValue) {
-                                requestType = `other: ${otherSpecifyValue}`; // Concatenate "other" with the user input
-                            }
-                        }
-
-                        // Append document data to FormData
-                        formData.append('document_name[]', docName); // Append document name
-                        formData.append('no_ofcopies[]', copies); // Append number of copies
-                        formData.append('request_type[]', requestType); // Append request type, including "other" with input
-
-                        // Format the document string for display in the modal
-                        formattedDocuments.push(`${index + 1}. ${docName} (x${copies}), ${requestType}`);
-                    });
-
-                    const total = calculateTotal();
-                    formData.append('price', total);
-                    formData.append('course', $('#course').val());
-
-                    // Populate and show the modal
-                    $('#modalStudentName').text(`${getField('first_name')} ${getField('middle_name')} ${getField('last_name')}`);
-                    $('#modalControlNo').text(getField('control_no'));
-                    $('#modalDocumentName').html(formattedDocuments.join('<br>')); // Display formatted document list
-                    $('#modalMode').text($('#mode_request').val());
-                    $('#modalTotalAmount').text(`₱${total.toFixed(2)}`);
-                    $('#paymentModal').modal('show');
-                });
-
-
-                $('#confirmSubmit').click(function() {
-                    if (formData) {
-                        $.ajax({
-                            url: '../init/controllers/add_request.php',
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            success(response) {
-                                $('#message').html(response);
-                                $('#paymentModal').modal('hide');
-                                window.scrollTo(0, 0);
-                            },
-                            error() {
-                                console.error('Failed to submit the form.');
-                            }
-                        });
-                    }
-                });
-
-                function getField(name) {
-                    return $(`input[name="${name}"]`).val();
-                }
-
-                function showError(msg) {
-                    $('#message').html(`<div class="alert alert-danger">${msg}</div>`);
-                    setTimeout(() => $('#message').empty(), 3000); // Auto-hide error message after 3 seconds
-                }
-
-                $('.btn-secondary').click(function() {
+    $('#confirmSubmit').click(function() {
+        if (formData) {
+            $.ajax({
+                url: '../init/controllers/add_request.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success(response) {
+                    $('#message').html(response);
                     $('#paymentModal').modal('hide');
-                });
+                    window.scrollTo(0, 0);
+                },
+                error() {
+                    console.error('Failed to submit the form.');
+                }
             });
+        }
+    });
+
+    function getField(name) {
+        return $(`input[name="${name}"]`).val();
+    }
+
+    function showError(msg) {
+        $('#message').html(`<div class="alert alert-danger">${msg}</div>`);
+        setTimeout(() => $('#message').empty(), 3000); // Auto-hide error message after 3 seconds
+    }
+
+    $('.btn-secondary').click(function() {
+        $('#paymentModal').modal('hide');
+    });
+});
+
 
 
 

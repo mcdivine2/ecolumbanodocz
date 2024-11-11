@@ -94,12 +94,15 @@
                                     </div>
                                 </div>
 
+                                <!-- Hidden email field to ensure it is always included in submission -->
+                                <input type="hidden" value="<?= $row['email_address']; ?>" name="email_address">
+
                                 <!-- Email Form Section (hidden by default) -->
                                 <div id="emailForm" style="display: none;">
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label text-sm-right">Send to:</label>
                                         <div class="col-sm-8 col-lg-6">
-                                            <input type="text" value="<?= $row['email_address']; ?>" name="email_address" class="form-control" readonly>
+                                            <input type="text" value="<?= $row['email_address']; ?>" name="email_address_visible" class="form-control" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -163,12 +166,10 @@
             data.append('processing_officer', $('input[name=processing_officer]').val());
             data.append('custodian_status', $('#custodian_status').val());
             data.append('request_id', $('input[name=request_id]').val());
+            data.append('email_address', $('input[name=email_address]').val()); // Include email address always
 
-            const libraryStatus = $('#custodian_status').val();
-
-            if (libraryStatus === 'Declined') {
-                // If "Declined" is selected, include email data for sending
-                data.append('email_address', $('input[name=email_address]').val());
+            if ($('#custodian_status').val() === 'Declined') {
+                // If "Declined" is selected, include additional email data for sending
                 data.append('subject', $('input[name=subject]').val());
                 data.append('body', $('#emailBody').val());
             }
@@ -177,7 +178,7 @@
                 $('#message').html('<div class="alert alert-danger">Required All Fields!</div>');
             } else {
                 $.ajax({
-                    url: libraryStatus === 'Declined' ? '../init/controllers/edit_request_with_email.php' : '../init/controllers/edit_request.php',
+                    url: '../init/controllers/edit_request.php',
                     type: "POST",
                     data: data,
                     processData: false,
