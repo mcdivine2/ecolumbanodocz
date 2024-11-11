@@ -28,7 +28,7 @@
     <link rel="stylesheet" type="text/css" href="../asset/vendor/datatables/css/fixedHeader.bootstrap4.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>@import url('https://fonts.googleapis.com/css2?family=Diplomata+SC&family=Yanone+Kaffeesatz&display=swap');</style> 
-    <title>Online-School-Documents-Processing</title>
+    <title>eColumbanoDocz</title>
     <style>
 
  /* ======================Add-request========================== */

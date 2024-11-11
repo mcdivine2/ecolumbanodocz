@@ -571,7 +571,8 @@ class class_model
 		$accounting_status,
 		$purpose,
 		$mode_request,
-		$student_id
+		$student_id,
+		$recent_image
 	) {
 		// Check if the connection is active
 		if (!$this->conn->ping()) {
@@ -591,8 +592,8 @@ class class_model
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
 			 email_address, control_no, document_name, price, request_type, date_request, 
 			 registrar_status, custodian_status, dean_status, library_status, 
-			 accounting_status, purpose, mode_request, student_id) 
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			 accounting_status, purpose, mode_request, student_id, recent_image) 
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
 		if (!$stmt) {
@@ -601,7 +602,7 @@ class class_model
 
 		// Bind parameters
 		$stmt->bind_param(
-			"sssssssssssssssssssi",
+			"sssssssssssssssssssis",
 			$first_name,
 			$middle_name,
 			$last_name,
@@ -621,7 +622,8 @@ class class_model
 			$accounting_status,
 			$purpose,
 			$mode_request,
-			$student_id
+			$student_id,
+			$recent_image
 		);
 
 		// Execute the statement and handle result
@@ -634,6 +636,7 @@ class class_model
 			return false;
 		}
 	}
+
 
 
 	public function add_myrequest($control_no, $student_id, $document_name, $date_releasing, $ref_number, $proof_ofpayment, $Verified)

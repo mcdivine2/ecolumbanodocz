@@ -97,7 +97,6 @@
                                 <h4 class="section-title">Applicant's Information</h4>
                                 <div class="row">
                                     <div class="col-md-4">
-
                                         <?php
                                         $conn = new class_model();
                                         $getstudno = $conn->student_profile($student_id);
@@ -129,12 +128,12 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Course</label>
-                                        <select data-parsley-type="alphanum" type="text" id="course" required="" placeholder="" class="form-control">
+                                        <select data-parsley-type="alphanum" id="course" required class="form-control">
                                             <?php
                                             $conn = new class_model();
                                             $course = $conn->fetchAll_course();
                                             ?>
-                                            <option value="">&larr;Select Course &rarr;</option>
+                                            <option value="">&larr; Select Course &rarr;</option>
                                             <?php foreach ($course as $row) { ?>
                                                 <option value="<?= $row['course_name']; ?>"><?= $row['course_name']; ?></option>
                                             <?php } ?>
@@ -142,7 +141,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>Email Address</label>
-                                        <input type="email" name="email_address" value="<?= $getstudno['email_address']; ?>" class="form-control" placeholder="">
+                                        <input type="email" name="email_address" value="<?= $getstudno['email_address']; ?>" class="form-control">
                                     </div>
                                 </div>
 
@@ -151,21 +150,16 @@
                                 function createRandomcnumber()
                                 {
                                     $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                                    srand((float)microtime() * 1000000);
-                                    $i = 0;
                                     $control = '';
-                                    while ($i <= 3) {
-                                        $num = rand() % 33;
-                                        $tmp = substr($chars, $num, 1);
-                                        $control = $control . $tmp;
-                                        $i++;
+                                    for ($i = 0; $i < 4; $i++) {
+                                        $control .= $chars[rand(0, strlen($chars) - 1)];
                                     }
                                     return $control;
                                 }
                                 $cNumber = 'CTRL-' . createRandomcnumber();
                                 ?>
                                 <div class="row mt-2">
-                                    <input type="hidden" value="<?= $cNumber . '' . $_SESSION['student_id']; ?>" name="control_no" class="form-control" readonly>
+                                    <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" readonly>
                                     <div class="col-md-3">
                                         <label>Date Request:</label>
                                         <input type="text" name="date_request" class="form-control" value="<?= date('M d Y'); ?>" readonly>
@@ -179,72 +173,40 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>Select Document</label>
-                                        <br>
                                         <?php
-                                        // Fetch all documents from the database
                                         $conn = new class_model();
                                         $doc = $conn->fetchAll_document();
                                         if ($doc && count($doc) > 0) {
                                             foreach ($doc as $index => $document) {
                                                 echo '<div class="form-check">';
-
-                                                // Checkbox for selecting the document
                                                 echo '<input class="form-check-input document-checkbox" type="checkbox" name="document_name[]" id="document_name' . ($index + 1) . '" value="' . $document['document_name'] . '" data-price="' . $document['price'] . '">';
                                                 echo '<label class="form-check-label" for="document_name' . ($index + 1) . '">' . $document['document_name'] . ' (₱' . $document['price'] . ')</label>';
-
-                                                // Hidden quantity input associated with the document
                                                 echo '<div id="quantity' . ($index + 1) . '" class="mt-2" style="display:none;">';
-                                                echo '<div class="d-flex align-items-center">';
                                                 echo '<label for="no_ofcopies' . ($index + 1) . '" class="mr-2">Copies:</label>';
                                                 echo '<input type="number" name="no_ofcopies[]" value="1" class="form-control no-of-copies" min="1" id="no_ofcopies' . ($index + 1) . '" style="width: 80px;">';
                                                 echo '</div>';
-                                                echo '</div>'; // Close quantity div
-
-                                                // Hidden div for request type radio buttons
                                                 echo '<div id="requestType' . ($index + 1) . '" class="mt-2" style="display:none;">';
-
                                                 if ($document['document_name'] === 'Certificate') {
-                                                    // Radio buttons for "as unit earn", "as graduate", and "other (please specify)"
-                                                    echo '<div class="form-check">';
-                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="as unit earn" required>';
-                                                    echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">As Unit Earn</label>';
-                                                    echo '</div>';
-
-                                                    echo '<div class="form-check">';
-                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="as graduate" required>';
-                                                    echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">As Graduate</label>';
-                                                    echo '</div>';
-
-                                                    echo '<div class="form-check">';
-                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type3_' . ($index + 1) . '" value="other" required onclick="showSpecifyInput(' . ($index + 1) . ')">';
-                                                    echo '<label class="form-check-label" for="request_type3_' . ($index + 1) . '">Other (please specify)</label>';
-                                                    echo '</div>';
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="as unit earn" required><label class="form-check-label">As Unit Earn</label></div>';
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="as graduate" required><label class="form-check-label">As Graduate</label></div>';
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="other" required onclick="showSpecifyInput(' . ($index + 1) . ')"><label class="form-check-label">Other (please specify)</label></div>';
                                                     echo '<input type="text" name="other_specify_' . ($index + 1) . '" placeholder="Please specify" class="form-control mt-2" style="display:none;" id="other_specify' . ($index + 1) . '">';
+                                                } elseif ($document['document_name'] === 'Honorable Dismissal w/ TOR for evaluation') {
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="1st request" required><label class="form-check-label">1st Request</label></div>';
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="re-issuance" required><label class="form-check-label">Re-Issuance</label></div>';
+                                                    echo '<div class="mt-3"><label for="upload_recent" class="form-label"><strong>Upload Recent 2x2</strong></label><input type="file" class="form-control" id="upload_recent" name="upload_recent" accept=".jpg, .jpeg, .png, .pdf"><small class="form-text text-muted">Accepted formats: JPG, PNG, PDF</small></div>';
                                                 } else {
-                                                    // Original radio buttons for non-certification documents
-                                                    echo '<div class="form-check">';
-                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type1_' . ($index + 1) . '" value="1st request" required>';
-                                                    echo '<label class="form-check-label" for="request_type1_' . ($index + 1) . '">1st Request</label>';
-                                                    echo '</div>';
-
-                                                    echo '<div class="form-check">';
-                                                    echo '<input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" id="request_type2_' . ($index + 1) . '" value="re-issuance" required>';
-                                                    echo '<label class="form-check-label" for="request_type2_' . ($index + 1) . '">Re-Issuance</label>';
-                                                    echo '</div>';
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="1st request" required><label class="form-check-label">1st Request</label></div>';
+                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="re-issuance" required><label class="form-check-label">Re-Issuance</label></div>';
                                                 }
-
-                                                echo '</div>'; // Close request type div
-
-                                                echo '</div>'; // Close form-check div
+                                                echo '</div></div>';
                                             }
                                         } else {
                                             echo "No documents found.";
                                         }
-
                                         ?>
                                     </div>
                                 </div>
-
 
                                 <!-- Request Date and Mode -->
                                 <div class="row mt-3">
@@ -256,12 +218,10 @@
                                             <option value="Delivery">Delivery</option>
                                         </select>
                                         <label id="deliveryFeeSection" style="display:none;">Delivery Fee: ₱50</label>
-                                        <p id="deliveryFee" class="form-control-static"></p>
                                     </div>
-
                                     <div class="col-md-3">
                                         <label>Total Amount:</label>
-                                        <input type="text" name="price" id="totalAmount" class="form-control" placeholder="₱0" value="" readonly>
+                                        <input type="text" name="price" id="totalAmount" class="form-control" placeholder="₱0" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -277,7 +237,6 @@
                                         <input type="checkbox" id="otherPurposeCheckbox" value="Other"> Other (specify) <br>
                                     </div>
                                 </div>
-                                <!-- Hidden input for "Other" -->
                                 <div class="col-lg-5">
                                     <input type="text" id="otherPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
                                 </div>
@@ -295,6 +254,7 @@
         </div>
 
 
+
         <!-- Payment Details Modal (add this at the bottom of your main PHP file) -->
         <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -309,6 +269,12 @@
                         <p><strong>Document Name: </strong> <span id="modalDocumentName"></span></p>
                         <p><strong>Mode: </strong> <span id="modalMode"></span></p>
                         <p><strong>Total Amount: </strong> <span id="modalTotalAmount"></span></p>
+
+                        <!-- Image Preview Section -->
+                        <div id="imagePreviewContainer" style="display:none; margin-top: 15px;">
+                            <h5>Image Preview:</h5>
+                            <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px;" />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -317,6 +283,8 @@
                 </div>
             </div>
         </div>
+
+
 
         <!-- ============================================================== -->
         <!-- end main wrapper -->
@@ -346,28 +314,63 @@
 
                 // Toggle visibility of quantity input and request type when checkbox is checked/unchecked
                 $('input[name="document_name[]"]').change(function() {
-                    const docIndex = this.id.replace('document_name', ''); // Get the document index
-                    const qtyDiv = `#quantity${docIndex}`; // Quantity div
-                    const requestTypeDiv = `#requestType${docIndex}`; // Request type div
+                    const docIndex = this.id.replace('document_name', '');
+                    const qtyDiv = `#quantity${docIndex}`;
+                    const requestTypeDiv = `#requestType${docIndex}`;
 
                     if (this.checked) {
                         $(qtyDiv).show();
                         $(requestTypeDiv).show();
+
+                        // Check if "Honorable Dismissal w/ TOR for evaluation" is selected and show image preview if uploaded
+                        if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
+                            previewImage(); // Call the image preview function
+                        }
                     } else {
-                        $(qtyDiv).hide().find('input').val(''); // Hide and clear quantity input
-                        $(requestTypeDiv).hide(); // Hide request type div
-                        $(`input[name="request_type_${docIndex}"]`).prop('checked', false); // Uncheck request type radio buttons
+                        $(qtyDiv).hide().find('input').val('');
+                        $(requestTypeDiv).hide();
+                        $(`input[name="request_type_${docIndex}"]`).prop('checked', false);
+
+                        // Hide image preview if "Honorable Dismissal w/ TOR for evaluation" is deselected
+                        if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
+                            $('#imagePreviewContainer').hide();
+                            $('#imagePreview').attr('src', '');
+                        }
                     }
 
-                    calculateTotal(); // Recalculate total
+                    calculateTotal();
                 });
 
-                // Toggle other purpose input visibility
+                // Function to preview the uploaded image
+                function previewImage() {
+                    const fileInput = $('#upload_recent')[0].files[0];
+                    if (fileInput) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#imagePreview').attr('src', e.target.result);
+                            $('#imagePreviewContainer').show();
+                        };
+                        reader.readAsDataURL(fileInput);
+                    } else {
+                        $('#imagePreviewContainer').hide();
+                        $('#imagePreview').attr('src', '');
+                    }
+                }
+
+                // Trigger the previewImage function when a new file is chosen
+                $('#upload_recent').change(function() {
+                    previewImage();
+                });
+
+                // Recalculate total on request type change
+                $(document).on('change', 'input[type="radio"][name^="request_type_"]', calculateTotal);
+
+                // Toggle visibility of "Other" purpose input
                 $('#otherPurposeCheckbox').change(function() {
                     $('#otherPurposeInput').toggle(this.checked).val('');
                 });
 
-                // Show/hide delivery fee section and recalculate total
+                // Show/hide delivery fee and recalculate total
                 $('#mode_request').change(function() {
                     $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
                     calculateTotal();
@@ -376,16 +379,20 @@
                 // Calculate total amount
                 function calculateTotal() {
                     let total = $('input[name="document_name[]"]:checked').get().reduce((sum, doc) => {
+                        const docIndex = doc.id.replace('document_name', '');
+                        const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+                        if (requestType === '1st request') return sum;
+
                         const copies = +$(doc).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
                         return sum + parseFloat($(doc).data('price')) * copies;
                     }, 0);
 
                     if ($('#mode_request').val() === 'Delivery') total += deliveryFee;
-                    $('input[name="price"]').val(total.toFixed(2));
+                    $('input[name="price"]').val(total > 0 ? `₱${total.toFixed(2)}` : '₱0');
                     return total;
                 }
 
-                // Form submission logic
+                // Form submission
                 $('#submitForm').click(function(e) {
                     e.preventDefault();
                     formData = new FormData($('form[name="docu_forms"]')[0]);
@@ -399,34 +406,21 @@
                     formData.delete('request_type[]');
 
                     let formattedDocuments = [];
-
                     selectedDocs.each(function(index) {
-                        const docIndex = this.id.replace('document_name', ''); // Get the index for each selected document
-
-                        // Get document name and number of copies
+                        const docIndex = this.id.replace('document_name', '');
                         const docName = this.value;
                         const copies = $(this).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
-
-                        // Get request type for this document, matching the unique index
                         let requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
-                        if (!requestType) {
-                            return showError(`Please select a request type for document ${docName}.`);
-                        }
 
-                        // Check if "other" is selected and concatenate with input value if present
                         if (requestType === 'other') {
                             const otherSpecifyValue = $(`input[name="other_specify_${docIndex}"]`).val().trim();
-                            if (otherSpecifyValue) {
-                                requestType = `other: ${otherSpecifyValue}`; // Concatenate "other" with the user input
-                            }
+                            if (otherSpecifyValue) requestType = `other: ${otherSpecifyValue}`;
                         }
 
-                        // Append document data to FormData
-                        formData.append('document_name[]', docName); // Append document name
-                        formData.append('no_ofcopies[]', copies); // Append number of copies
-                        formData.append('request_type[]', requestType); // Append request type, including "other" with input
+                        formData.append('document_name[]', docName);
+                        formData.append('no_ofcopies[]', copies);
+                        formData.append('request_type[]', requestType);
 
-                        // Format the document string for display in the modal
                         formattedDocuments.push(`${index + 1}. ${docName} (x${copies}), ${requestType}`);
                     });
 
@@ -434,15 +428,16 @@
                     formData.append('price', total);
                     formData.append('course', $('#course').val());
 
-                    // Populate and show the modal
+                    const file = $('#upload_recent')[0].files[0];
+                    if (file) formData.append('upload_recent', file);
+
                     $('#modalStudentName').text(`${getField('first_name')} ${getField('middle_name')} ${getField('last_name')}`);
                     $('#modalControlNo').text(getField('control_no'));
-                    $('#modalDocumentName').html(formattedDocuments.join('<br>')); // Display formatted document list
+                    $('#modalDocumentName').html(formattedDocuments.join('<br>'));
                     $('#modalMode').text($('#mode_request').val());
                     $('#modalTotalAmount').text(`₱${total.toFixed(2)}`);
                     $('#paymentModal').modal('show');
                 });
-
 
                 $('#confirmSubmit').click(function() {
                     if (formData) {
@@ -470,60 +465,15 @@
 
                 function showError(msg) {
                     $('#message').html(`<div class="alert alert-danger">${msg}</div>`);
-                    setTimeout(() => $('#message').empty(), 3000); // Auto-hide error message after 3 seconds
+                    setTimeout(() => $('#message').empty(), 3000);
                 }
 
                 $('.btn-secondary').click(function() {
                     $('#paymentModal').modal('hide');
                 });
             });
-
-
-
-            // Example starter JavaScript for disabling form submissions if there are invalid fields
-            (function() {
-                'use strict';
-                window.addEventListener('load', function() {
-                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                    var forms = document.getElementsByClassName('needs-validation');
-                    // Loop over them and prevent submission
-                    Array.prototype.filter.call(forms, function(form) {
-                        form.addEventListener('submit', function(event) {
-                            if (form.checkValidity() === false) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                            form.classList.add('was-validated');
-                        }, false);
-                    });
-                }, false);
-            })();
-            print_r($_POST); // This will help you inspect the incoming data
-            exit;
         </script>
-        <script>
-            function showSpecifyInput(index) {
-                var specifyInput = document.getElementById('other_specify' + index);
-                specifyInput.style.display = 'block';
-                specifyInput.required = true; // Make the input required when shown
-            }
 
-            // Add event listeners to hide the input if other radio buttons are selected
-            document.addEventListener('DOMContentLoaded', function() {
-                var radioButtons = document.querySelectorAll('.form-check-input');
-                radioButtons.forEach(function(radio) {
-                    radio.addEventListener('change', function() {
-                        var index = this.name.split('_')[2]; // Extract index from radio name
-                        var specifyInput = document.getElementById('other_specify' + index);
-                        if (this.value !== 'other') {
-                            specifyInput.style.display = 'none';
-                            specifyInput.required = false;
-                            specifyInput.value = ''; // Clear the input when not needed
-                        }
-                    });
-                });
-            });
-        </script>
 
 
         </body>
