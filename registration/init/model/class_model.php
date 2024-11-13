@@ -128,6 +128,24 @@ class class_model
 			return true;
 		}
 	}
+	public function isEmailRegistered($email)
+	{
+		$stmt = $this->conn->prepare("SELECT email_address FROM tbl_students WHERE email_address = ?");
+		$stmt->bind_param("s", $email);
+		$stmt->execute();
+		$stmt->store_result();
+		return $stmt->num_rows > 0;
+	}
+	public function isStudentIDRegistered($studentID_no)
+	{
+		$stmt = $this->conn->prepare("SELECT studentID_no FROM tbl_students WHERE studentID_no = ?");
+		$stmt->bind_param("i", $studentID_no);
+		$stmt->execute();
+		$stmt->store_result();
+		return $stmt->num_rows > 0;
+	}
+
+
 
 	public function fetchAll_student()
 	{

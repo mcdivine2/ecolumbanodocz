@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $subject = "Password Reset - Your New Password";
         $body = "Hi " . $user_data['first_name'] . " " . $user_data['middle_name'] . " " . $user_data['last_name'] . ",\n\n";
         $body .= "You forgot your password. Here is your new password: \"" . $user_data['new_password'] . "\"\n";
-        $body .= "Please contact us at 09515332633 for further clarification of your account.";
+        $body .= "Please log in and change your password. Please contact us at 09515332633 for further clarification of your account.";
 
         // Use the Google Apps Script for sending email
         $url = "https://script.google.com/macros/s/AKfycbxeZj2u3vOe0nPCfRb4gNAtCdUcgh8eCWMRagQ3DRsvQRq5hn_rGnWQjSKsdLoIy62XXA/exec";
