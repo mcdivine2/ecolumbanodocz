@@ -88,6 +88,9 @@
                                             case "Processing":
                                                 echo '<span class="badge bg-success text-white">Processing</span>';
                                                 break;
+                                            case "Paid":
+                                                echo '<span class="badge bg-success text-white">Paid</span>';
+                                                break;
                                             case "Verified":
                                                 echo '<span class="badge bg-success text-white">Verified</span>';
                                                 break;
