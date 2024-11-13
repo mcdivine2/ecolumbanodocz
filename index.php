@@ -110,11 +110,13 @@
                             <input class="custom-control-input" type="checkbox" id="remember" onclick="myFunction()">
                             <span class="custom-control-label">Show Password</span>
                             <a href="http://ecolumbanodocz.com/registration/" class="register">Register</a>
-
                         </label>
                     </div>
                     <div class="form-group">
                         <button class="btn btn-lg btn-block button1" value="Sign in" id="btn-student" name="btn-student">Sign in</button>
+                    </div>
+                    <div class="form-group">
+                        <button><a href="http://ecolumbanodocz.com/forgetpassword.php/">forgot password?</a></button>
                     </div>
                     <div class="form-group">
                         <button><a href="http://ecolumbanodocz.com/admin/">Admin</a></button>
