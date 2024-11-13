@@ -458,7 +458,13 @@
             });
         </script>
 
-
+        <script>
+            function showSpecifyInput(index) {
+                // Toggle visibility of the "Other" input when "Other (please specify)" radio button is selected
+                const specifyInput = $(`#other_specify${index}`);
+                specifyInput.toggle(); // Show or hide the input
+            }
+        </script>
 
         </body>
 
