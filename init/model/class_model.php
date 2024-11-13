@@ -539,15 +539,17 @@ class class_model
 
 	public function update_profile($username, $password, $mobile_number, $email_address, $student_id)
 	{
-		$sql = "UPDATE `tbl_student` SET  `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
+		$sql = "UPDATE `tbl_students` SET `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("ssssi", $username, $password, $mobile_number, $email_address, $student_id);
 		if ($stmt->execute()) {
 			$stmt->close();
-			$this->conn->close();
 			return true;
+		} else {
+			return false;
 		}
 	}
+
 
 
 
