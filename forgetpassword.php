@@ -52,7 +52,8 @@
     <div class="splash-container" style="margin-top: 50px">
         <div class="card">
             <div class="card-header text-center">
-                <img class="scc_logo" src="asset/images/scc_logo.png" alt="SCC_logo" height="200px">
+                <a href="index.php"><img class="scc_logo" src="asset/images/scc_logo.png" alt="SCC_logo" height="200px"></a>
+
             </div>
             <div class="card-body">
                 <form method="post" name="forgot_password_form">
