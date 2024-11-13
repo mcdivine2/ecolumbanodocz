@@ -53,7 +53,6 @@
         <div class="card">
             <div class="card-header text-center">
                 <a href="index.php"><img class="scc_logo" src="asset/images/scc_logo.png" alt="SCC_logo" height="200px"></a>
-
             </div>
             <div class="card-body">
                 <form method="post" name="forgot_password_form">
@@ -74,6 +73,16 @@
             </div>
         </div>
     </div>
+    <script src="../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script src="../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+    <script src="../asset/vendor/parsley/parsley.js"></script>
+    <script src="../asset/libs/js/main-js.js"></script>
+    <script type="text/javascript">
+        document.oncontextmenu = document.body.oncontextmenu = function() {
+            return false;
+        } //disable right click
+    </script>
 
     <script>
         $(document).ready(function() {
