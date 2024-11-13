@@ -30,18 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $library_status = "Pending";
     $accounting_status = "Pending";
 
-    // Validation
     $errors = [];
     if (empty($first_name)) $errors[] = 'First name is required!';
     if (empty($course)) $errors[] = 'Course is required!';
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address!';
-    if (empty($_FILES["upload_recent"]["name"])) $errors[] = 'Recent image is required!';
 
-    // File Upload
-    if (empty($errors)) {
-        $recent_image = null;
+    $recent_image = "Not Required";
+
+    // Check for specific document and handle file upload
+    if (in_array("Honorable Dismissal w/ TOR for evaluation", $document_names)) {
         if ($_FILES["upload_recent"]["error"] === UPLOAD_ERR_OK) {
-            $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/student/student_uploads/";
+            // Use a relative path for student/student_uploads directory
+            $target_dir = __DIR__ . "/../../student/student_uploads/";
             $file_name = uniqid() . '-' . basename($_FILES["upload_recent"]["name"]);
             $target_file = $target_dir . $file_name;
             $allowed_types = ['image/jpeg', 'image/png', 'application/pdf'];
@@ -49,13 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (in_array(mime_content_type($_FILES["upload_recent"]["tmp_name"]), $allowed_types)) {
                 if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
                 if (move_uploaded_file($_FILES["upload_recent"]["tmp_name"], $target_file)) {
-                    $recent_image = "student_uploads/" . $file_name;
+                    $recent_image = "student/student_uploads/" . $file_name;
                 } else {
                     $errors[] = 'Failed to upload file!';
                 }
             } else {
                 $errors[] = 'Invalid file type! Only JPG, PNG, and PDF files are allowed.';
             }
+        } else {
+            $errors[] = 'Recent image is required for "Honorable Dismissal w/ TOR for evaluation" requests!';
         }
     }
 
@@ -96,10 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         implode(", ", $purposes),
         $mode_request,
         $student_id,
-        $recent_image
+        $recent_image // This will either be the uploaded file path or "Not Required"
     );
 
     echo $request
         ? '<div class="alert alert-success">Request added successfully!</div>'
-        : '<div class="alert alert-danger">Failed to add request. Please try again.</div>';
+        : '<div class="alert alert-danger">Failed to add request. Please try again.';
 }
