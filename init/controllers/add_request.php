@@ -30,8 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accounting_status = "Pending";
 
     $errors = [];
-    if (empty($first_name)) $errors[] = 'First name is required!';
     if (empty($course)) $errors[] = 'Course is required!';
+    if (empty($request_type)) $errors[] = 'Request type is required!';
+    if (empty($purposes)) $errors[] = 'Purpose is required!';
+    if (empty($mode_request)) $errors[] = 'Mode Request is required!';
+    if (empty($birthdate)) $errors[] = 'Birthdate is required!';
+    
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address!';
 
     $recent_image = "Not Required";
