@@ -1,6 +1,32 @@
 <?php include('main_header/header.php'); ?>
 <?php include('left_sidebar/sidebar.php'); ?>
 
+<style>
+    .card-header {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    .form-control.custom-select {
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out;
+    }
+    .form-control.custom-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .card.shadow-sm {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    .card-header i {
+        margin-right: 0.5rem;
+    }
+    label i {
+        margin-right: 0.25rem;
+        color: #6c757d;
+    }
+</style>
+
 <div class="dashboard-wrapper">
     <div class="container-fluid dashboard-content">
         <div class="row">
@@ -19,7 +45,46 @@
             </div>
         </div>
 
-        <div class="row">
+        <!-- Enhanced Filter Form -->
+<div class="card shadow-sm mb-4">
+    <h5 class="card-header text-white bg-primary"><i class="fa fa-filter"></i> Filter by Date</h5>
+    <div class="card-body">
+        <form method="GET" action="" id="filterForm">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="day"><i class="fa fa-calendar-day"></i> Day</label>
+                    <select name="day" id="day" class="form-control custom-select" onchange="document.getElementById('filterForm').submit();">
+                        <option value="">All</option>
+                        <?php for ($d = 1; $d <= 31; $d++): ?>
+                            <option value="<?= $d; ?>" <?= isset($_GET['day']) && $_GET['day'] == $d ? 'selected' : ''; ?>><?= $d; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="month"><i class="fa fa-calendar-alt"></i> Month</label>
+                    <select name="month" id="month" class="form-control custom-select" onchange="document.getElementById('filterForm').submit();">
+                        <option value="">All</option>
+                        <?php for ($m = 1; $m <= 12; $m++): ?>
+                            <option value="<?= $m; ?>" <?= isset($_GET['month']) && $_GET['month'] == $m ? 'selected' : ''; ?>><?= date('F', mktime(0, 0, 0, $m, 10)); ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="year"><i class="fa fa-calendar"></i> Year</label>
+                    <select name="year" id="year" class="form-control custom-select" onchange="document.getElementById('filterForm').submit();">
+                        <option value="">All</option>
+                        <?php for ($y = date('Y'); $y >= 2000; $y--): ?>
+                            <option value="<?= $y; ?>" <?= isset($_GET['year']) && $_GET['year'] == $y ? 'selected' : ''; ?>><?= $y; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+        <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
                     <h5 class="card-header">Request Information</h5>
@@ -45,7 +110,14 @@
                                 <tbody>
                                     <?php
                                     $conn = new class_model();
-                                    $docrequest = $conn->fetchAll_documentrequest();
+
+                                    // Fetch filter values
+                                    $day = isset($_GET['day']) ? $_GET['day'] : '';
+                                    $month = isset($_GET['month']) ? $_GET['month'] : '';
+                                    $year = isset($_GET['year']) ? $_GET['year'] : '';
+
+                                    // Fetch filtered document requests
+                                    $docrequest = $conn->fetchAll_documentrequest($day, $month, $year);
                                     foreach ($docrequest as $row) {
                                         // Determine clearance button properties
                                         $all_verified = ($row['library_status'] === 'Verified' &&
@@ -67,13 +139,13 @@
                                         $badge_class = $status_badges[$status_text] ?? 'secondary';
                                     ?>
                                         <tr>
-                                            <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
+                                            <td><?= $row['date_request']; ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= htmlspecialchars($row['first_name'] . " " . $row['last_name']); ?></td>
                                             <td><?= htmlspecialchars($row['document_name']); ?></td>
                                             <td><?= htmlspecialchars($row['mode_request']); ?></td>
-                                            <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td>
+                                            <td><?= $row['date_releasing']; ?></td>
                                             <td><?= htmlspecialchars($row['processing_officer']); ?></td>
                                             <td><span class='badge bg-<?= $badge_class; ?> text-white'><?= $status_text; ?></span></td>
                                             <td>
@@ -105,12 +177,17 @@
     </div>
 </div>
 
+
+
 <!-- Scripts -->
 <script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="../assets/libs/js/main-js.js"></script>
-<script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
-<script src="../assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="../assets/vendor/custom-js/jquery.multi-select.html"></script>
+    <script src="../assets/libs/js/main-js.js"></script>
+    <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+    <script src="../assets/vendor/datatables/js/data-table.js"></script>
 
 <script>
     $(document).ready(function() {

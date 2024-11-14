@@ -336,17 +336,41 @@ class class_model
 		}
 	}
 
-	public function fetchAll_documentrequest()
+	public function fetchAll_documentrequest($day = null, $month = null, $year = null)
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest";
-		$stmt = $this->conn->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$data = array();
-		while ($row = $result->fetch_assoc()) {
-			$data[] = $row;
-		}
-		return $data;
+    // Start the base SQL query
+    $sql = "SELECT * FROM tbl_documentrequest WHERE 1=1";
+    
+    // Add conditions based on the provided filters
+    if ($day) {
+        $sql .= " AND DAY(date_request) = ?";
+    }
+    if ($month) {
+        $sql .= " AND MONTH(date_request) = ?";
+    }
+    if ($year) {
+        $sql .= " AND YEAR(date_request) = ?";
+    }
+    
+    // Prepare the statement
+    $stmt = $this->conn->prepare($sql);
+
+    // Bind parameters dynamically
+    $params = [];
+    if ($day) $params[] = $day;
+    if ($month) $params[] = $month;
+    if ($year) $params[] = $year;
+    
+    // Execute with parameters
+    $stmt->execute($params);
+
+    // Fetch the result set
+    $result = $stmt->get_result();
+    $data = array();
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+    return $data;
 	}
 
 	public function print_documentrequest()
@@ -817,5 +841,30 @@ class class_model
 		}
 		return $data;
 	}
+
+	public function fetchMonthly_documentrequest($year = null)
+{
+    $sql = "SELECT MONTH(date_request) as month, COUNT(*) as count FROM tbl_documentrequest WHERE 1=1";
+    if ($year) {
+        $sql .= " AND YEAR(date_request) = ?";
+    }
+    $sql .= " GROUP BY MONTH(date_request)";
+    
+    $stmt = $this->conn->prepare($sql);
+    $params = [];
+    if ($year) $params[] = $year;
+    
+    $stmt->execute($params);
+    $result = $stmt->get_result();
+    $data = array();
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+    return $data;
 }
+	
+
+	
+}
+
 ?>
