@@ -406,18 +406,44 @@ class class_model
 		return $data;
 	}
 
-	public function count_numberoftotalrequest()
-	{
-		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest";
-		$stmt = $this->conn->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$data = array();
-		while ($row = $result->fetch_assoc()) {
-			$data[] = $row;
-		}
-		return $data;
-	}
+	public function count_numberoftotalrequest($student_id)
+{
+    $sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE student_id = ?";
+    $stmt = $this->conn->prepare($sql);
+
+    // Bind the parameter
+    $stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = array();
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    return $data;
+}
+
+public function count_Allpayments($student_id)
+{
+    $sql = "SELECT COUNT(payment_id) as count_payment FROM tbl_payment WHERE student_id = ?";
+    $stmt = $this->conn->prepare($sql);
+
+    // Bind the parameter
+    $stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = array();
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    return $data;
+}
+
 
 	public function count_numberoftotalpending($student_id)
 	{
