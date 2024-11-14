@@ -6,9 +6,9 @@ session_start();
 // Define session timeout period (in seconds)
 define("SESSION_TIMEOUT", 900); // 15 minutes
 
-// Check if the user is logged in
-if (!(trim($_SESSION['user_id']))) {
-    header('location:../index.php');
+// Check if the user is logged in and has the correct role
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== "Library") {
+    header('Location: ../index.php'); // Redirect unauthorized users
     exit();
 }
 
@@ -17,7 +17,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
     // Session has timed out
     session_unset();
     session_destroy();
-    header('Location: ../index.php?timeout=1');
+    header('Location: ../index.php?timeout=1'); // Redirect to login with timeout message
     exit();
 } else {
     // Update last activity time
@@ -28,12 +28,6 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 $user_id = $_SESSION['user_id'];
 $conn = new class_model();
 $user = $conn->user_account($user_id);
-
-// Check if the user's role is "Library"
-if ($user['role'] !== 'Library') {
-    header('Location: ../unauthorized.php'); // Redirect unauthorized users
-    exit();
-}
 
 ?>
 <!doctype html>
