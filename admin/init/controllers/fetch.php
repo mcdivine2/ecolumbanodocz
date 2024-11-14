@@ -27,7 +27,7 @@ if(isset($_POST['view'])){
      <li style =" background-color:#ededed;width:100%">
        <a class="nav-item href="#" style="margin-left:10px;">
        <b><a href="request.php" style="color: #000000 !important;"><i class="fa fa-fw fa-file" style="color: #1269af !important"></i>Document Name: '.$row["document_name"].'</b></a>
-       <p style="margin-left:14px;font-size:11px"><i class="fa fa-calendar"></i> Date Releasing: <i>'.date("M d, Y",strtotime($row["date_releasing"])).'</i></p>
+       <p style="margin-left:14px;font-size:11px"><i class="fa fa-calendar"></i> Date Requested: <i>'.date("M d, Y",strtotime($row["date_request"])).'</i></p>
        <p style ="border-bottom:1px dotted blue;width:100%;"></p>
        </a>
      </li>

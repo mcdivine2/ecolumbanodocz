@@ -263,7 +263,27 @@ $yearlyDataJSON = json_encode($yearlyData);
 <script src="../assets/libs/js/main-js.js"></script>
 <script type="text/javascript" src="../assets/js/loader.js"></script>
 
+<script>
+     $(document).ready(function() {
+        // Display initials in profile image
+        let initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
+        $('#profileImage').text(initials);
 
+        // Handle delete request
+        $('.delete').on('click', function() {
+            let request_id = $(this).data("id");
+            if (confirm("Are you sure you want to remove this data?")) {
+                $.post("../init/controllers/delete_request.php", {
+                    request_id
+                }, function(response) {
+                    $("#message").html(response);
+                }).fail(function() {
+                    console.log("Failed");
+                });
+            }
+        });
+    });
+</script>
 <script>
 
     // Weekly Chart
