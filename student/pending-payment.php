@@ -129,6 +129,10 @@
                                 <label for="proof_ofpayment">Upload Proof of Payment</label>
                                 <input type="file" class="form-control" id="proof_ofpayment" name="proof_ofpayment" accept=".jpeg, .jpg, .png, .gif" required>
                             </div>
+                            <!-- Hidden date_ofpayment field -->
+                            <div class="form-group">
+                                <input type="hidden" id="date_ofpayment" name="date_ofpayment">
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
