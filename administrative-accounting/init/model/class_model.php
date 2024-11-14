@@ -797,7 +797,7 @@ class class_model
 	}
 	public function count_verified()
 	{
-		$sql = "SELECT COUNT(request_id) as count_verified FROM tbl_documentrequest WHERE accounting_status = 'Verified'";
+		$sql = "SELECT COUNT(payment_id) as count_verified FROM tbl_payment WHERE status = 'Verified'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
