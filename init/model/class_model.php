@@ -56,7 +56,7 @@ class class_model
 					);
 				}
 			} else {
-				// User not found
+				// User not found asdfasdf
 				return array(
 					'student_id' => null,
 					'count' => 0
