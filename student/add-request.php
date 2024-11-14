@@ -144,10 +144,6 @@
                                 ?>
                                 <div class="row mt-2">
                                     <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" readonly>
-                                    <div class="col-md-3">
-                                        <label>Date Request:</label>
-                                        <input type="text" name="date_request" class="form-control" value="<?= date('M d Y'); ?>" readonly>
-                                    </div>
                                 </div>
                             </div>
 

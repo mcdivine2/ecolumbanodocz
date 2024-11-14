@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course = trim($_POST['course']);
     $email_address = trim($_POST['email_address']);
     $control_no = trim($_POST['control_no']);
-    $date_request = trim($_POST['date_request']);
     $mode_request = trim($_POST['mode_request']);
     $student_id = trim($_POST['student_id']);
     $price = str_replace('₱', '', trim($_POST['price']));
@@ -89,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         implode("<br>", $documents),
         $price,
         implode("<br>", $request_types),
-        $date_request,
         $registrar_status,
         $custodian_status,
         $dean_status,

@@ -591,7 +591,6 @@ public function count_Allpayments($student_id)
 		$document_name,
 		$price,
 		$request_type,
-		$date_request,
 		$registrar_status,
 		$custodian_status,
 		$dean_status,
@@ -618,10 +617,10 @@ public function count_Allpayments($student_id)
 		$stmt = $this->conn->prepare(
 			"INSERT INTO tbl_documentrequest 
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
-			 email_address, control_no, document_name, price, request_type, date_request, 
+			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
 			 accounting_status, purpose, mode_request, student_id, recent_image) 
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
 		if (!$stmt) {
@@ -630,7 +629,7 @@ public function count_Allpayments($student_id)
 
 		// Bind parameters
 		$stmt->bind_param(
-			"sssssssssssssssssssis",
+			"ssssssssssssssssssis",
 			$first_name,
 			$middle_name,
 			$last_name,
@@ -642,7 +641,6 @@ public function count_Allpayments($student_id)
 			$document_name,
 			$price,
 			$request_type,
-			$date_request,
 			$registrar_status,
 			$custodian_status,
 			$dean_status,

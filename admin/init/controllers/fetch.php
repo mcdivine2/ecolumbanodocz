@@ -1,18 +1,55 @@
 <?php
-include '../model/config/connection2.php';  // Include your connection file
 
-$stmt = $conn->prepare('SELECT c.course_name, COUNT(dr.course) as request_count 
-                        FROM tbl_course c 
-                        LEFT JOIN tbl_documentrequest dr ON c.course_name = dr.course 
-                        GROUP BY c.course_name');
+ include '../model/config/connection2.php';
+
+
+if(isset($_POST['view'])){
+
+  if($_POST["view"] != ''){
+
+      $stmt = $conn->prepare('UPDATE tbl_documentrequest SET `notif` = 1 WHERE `notif`= 0');
+      $stmt->execute();
+      $stmt->get_result();
+
+
+  }
+
+  $stmt = $conn->prepare('SELECT * FROM tbl_documentrequest ORDER BY request_id DESC LIMIT 5');
+  $stmt->execute();
+  $result = $stmt->get_result();
+   $output = '';
+   if($result->num_rows > 0){
+   while ($row = $result->fetch_assoc()) {
+
+     $output .= '
+
+
+     <li style =" background-color:#ededed;width:100%">
+       <a class="nav-item href="#" style="margin-left:10px;">
+       <b><a href="request.php" style="color: #000000 !important;"><i class="fa fa-fw fa-file" style="color: #1269af !important"></i>Document Name: '.$row["document_name"].'</b></a>
+       <p style="margin-left:14px;font-size:11px"><i class="fa fa-calendar"></i> Date Releasing: <i>'.date("M d, Y",strtotime($row["date_releasing"])).'</i></p>
+       <p style ="border-bottom:1px dotted blue;width:100%;"></p>
+       </a>
+     </li>
+     ';
+
+   }
+  }else{
+       $output .= '
+       <li><a href="#" class="text-bold text-italic">No Notif Found</a></li>';
+  }
+
+$stmt = $conn->prepare("SELECT * FROM tbl_documentrequest WHERE `notif`= 0");
 $stmt->execute();
 $result = $stmt->get_result();
+    $count = $result->num_rows;
+    $data = array(
+        'notification' => $output,
+        'unseen_notification'  => $count
+    );
 
-$data = [];
-if ($result->num_rows > 0) {
-  while ($row = $result->fetch_assoc()) {
-    $data[] = [$row['course_name'], (int)$row['request_count']];
+    echo json_encode($data);
+
   }
-}
 
-echo json_encode($data);
+?>
