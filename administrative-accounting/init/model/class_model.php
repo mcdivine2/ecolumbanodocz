@@ -31,14 +31,17 @@ class class_model
 	{
 		$stmt = $this->conn->prepare("SELECT * FROM `tbl_usermanagement` WHERE `username` = ? AND `password` = ? AND `status` = ? AND `role` = ?") or die($this->conn->error);
 		$stmt->bind_param("ssss", $username, $password, $status, $role);
-		if ($stmt->execute()) {
-			$result = $stmt->get_result();
-			$valid = $result->num_rows;
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
 			$fetch = $result->fetch_array();
 			return array(
-				'user_id' => htmlentities($fetch['user_id']),
-				'count' => $valid
+				'count' => $result->num_rows,
+				'user_id' => $fetch['user_id'],
+				'role' => $fetch['role']
 			);
+		} else {
+			return array('count' => 0);
 		}
 	}
 
@@ -794,7 +797,7 @@ class class_model
 	}
 	public function count_verified()
 	{
-		$sql = "SELECT COUNT(request_id) as count_verified FROM tbl_documentrequest WHERE accounting_status = 'Verified'";
+		$sql = "SELECT COUNT(payment_id) as count_verified FROM tbl_payment WHERE status = 'Verified'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
