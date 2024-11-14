@@ -2,8 +2,37 @@
 
 include('../init/model/class_model.php');
 session_start();
+
+// Define session timeout period (in seconds)
+define("SESSION_TIMEOUT", 900); // 15 minutes
+
+// Check if the user is logged in
 if (!(trim($_SESSION['user_id']))) {
     header('location:../index.php');
+    exit();
+}
+
+// Check for session timeout
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > SESSION_TIMEOUT)) {
+    // Session has timed out
+    session_unset();
+    session_destroy();
+    header('Location: ../index.php?timeout=1');
+    exit();
+} else {
+    // Update last activity time
+    $_SESSION['last_activity'] = time();
+}
+
+// Fetch user details
+$user_id = $_SESSION['user_id'];
+$conn = new class_model();
+$user = $conn->user_account($user_id);
+
+// Check if the user's role is "Library"
+if ($user['role'] !== 'Administrator') {
+    header('Location: ../unauthorized.php'); // Redirect unauthorized users
+    exit();
 }
 
 ?>
