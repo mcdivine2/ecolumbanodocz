@@ -61,7 +61,7 @@
                                     ?>
                                     <?php foreach ($docrequest as $row) { ?>
                                         <tr>
-                                            <td><?= date("M d, Y", strtotime($row['date_releasing'])); ?></td>
+                                            <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
