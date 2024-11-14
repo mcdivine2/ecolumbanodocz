@@ -539,15 +539,17 @@ class class_model
 
 	public function update_profile($username, $password, $mobile_number, $email_address, $student_id)
 	{
-		$sql = "UPDATE `tbl_student` SET  `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
+		$sql = "UPDATE `tbl_students` SET `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("ssssi", $username, $password, $mobile_number, $email_address, $student_id);
 		if ($stmt->execute()) {
 			$stmt->close();
-			$this->conn->close();
 			return true;
+		} else {
+			return false;
 		}
 	}
+
 
 
 
@@ -571,8 +573,8 @@ class class_model
 		$accounting_status,
 		$purpose,
 		$mode_request,
-    $recent_image,
-		$student_id
+		$student_id,
+		$recent_image
 	) {
 		// Check if the connection is active
 		if (!$this->conn->ping()) {
@@ -592,7 +594,7 @@ class class_model
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
 			 email_address, control_no, document_name, price, request_type, date_request, 
 			 registrar_status, custodian_status, dean_status, library_status, 
-			 accounting_status, purpose, mode_request, student_id) 
+			 accounting_status, purpose, mode_request, student_id, recent_image) 
 			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
@@ -602,7 +604,7 @@ class class_model
 
 		// Bind parameters
 		$stmt->bind_param(
-			"ssssssssssssssssssssi",
+			"sssssssssssssssssssis",
 			$first_name,
 			$middle_name,
 			$last_name,
@@ -622,8 +624,8 @@ class class_model
 			$accounting_status,
 			$purpose,
 			$mode_request,
-      $recent_image,
-			$student_id
+			$student_id,
+			$recent_image
 		);
 
 		// Execute the statement and handle result
@@ -671,6 +673,42 @@ class class_model
 			$stmt->close();
 			$this->conn->close();
 			return true;
+		}
+	}
+	public function forgot_password($email)
+	{
+		// Check if the email exists in the database
+		$sql = "SELECT first_name, middle_name, last_name, email_address FROM tbl_students WHERE email_address = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("s", $email);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			// User found
+			$user = $result->fetch_assoc();
+
+			// Generate a random new password
+			$new_password = bin2hex(random_bytes(4)); // Generates an 8-character random password
+			$hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Hash the new password
+
+			// Update the password in the database
+			$update_sql = "UPDATE tbl_students SET password = ? WHERE email_address = ?";
+			$update_stmt = $this->conn->prepare($update_sql);
+			$update_stmt->bind_param("ss", $hashed_password, $email);
+			$update_stmt->execute();
+
+			// Return user details and new password for email notification
+			return [
+				'first_name' => $user['first_name'],
+				'middle_name' => $user['middle_name'],
+				'last_name' => $user['last_name'],
+				'email_address' => $user['email_address'],
+				'new_password' => $new_password
+			];
+		} else {
+			// Email not found in the database
+			return false;
 		}
 	}
 }

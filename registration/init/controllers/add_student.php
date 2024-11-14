@@ -36,38 +36,45 @@ if (isset($_POST)) {
     $status = "Active";
     $is_highschool = "No";
 
-    // Check if file is uploaded
-    if (isset($_FILES['id_upload']) && $_FILES['id_upload']['error'] === UPLOAD_ERR_OK) {
-        $file_tmp_path = $_FILES['id_upload']['tmp_name'];
-        $file_name = addslashes($_FILES['id_upload']['name']);
-        $file_size = $_FILES['id_upload']['size'];
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/student/student_uploads/";
+    // Check if the email or student ID already exists
+    if ($conn->isEmailRegistered($email_address)) {
+        echo '<div class="alert alert-danger">This email is already registered!</div>';
+    } elseif ($conn->isStudentIDRegistered($studentID_no)) {
+        echo '<div class="alert alert-danger">This Student ID is already registered!</div>';
+    } else {
+        // Check if file is uploaded
+        if (isset($_FILES['id_upload']) && $_FILES['id_upload']['error'] === UPLOAD_ERR_OK) {
+            $file_tmp_path = $_FILES['id_upload']['tmp_name'];
+            $file_name = addslashes($_FILES['id_upload']['name']);
+            $file_size = $_FILES['id_upload']['size'];
+            $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/student/student_uploads/";
 
-        // Ensure the upload directory exists
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
-        }
+            // Ensure the upload directory exists
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
 
-        $upload_file = $upload_dir . $file_name;
+            $upload_file = $upload_dir . $file_name;
 
-        // Move the uploaded file to the desired directory
-        if (move_uploaded_file($file_tmp_path, $upload_file)) {
-            // File path to store in the database
-            $id_upload = "student_uploads/" . $file_name;
+            // Move the uploaded file to the desired directory
+            if (move_uploaded_file($file_tmp_path, $upload_file)) {
+                // File path to store in the database
+                $id_upload = "student_uploads/" . $file_name;
 
-            // Insert student information into the database
-            $stud = $conn->register($studentID_no, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status, $is_highschool);
+                // Insert student information into the database
+                $stud = $conn->register($studentID_no, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $id_upload, $status, $is_highschool);
 
-            if ($stud == TRUE) {
-                echo '<div class="alert alert-success">Student Registered Successfully!</div><script> setTimeout(function() { window.location.reload(); }, 1000); </script>';
+                if ($stud == TRUE) {
+                    echo '<div class="alert alert-success">Student Registered Successfully!</div><script> setTimeout(function() { window.location.reload(); }, 1000); </script>';
+                } else {
+                    echo '<div class="alert alert-danger">Registration Failed!</div>';
+                    echo "Error: " . $conn->error;
+                }
             } else {
-                echo '<div class="alert alert-danger">Registration Failed!</div>';
-                echo "Error: " . $conn->error;
+                echo '<div class="alert alert-danger">Failed to move uploaded file.</div>';
             }
         } else {
-            echo '<div class="alert alert-danger">Failed to move uploaded file.</div>';
+            echo '<div class="alert alert-danger">No file uploaded or upload error.</div>';
         }
-    } else {
-        echo '<div class="alert alert-danger">No file uploaded or upload error.</div>';
     }
 }

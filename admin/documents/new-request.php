@@ -38,7 +38,7 @@
                                         <!-- <th>Date Releasing</th> -->
                                         <!-- <th>Processing Officer</th> -->
                                         <th>Status</th>
-                                        <!-- <th>Clearance</th> -->
+                                        <th>Clearance</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -79,14 +79,14 @@
                                                 echo "<span class='badge bg-{$badge_class} text-white'>{$status_text}</span>";
                                                 ?>
                                             </td>
-                                            <!-- <td>
+                                            <td>
                                                 <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
                                                     class="btn btn-sm <?= $clearance_class; ?> text-xs"
                                                     data-toggle="tooltip"
                                                     title="Clearance">
                                                     <?= $clearance_text; ?>
                                                 </a>
-                                            </td> -->
+                                            </td>
                                             <td>
                                                 <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
                                                     <i class="fa fa-edit"></i>
