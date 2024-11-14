@@ -1,32 +1,22 @@
 <?php
 require_once "../model/class_model.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST)) {
     $conn = new class_model();
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     $status = "Active";
-    $role = "Administrator"; 
+    $role = "Administrator";  // Only allows Library role users to log in
 
-    
     $get_admin = $conn->login($username, $password, $status, $role);
-    
+
     if ($get_admin['count'] > 0) {
         session_start();
-
-        // Secure the session by regenerating the session ID
-        session_regenerate_id(true);
-
-        // Store user data in session
         $_SESSION['user_id'] = $get_admin['user_id'];
-        $_SESSION['username'] = $username;  // Optionally store username
-        $_SESSION['role'] = $role;  // Store role if needed
+        $_SESSION['role'] = $get_admin['role'];  // Store role in session for verification
 
-        // Output success
-        echo 1;
+        echo 1; // Login success
     } else {
-        // Output failure (login failed)
-        echo 0;
+        echo 0; // Login failed
     }
 }
-?>

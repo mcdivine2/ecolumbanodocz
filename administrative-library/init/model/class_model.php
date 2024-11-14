@@ -31,16 +31,20 @@ class class_model
 	{
 		$stmt = $this->conn->prepare("SELECT * FROM `tbl_usermanagement` WHERE `username` = ? AND `password` = ? AND `status` = ? AND `role` = ?") or die($this->conn->error);
 		$stmt->bind_param("ssss", $username, $password, $status, $role);
-		if ($stmt->execute()) {
-			$result = $stmt->get_result();
-			$valid = $result->num_rows;
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
 			$fetch = $result->fetch_array();
 			return array(
-				'user_id' => htmlentities($fetch['user_id']),
-				'count' => $valid
+				'count' => $result->num_rows,
+				'user_id' => $fetch['user_id'],
+				'role' => $fetch['role']
 			);
+		} else {
+			return array('count' => 0);
 		}
 	}
+
 
 	public function user_account($user_id)
 	{
