@@ -1,3 +1,16 @@
+<?php
+// Assume $student_id is already defined or retrieved, e.g., from session or another source
+$student_id = $_SESSION['student_id']; // Replace with actual retrieval method
+
+// Fetch the total request count
+$totalRequestData = $conn->count_numberoftotalrequest($student_id);
+$totalRequestCount = !empty($totalRequestData) ? $totalRequestData[0]['count_request'] : 0;
+
+// Fetch the total payment count
+$totalPaymentData = $conn->count_Allpayments($student_id);
+$totalPaymentCount = !empty($totalPaymentData) ? $totalPaymentData[0]['count_payment'] : 0;
+?>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
@@ -14,28 +27,28 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="index.php">
-                            <i class="fa fa-fw fa-tachometer-alt"></i>Dashboard <span class="badge badge-success">0</span>
+                            <i class="fa fa-fw fa-tachometer-alt"></i>Dashboard <span class="badge badge-success"></span>
                         </a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="request-list.php">
-                            <i class="fa fa-fw fa-file"></i>History Request <span class="badge badge-success">0</span>
+                            <i class="fa fa-fw fa-file"></i>History Request <span class="badge badge-success"><?= $totalRequestCount ?></span>
                         </a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="payment.php"><i class="fa fa-fw fa-money-bill-wave">
-                            </i>Proof of Payment <span class="badge badge-success">0</span>
+                            </i>Proof of Payment <span class="badge badge-success"><?= $totalPaymentCount ?></span>
                         </a>
                         </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="add-request.php"><i class="fa fa-fw fa-plus">
-                            </i>Request Document <span class="badge badge-success">0</span>
+                            </i>Request Document <span class="badge badge-success"></span>
                         </a>
                     
                         
                     <li class="nav-item">
                         <a class="nav-link" href="profile.php"><i class="fas fa-id-card">
-                            </i>Profile <span class="badge badge-success">0</span>
+                            </i>Profile <span class="badge badge-success"></span>
                         </a>
                     </li>
                     

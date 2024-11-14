@@ -31,14 +31,17 @@ class class_model
 	{
 		$stmt = $this->conn->prepare("SELECT * FROM `tbl_usermanagement` WHERE `username` = ? AND `password` = ? AND `status` = ? AND `role` = ?") or die($this->conn->error);
 		$stmt->bind_param("ssss", $username, $password, $status, $role);
-		if ($stmt->execute()) {
-			$result = $stmt->get_result();
-			$valid = $result->num_rows;
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
 			$fetch = $result->fetch_array();
 			return array(
-				'user_id' => htmlentities($fetch['user_id']),
-				'count' => $valid
+				'count' => $result->num_rows,
+				'user_id' => $fetch['user_id'],
+				'role' => $fetch['role']
 			);
+		} else {
+			return array('count' => 0);
 		}
 	}
 
@@ -254,7 +257,8 @@ class class_model
 
 	public function fetchAll_newrequest()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE dean_status = 'Pending' ";
+		// Fetch requests where dean_status is either 'Verified' or 'Declined'
+		$sql = "SELECT * FROM tbl_documentrequest WHERE dean_status IN ('Verified', 'Declined', 'Pending')";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -264,6 +268,7 @@ class class_model
 		}
 		return $data;
 	}
+
 
 	public function fetchAll_releasing()
 	{

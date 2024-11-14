@@ -41,6 +41,30 @@
                 <div class="card influencer-profile-data">
                     <div class="card-body">
                         <div id="message"></div>
+                        <?php
+                        if (isset($_GET['request']) && isset($_GET['student-number'])) {
+                            $request_id = $_GET['request'];
+                            $student_id = $_GET['student-number'];
+
+                            $conn = new class_model();
+                            $document = $conn->fetch_document_by_id($student_id, $request_id);
+
+                            if ($document) {
+                                // Display student details at the top
+                                echo "<h4>Student Name: " . htmlspecialchars($document['first_name']) . " " . htmlspecialchars($document['last_name']) . "</h4>";
+                                echo "<p>Control Number: " . htmlspecialchars($document['control_no']) . "</p>";
+                                echo "<p>Document Requested: " . htmlspecialchars($document['document_name']) . "</p>";
+
+                                // Check if document matches the criteria and display recent image
+                                if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
+                                    echo '<div class="form-group">';
+                                    echo '<label for="recent_image_preview">Recent Image:</label>';
+                                    echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
+                                    echo '</div>';
+                                }
+                            }
+                        }
+                        ?>
                         <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
                             <div class="form-group row">
                                 <label class="col-12 col-sm-2 col-form-label text-sm-left"><i class="fa fa-building"></i> Departments</label>
@@ -71,6 +95,7 @@
                                     if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
                                         $departments['dean'] = 'DEAN';
                                     }
+
 
                                     foreach ($departments as $key => $label) {
                                         echo '<div class="form-group row">';

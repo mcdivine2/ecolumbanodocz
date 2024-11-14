@@ -1,22 +1,9 @@
 <?php include('main_header/header.php'); ?>
-<!-- ============================================================== -->
-<!-- end navbar -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- left sidebar -->
-<!-- ============================================================== -->
 <?php include('left_sidebar/sidebar.php'); ?>
-<!-- ============================================================== -->
-<!-- end left sidebar -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- wrapper  -->
-<!-- ============================================================== -->
+
 <div class="dashboard-wrapper">
     <div class="container-fluid  dashboard-content">
-        <!-- ============================================================== -->
-        <!-- pageheader -->
-        <!-- ============================================================== -->
+
         <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="page-header">
@@ -32,10 +19,7 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- end pageheader -->
-        <!-- ============================================================== -->
-        <!-- CSS for Layout -->
+
         <style>
             .form-group {
                 margin-bottom: 20px;
@@ -160,10 +144,6 @@
                                 ?>
                                 <div class="row mt-2">
                                     <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" readonly>
-                                    <div class="col-md-3">
-                                        <label>Date Request:</label>
-                                        <input type="text" name="date_request" class="form-control" value="<?= date('M d Y'); ?>" readonly>
-                                    </div>
                                 </div>
                             </div>
 
@@ -474,7 +454,13 @@
             });
         </script>
 
-
+        <script>
+            function showSpecifyInput(index) {
+                // Toggle visibility of the "Other" input when "Other (please specify)" radio button is selected
+                const specifyInput = $(`#other_specify${index}`);
+                specifyInput.toggle(); // Show or hide the input
+            }
+        </script>
 
         </body>
 

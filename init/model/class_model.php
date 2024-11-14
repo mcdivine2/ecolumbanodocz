@@ -406,18 +406,44 @@ class class_model
 		return $data;
 	}
 
-	public function count_numberoftotalrequest()
-	{
-		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest";
-		$stmt = $this->conn->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$data = array();
-		while ($row = $result->fetch_assoc()) {
-			$data[] = $row;
-		}
-		return $data;
-	}
+	public function count_numberoftotalrequest($student_id)
+{
+    $sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE student_id = ?";
+    $stmt = $this->conn->prepare($sql);
+
+    // Bind the parameter
+    $stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = array();
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    return $data;
+}
+
+public function count_Allpayments($student_id)
+{
+    $sql = "SELECT COUNT(payment_id) as count_payment FROM tbl_payment WHERE student_id = ?";
+    $stmt = $this->conn->prepare($sql);
+
+    // Bind the parameter
+    $stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = array();
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    return $data;
+}
+
 
 	public function count_numberoftotalpending($student_id)
 	{
@@ -539,15 +565,17 @@ class class_model
 
 	public function update_profile($username, $password, $mobile_number, $email_address, $student_id)
 	{
-		$sql = "UPDATE `tbl_student` SET  `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
+		$sql = "UPDATE `tbl_students` SET `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("ssssi", $username, $password, $mobile_number, $email_address, $student_id);
 		if ($stmt->execute()) {
 			$stmt->close();
-			$this->conn->close();
 			return true;
+		} else {
+			return false;
 		}
 	}
+
 
 
 
@@ -563,7 +591,6 @@ class class_model
 		$document_name,
 		$price,
 		$request_type,
-		$date_request,
 		$registrar_status,
 		$custodian_status,
 		$dean_status,
@@ -590,10 +617,10 @@ class class_model
 		$stmt = $this->conn->prepare(
 			"INSERT INTO tbl_documentrequest 
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
-			 email_address, control_no, document_name, price, request_type, date_request, 
+			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
 			 accounting_status, purpose, mode_request, student_id, recent_image) 
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
 		if (!$stmt) {
@@ -602,7 +629,7 @@ class class_model
 
 		// Bind parameters
 		$stmt->bind_param(
-			"sssssssssssssssssssis",
+			"ssssssssssssssssssis",
 			$first_name,
 			$middle_name,
 			$last_name,
@@ -614,7 +641,6 @@ class class_model
 			$document_name,
 			$price,
 			$request_type,
-			$date_request,
 			$registrar_status,
 			$custodian_status,
 			$dean_status,
@@ -671,6 +697,42 @@ class class_model
 			$stmt->close();
 			$this->conn->close();
 			return true;
+		}
+	}
+	public function forgot_password($email)
+	{
+		// Check if the email exists in the database
+		$sql = "SELECT first_name, middle_name, last_name, email_address FROM tbl_students WHERE email_address = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("s", $email);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			// User found
+			$user = $result->fetch_assoc();
+
+			// Generate a random new password
+			$new_password = bin2hex(random_bytes(4)); // Generates an 8-character random password
+			$hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Hash the new password
+
+			// Update the password in the database
+			$update_sql = "UPDATE tbl_students SET password = ? WHERE email_address = ?";
+			$update_stmt = $this->conn->prepare($update_sql);
+			$update_stmt->bind_param("ss", $hashed_password, $email);
+			$update_stmt->execute();
+
+			// Return user details and new password for email notification
+			return [
+				'first_name' => $user['first_name'],
+				'middle_name' => $user['middle_name'],
+				'last_name' => $user['last_name'],
+				'email_address' => $user['email_address'],
+				'new_password' => $new_password
+			];
+		} else {
+			// Email not found in the database
+			return false;
 		}
 	}
 }
