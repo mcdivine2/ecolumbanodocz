@@ -29,18 +29,42 @@ class class_model
 
 	public function login_student($username, $password, $status)
 	{
-		$stmt = $this->conn->prepare("SELECT * FROM `tbl_students` WHERE `username` = ? AND `password` = ? AND `account_status` = ?") or die($this->conn->error);
-		$stmt->bind_param("sss", $username, $password, $status);
+		// Prepare the SQL statement to fetch the user based on username and account status
+		$stmt = $this->conn->prepare("SELECT * FROM `tbl_students` WHERE `username` = ? AND `account_status` = ?") or die($this->conn->error);
+		$stmt->bind_param("ss", $username, $status);
+
 		if ($stmt->execute()) {
 			$result = $stmt->get_result();
-			$valid = $result->num_rows;
-			$fetch = $result->fetch_array();
-			return array(
-				'student_id' => htmlentities($fetch['student_id']),
-				'count' => $valid
-			);
+
+			// Check if a user was found
+			if ($result->num_rows > 0) {
+				$fetch = $result->fetch_array();
+				$hashed_password = $fetch['password'];
+
+				// Verify the password using password_verify
+				if (password_verify($password, $hashed_password)) {
+					// Password is correct, return user data
+					return array(
+						'student_id' => htmlentities($fetch['student_id']),
+						'count' => 1
+					);
+				} else {
+					// Password is incorrect
+					return array(
+						'student_id' => null,
+						'count' => 0
+					);
+				}
+			} else {
+				// User not found
+				return array(
+					'student_id' => null,
+					'count' => 0
+				);
+			}
 		}
 	}
+
 
 	public function student_account($student_id)
 	{
