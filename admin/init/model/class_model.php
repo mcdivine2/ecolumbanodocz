@@ -143,6 +143,7 @@ class class_model
 		}
 	}
 
+
 	public function fetchAll_student()
 	{
 		$sql = "SELECT * FROM  tbl_students";
