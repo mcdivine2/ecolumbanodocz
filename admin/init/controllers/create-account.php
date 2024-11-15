@@ -39,6 +39,7 @@ if (isset($_POST)) {
 		$body .= "Username: $username\n";
 		$body .= "Password: $password\n"; // Send the plaintext password for initial login
 		$body .= "Please log in and change your password after your first login for security purposes.\n";
+		$body .= "Please visit us in ecolumbanodocz.com \n";
 		$body .= "If you have any questions, feel free to contact us.";
 
 		// Email sender using Google Apps Script
