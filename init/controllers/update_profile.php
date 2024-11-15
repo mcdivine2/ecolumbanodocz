@@ -10,7 +10,9 @@ if (isset($_POST['username'], $_POST['password'], $_POST['mobile_number'], $_POS
 	$email_address = trim($_POST['email_address']);
 	$student_id = trim($_POST['student_id']);
 
+	// Update the profile with hashed password
 	$upt = $conn->update_profile($username, $password, $mobile_number, $email_address, $student_id);
+
 	if ($upt) {
 		echo '<div class="alert alert-success">Profile Updated Successfully!</div><script> setTimeout(function() { window.location.reload(); }, 1000); </script>';
 	} else {
