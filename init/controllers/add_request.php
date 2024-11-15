@@ -31,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required!';
-    if (empty($request_type)) $errors[] = 'Request type is required!';
     if (empty($purposes)) $errors[] = 'Purpose is required!';
     if (empty($mode_request)) $errors[] = 'Mode Request is required!';
     if (empty($birthdate)) $errors[] = 'Birthdate is required!';
