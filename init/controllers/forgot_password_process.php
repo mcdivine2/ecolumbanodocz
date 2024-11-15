@@ -1,5 +1,5 @@
 <?php
-include('../model/config/connection2.php'); // Include the database connection
+
 include('../model/class_model.php'); // Correct relative path to class_model.php
 
 header('Content-Type: application/json'); // Specify JSON output

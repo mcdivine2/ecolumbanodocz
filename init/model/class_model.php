@@ -29,41 +29,74 @@ class class_model
 
 	public function login_student($username, $password, $status)
 	{
-		// Prepare the SQL statement to fetch the user based on username and account status
 		$stmt = $this->conn->prepare("SELECT * FROM `tbl_students` WHERE `username` = ? AND `account_status` = ?") or die($this->conn->error);
 		$stmt->bind_param("ss", $username, $status);
 
 		if ($stmt->execute()) {
 			$result = $stmt->get_result();
 
-			// Check if a user was found
 			if ($result->num_rows > 0) {
-				$fetch = $result->fetch_array();
+				$fetch = $result->fetch_assoc();
 				$hashed_password = $fetch['password'];
 
-				// Verify the password using password_verify
+				// Debugging: Output the hashed password and entered password
 				if (password_verify($password, $hashed_password)) {
-					// Password is correct, return user data
+					// Password is correct
 					return array(
 						'student_id' => htmlentities($fetch['student_id']),
 						'count' => 1
 					);
 				} else {
-					// Password is incorrect
-					return array(
-						'student_id' => null,
-						'count' => 0
-					);
+					// Debugging for incorrect password
+					echo json_encode(['status' => 'error', 'message' => 'Password does not match.']);
 				}
-			} else {
-				// User not found asdfasdf
-				return array(
-					'student_id' => null,
-					'count' => 0
-				);
 			}
 		}
+
+		// Return null for login failure
+		return array(
+			'student_id' => null,
+			'count' => 0
+		);
 	}
+
+	public function forgot_password($email)
+	{
+		// Generate a random temporary password
+		$new_password_plaintext = bin2hex(random_bytes(4)); // Example: 8 characters
+		$new_password_hashed = password_hash($new_password_plaintext, PASSWORD_DEFAULT);
+
+		// Fetch user details for email
+		$stmt = $this->conn->prepare("SELECT * FROM `tbl_students` WHERE `email_address` = ?");
+		$stmt->bind_param("s", $email);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			$user_data = $result->fetch_assoc();
+
+			// Update the password in the database
+			$update_stmt = $this->conn->prepare("UPDATE `tbl_students` SET `password` = ? WHERE `email_address` = ?");
+			$update_stmt->bind_param("ss", $new_password_hashed, $email);
+			$update_stmt->execute();
+
+			// Attach new plaintext password to return data for email
+			$user_data['new_password'] = $new_password_plaintext;
+			return $user_data;
+		}
+		return null;
+	}
+	public function update_profile($username, $password, $mobile_number, $email_address, $student_id)
+	{
+		// Hash the password before updating
+		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+		$stmt = $this->conn->prepare("UPDATE `tbl_students` SET `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE `student_id` = ?");
+		$stmt->bind_param("sssss", $username, $hashed_password, $mobile_number, $email_address, $student_id);
+
+		return $stmt->execute();
+	}
+
 
 
 	public function student_account($student_id)
@@ -90,7 +123,7 @@ class class_model
 			$fetch = $result->fetch_array();
 			return array(
 				'student_id' => $fetch['student_id'],
-				'student_id' => $fetch['student_id'],
+				// 'student_id' => $fetch['student_id'],
 				'first_name' => $fetch['first_name'],
 				'middle_name' => $fetch['middle_name'],
 				'last_name' => $fetch['last_name'],
@@ -561,22 +594,6 @@ class class_model
 		}
 	}
 
-	public function update_profile($username, $password, $mobile_number, $email_address, $student_id)
-	{
-		$sql = "UPDATE `tbl_students` SET `username` = ?, `password` = ?, `mobile_number` = ?, `email_address` = ? WHERE student_id = ?";
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("ssssi", $username, $password, $mobile_number, $email_address, $student_id);
-		if ($stmt->execute()) {
-			$stmt->close();
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-
-
-
 	public function add_request(
 		$first_name,
 		$middle_name,
@@ -697,42 +714,6 @@ class class_model
 			$stmt->close();
 			$this->conn->close();
 			return true;
-		}
-	}
-	public function forgot_password($email)
-	{
-		// Check if the email exists in the database
-		$sql = "SELECT first_name, middle_name, last_name, email_address FROM tbl_students WHERE email_address = ?";
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("s", $email);
-		$stmt->execute();
-		$result = $stmt->get_result();
-
-		if ($result->num_rows > 0) {
-			// User found
-			$user = $result->fetch_assoc();
-
-			// Generate a random new password
-			$new_password = bin2hex(random_bytes(4)); // Generates an 8-character random password
-			$hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Hash the new password
-
-			// Update the password in the database
-			$update_sql = "UPDATE tbl_students SET password = ? WHERE email_address = ?";
-			$update_stmt = $this->conn->prepare($update_sql);
-			$update_stmt->bind_param("ss", $hashed_password, $email);
-			$update_stmt->execute();
-
-			// Return user details and new password for email notification
-			return [
-				'first_name' => $user['first_name'],
-				'middle_name' => $user['middle_name'],
-				'last_name' => $user['last_name'],
-				'email_address' => $user['email_address'],
-				'new_password' => $new_password
-			];
-		} else {
-			// Email not found in the database
-			return false;
 		}
 	}
 }
