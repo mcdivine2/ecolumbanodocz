@@ -186,17 +186,33 @@ class class_model
 
 
 
-	public function edit_student($first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $username, $password, $account_status, $student_id)
-	{
+	public function edit_student(
+		$first_name,
+		$middle_name,
+		$last_name,
+		$complete_address,
+		$email_address,
+		$mobile_number,
+		$username,
+		$password,
+		$account_status,
+		$student_id
+	) {
 		$sql = "UPDATE `tbl_students` 
-					SET `first_name` = ?, `middle_name` = ?, `last_name` = ?, 
-						`complete_address` = ?, `email_address` = ?, 
-						`mobile_number` = ?, `username` = ?, `password` = ?, `account_status` = ? 
-					WHERE `student_id` = ?";
+				SET `first_name` = ?, 
+					`middle_name` = ?, 
+					`last_name` = ?, 
+					`complete_address` = ?, 
+					`email_address` = ?, 
+					`mobile_number` = ?, 
+					`username` = ?, 
+					`password` = ?, 
+					`account_status` = ? 
+				WHERE `student_id` = ?";
 
 		$stmt = $this->conn->prepare($sql);
 
-		// Bind parameters correctly without trailing comma
+		// Bind parameters
 		$stmt->bind_param(
 			"sssssssssi",
 			$first_name,
@@ -211,18 +227,17 @@ class class_model
 			$student_id
 		);
 
+		// Execute the query and check for success
 		if ($stmt->execute()) {
 			$stmt->close();
-			$this->conn->close();
-			return true;
+			return true; // Update successful
 		} else {
-			// Optional: Handle errors (e.g., logging or returning false)
+			// Log the error for debugging
+			error_log("Database error: " . $this->conn->error);
 			$stmt->close();
-			$this->conn->close();
-			return false;
+			return false; // Update failed
 		}
 	}
-
 
 	public function add_account($student_id, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $username, $password, $status)
 	{
