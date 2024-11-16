@@ -81,6 +81,7 @@
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="../assets/js/loader.js"></script>
+
 <script type="text/javascript">
    $(document).ready(function() {
       // Event listener for filter change
