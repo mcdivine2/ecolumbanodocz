@@ -144,10 +144,6 @@
                                 ?>
                                 <div class="row mt-2">
                                     <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" readonly>
-                                    <div class="col-md-3">
-                                        <label>Date Request:</label>
-                                        <input type="text" name="date_request" class="form-control" value="<?= date('M d Y'); ?>" readonly>
-                                    </div>
                                 </div>
                             </div>
 
@@ -211,6 +207,7 @@
                             </div>
 
                             <!-- Purpose Section -->
+                            <!--add a required  purpose here -->
                             <div class="form-group mt-4">
                                 <h4 class="section-title">Purpose</h4>
                                 <div class="row">
@@ -270,6 +267,7 @@
 
 
 
+
         <!-- ============================================================== -->
         <!-- end main wrapper -->
         <!-- ============================================================== -->
@@ -290,13 +288,12 @@
                 var profileImage = $('#profileImage').text(intials);
             });
         </script>
-
         <script>
             $(document).ready(function() {
                 let formData = null;
                 const deliveryFee = 50;
 
-                // Toggle visibility of quantity input and request type when checkbox is checked/unchecked
+                // Toggle visibility of quantity input and request type
                 $('input[name="document_name[]"]').change(function() {
                     const docIndex = this.id.replace('document_name', '');
                     const qtyDiv = `#quantity${docIndex}`;
@@ -306,55 +303,52 @@
                         $(qtyDiv).show();
                         $(requestTypeDiv).show();
 
-                        // Check if "Honorable Dismissal w/ TOR for evaluation" is selected and show image preview if uploaded
+                        // Check for specific document and show image preview if needed
                         if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
-                            previewImage(); // Call the image preview function
+                            previewImage();
                         }
                     } else {
                         $(qtyDiv).hide().find('input').val('');
                         $(requestTypeDiv).hide();
                         $(`input[name="request_type_${docIndex}"]`).prop('checked', false);
 
-                        // Hide image preview if "Honorable Dismissal w/ TOR for evaluation" is deselected
                         if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
-                            $('#imagePreviewContainer').hide();
-                            $('#imagePreview').attr('src', '');
+                            hideImagePreview();
                         }
                     }
 
                     calculateTotal();
                 });
 
-                // Function to preview the uploaded image
+                // Image preview function
                 function previewImage() {
                     const fileInput = $('#upload_recent')[0].files[0];
                     if (fileInput) {
                         const reader = new FileReader();
                         reader.onload = function(e) {
-                            $('#imagePreview').attr('src', e.target.result);
+                            $('#imagePreview').attr('src', e.target.result).show();
                             $('#imagePreviewContainer').show();
                         };
                         reader.readAsDataURL(fileInput);
                     } else {
-                        $('#imagePreviewContainer').hide();
-                        $('#imagePreview').attr('src', '');
+                        hideImagePreview();
                     }
                 }
 
-                // Trigger the previewImage function when a new file is chosen
-                $('#upload_recent').change(function() {
-                    previewImage();
-                });
+                function hideImagePreview() {
+                    $('#imagePreviewContainer').hide();
+                    $('#imagePreview').attr('src', '').hide();
+                }
 
-                // Recalculate total on request type change
-                $(document).on('change', 'input[type="radio"][name^="request_type_"]', calculateTotal);
+                // Trigger image preview on file change
+                $('#upload_recent').change(previewImage);
 
-                // Toggle visibility of "Other" purpose input
+                // Toggle "Other Purpose" input field
                 $('#otherPurposeCheckbox').change(function() {
                     $('#otherPurposeInput').toggle(this.checked).val('');
                 });
 
-                // Show/hide delivery fee and recalculate total
+                // Show/hide delivery fee section
                 $('#mode_request').change(function() {
                     $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
                     calculateTotal();
@@ -365,18 +359,22 @@
                     let total = $('input[name="document_name[]"]:checked').get().reduce((sum, doc) => {
                         const docIndex = doc.id.replace('document_name', '');
                         const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+
                         if (requestType === '1st request') return sum;
 
                         const copies = +$(doc).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
                         return sum + parseFloat($(doc).data('price')) * copies;
                     }, 0);
 
-                    if ($('#mode_request').val() === 'Delivery') total += deliveryFee;
+                    if ($('#mode_request').val() === 'Delivery') {
+                        total += deliveryFee;
+                    }
+
                     $('input[name="price"]').val(total > 0 ? `₱${total.toFixed(2)}` : '₱0');
                     return total;
                 }
 
-                // Form submission
+                // Form submission with validation
                 $('#submitForm').click(function(e) {
                     e.preventDefault();
                     formData = new FormData($('form[name="docu_forms"]')[0]);
@@ -384,6 +382,25 @@
                     const selectedDocs = $('input[name="document_name[]"]:checked');
                     if (!selectedDocs.length) return showError('Please select at least one document.');
                     if (!$('#course').val()) return showError('Please select a course.');
+                    const selectedPurpose = $('input[name="purpose[]"]:checked');
+                    if (!selectedPurpose.length) {
+                        return showError('Please select at least one purpose.');
+                    }
+
+                    let isValid = true;
+                    selectedDocs.each(function() {
+                        const docIndex = this.id.replace('document_name', '');
+                        const requestTypeRadios = $(`input[name="request_type_${docIndex}"]`);
+                        const isRequestTypeSelected = requestTypeRadios.is(':checked');
+
+                        if (!isRequestTypeSelected) {
+                            showError(`Please select a request type for the document: ${this.value}`);
+                            isValid = false;
+                            return false; // Exit loop
+                        }
+                    });
+
+                    if (!isValid) return;
 
                     formData.delete('document_name[]');
                     formData.delete('no_ofcopies[]');
@@ -415,6 +432,7 @@
                     const file = $('#upload_recent')[0].files[0];
                     if (file) formData.append('upload_recent', file);
 
+                    // Show modal with details
                     $('#modalStudentName').text(`${getField('first_name')} ${getField('middle_name')} ${getField('last_name')}`);
                     $('#modalControlNo').text(getField('control_no'));
                     $('#modalDocumentName').html(formattedDocuments.join('<br>'));
@@ -435,8 +453,13 @@
                                 $('#message').html(response);
                                 $('#paymentModal').modal('hide');
                                 window.scrollTo(0, 0);
+                                // Redirect to the specified page after a delay
+                                setTimeout(function() {
+                                    window.location.href = 'index.php';
+                                }, 2000); // Adjust delay time as needed (e.g., 2 seconds)
                             },
                             error() {
+
                                 console.error('Failed to submit the form.');
                             }
                         });
@@ -458,13 +481,6 @@
             });
         </script>
 
-        <script>
-            function showSpecifyInput(index) {
-                // Toggle visibility of the "Other" input when "Other (please specify)" radio button is selected
-                const specifyInput = $(`#other_specify${index}`);
-                specifyInput.toggle(); // Show or hide the input
-            }
-        </script>
 
         </body>
 

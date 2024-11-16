@@ -106,12 +106,12 @@
                         <form action="process_payment.php" method="POST" id="paymentForm" enctype="multipart/form-data">
                             <input type="hidden" name="student_id" value="<?= $_SESSION['student_id']; ?>">
                             <div class="form-group">
-                                <label for="trace_no">Trace No.</label>
-                                <input type="text" class="form-control" id="trace_no" name="trace_no" placeholder="Enter Trace number">
+                                <label for="trace_no" >Trace No.</label>
+                                <input type="text" class="form-control" id="trace_no" name="trace_no" placeholder="Enter Trace number" required>
                             </div>
                             <div class="form-group">
                                 <label for="ref_no">Ref. No.</label>
-                                <input type="text" class="form-control" id="ref_no" name="ref_no" placeholder="Enter Reference number">
+                                <input type="text" class="form-control" id="ref_no" name="ref_no" placeholder="Enter Reference number" required>
                             </div>
                             <div class="form-group">
                                 <label for="control_no">Control No.</label>

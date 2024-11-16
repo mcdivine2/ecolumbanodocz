@@ -463,18 +463,44 @@ class class_model
 		return $data;
 	}
 
-	public function count_numberoftotalrequest()
+	public function count_numberoftotalrequest($student_id)
 	{
-		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest";
+		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE student_id = ?";
 		$stmt = $this->conn->prepare($sql);
+
+		// Bind the parameter
+		$stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$data = array();
+
 		while ($row = $result->fetch_assoc()) {
 			$data[] = $row;
 		}
+
 		return $data;
 	}
+
+	public function count_Allpayments($student_id)
+	{
+		$sql = "SELECT COUNT(payment_id) as count_payment FROM tbl_payment WHERE student_id = ?";
+		$stmt = $this->conn->prepare($sql);
+
+		// Bind the parameter
+		$stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+
+		return $data;
+	}
+
 
 	public function count_numberoftotalpending($student_id)
 	{
@@ -606,7 +632,6 @@ class class_model
 		$document_name,
 		$price,
 		$request_type,
-		$date_request,
 		$registrar_status,
 		$custodian_status,
 		$dean_status,
@@ -615,7 +640,8 @@ class class_model
 		$purpose,
 		$mode_request,
 		$student_id,
-		$recent_image
+		$recent_image,
+		$date_request // New parameter
 	) {
 		// Check if the connection is active
 		if (!$this->conn->ping()) {
@@ -633,9 +659,9 @@ class class_model
 		$stmt = $this->conn->prepare(
 			"INSERT INTO tbl_documentrequest 
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
-			 email_address, control_no, document_name, price, request_type, date_request, 
+			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
-			 accounting_status, purpose, mode_request, student_id, recent_image) 
+			 accounting_status, purpose, mode_request, student_id, recent_image, date_request) 
 			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
@@ -645,7 +671,7 @@ class class_model
 
 		// Bind parameters
 		$stmt->bind_param(
-			"sssssssssssssssssssis",
+			"ssssssssssssssssssiss",
 			$first_name,
 			$middle_name,
 			$last_name,
@@ -657,7 +683,6 @@ class class_model
 			$document_name,
 			$price,
 			$request_type,
-			$date_request,
 			$registrar_status,
 			$custodian_status,
 			$dean_status,
@@ -666,7 +691,8 @@ class class_model
 			$purpose,
 			$mode_request,
 			$student_id,
-			$recent_image
+			$recent_image,
+			$date_request // Bind the new parameter
 		);
 
 		// Execute the statement and handle result

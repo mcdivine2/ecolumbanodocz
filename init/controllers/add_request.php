@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course = trim($_POST['course']);
     $email_address = trim($_POST['email_address']);
     $control_no = trim($_POST['control_no']);
-    $date_request = trim($_POST['date_request']);
     $mode_request = trim($_POST['mode_request']);
     $student_id = trim($_POST['student_id']);
     $price = str_replace('₱', '', trim($_POST['price']));
@@ -30,9 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $library_status = "Pending";
     $accounting_status = "Pending";
 
+    // Capture current date and time
+    $date_request = date("Y-m-d H:i:s");
+
     $errors = [];
-    if (empty($first_name)) $errors[] = 'First name is required!';
     if (empty($course)) $errors[] = 'Course is required!';
+    if (empty($purposes)) $errors[] = 'Purpose is required!';
+    if (empty($mode_request)) $errors[] = 'Mode Request is required!';
+    if (empty($birthdate)) $errors[] = 'Birthdate is required!';
+
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address!';
 
     $recent_image = "Not Required";
@@ -89,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         implode("<br>", $documents),
         $price,
         implode("<br>", $request_types),
-        $date_request,
         $registrar_status,
         $custodian_status,
         $dean_status,
@@ -98,7 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         implode(", ", $purposes),
         $mode_request,
         $student_id,
-        $recent_image // This will either be the uploaded file path or "Not Required"
+        $recent_image, // This will either be the uploaded file path or "Not Required"
+        $date_request // New date_request field
     );
 
     echo $request

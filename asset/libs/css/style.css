@@ -226,11 +226,7 @@ a:hover {
     text-decoration: none;
 }
 
-ol,
-ul {}
 
-ol li,
-ul li {}
 
 .lead {
     font-size: 1.25rem;
@@ -283,9 +279,7 @@ input[type=file] {
     font-size: 15px;
 }
 
-input {}
 
-button {}
 
 button:focus {
     outline: 0;
@@ -330,13 +324,6 @@ textarea:focus::-webkit-input-placeholder {
     color: #5969ff !important;
 }
 
-button.btn {}
-
-button.btn-default {}
-
-button.btn-primary {}
-
-address {}
 
 .form-group {
     margin-bottom: 12px;
@@ -381,7 +368,7 @@ address {}
     background-color: #5969ff;
 }
 
-.custom-checkbox .custom-control-input:checked~.custom-control-label::after {}
+
 
 .custom-control-label::after {
     position: absolute;
@@ -1200,9 +1187,7 @@ Legends
     font-size: 14px;
 }
 
-.legend-title {}
 
-.legend-text {}
 
 
 /* ==========================================================================
@@ -1219,7 +1204,7 @@ Legends
 Top Header
 -------------------------*/
 
-.dashboard-header {}
+
 
 .dashboard-header .navbar {
     padding: 0px;
@@ -1621,16 +1606,6 @@ Top Header
     border-radius: 2px;
     background-color: transparent;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 /* -----------------------
