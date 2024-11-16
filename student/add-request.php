@@ -389,8 +389,11 @@
                     formData = new FormData($('form[name="docu_forms"]')[0]);
 
                     const selectedDocs = $('input[name="document_name[]"]:checked');
+                    const selectedPurpose = $('input[name="purpose[]"]:checked');
+
                     if (!selectedDocs.length) return showError('Please select at least one document.');
                     if (!$('#course').val()) return showError('Please select a course.');
+                    if (!selectedPurpose.length) return showError('Please select at least one purpose.');
 
                     // Validate request type for each selected document
                     let isValid = true;
@@ -445,6 +448,7 @@
                     $('#modalTotalAmount').text(`₱${total.toFixed(2)}`);
                     $('#paymentModal').modal('show');
                 });
+
 
                 $('#confirmSubmit').click(function() {
                     if (formData) {
