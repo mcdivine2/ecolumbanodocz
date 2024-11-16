@@ -343,6 +343,7 @@
                 });
 
                 // Recalculate total on request type change
+                $(document).on('input', '.no-of-copies', calculateTotal);
                 $(document).on('change', 'input[type="radio"][name^="request_type_"]', calculateTotal);
 
                 // Toggle visibility of "Other" purpose input
@@ -357,19 +358,29 @@
                 });
 
                 // Calculate total amount
+                // Calculate total amount
                 function calculateTotal() {
-                    let total = $('input[name="document_name[]"]:checked').get().reduce((sum, doc) => {
-                        const docIndex = doc.id.replace('document_name', '');
+                    let totalAmount = 0;
+
+                    $('input[name="document_name[]"]:checked').each(function() {
+                        const docIndex = this.id.replace('document_name', '');
+                        const price = parseFloat($(this).data('price')) || 0;
+                        const copies = parseInt($(`#no_ofcopies${docIndex}`).val()) || 1;
                         const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
-                        if (requestType === '1st request') return sum;
 
-                        const copies = +$(doc).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
-                        return sum + parseFloat($(doc).data('price')) * copies;
-                    }, 0);
+                        if (requestType === '1st request') {
+                            totalAmount += price * Math.max(0, copies - 1);
+                        } else {
+                            totalAmount += price * copies;
+                        }
+                    });
 
-                    if ($('#mode_request').val() === 'Delivery') total += deliveryFee;
-                    $('input[name="price"]').val(total > 0 ? `₱${total.toFixed(2)}` : '₱0');
-                    return total;
+                    if ($('#mode_request').val() === 'Delivery') {
+                        totalAmount += deliveryFee;
+                    }
+
+                    $('#totalAmount').val(totalAmount > 0 ? `₱${totalAmount.toFixed(2)}` : '₱0');
+                    return totalAmount;
                 }
 
                 // Form submission
