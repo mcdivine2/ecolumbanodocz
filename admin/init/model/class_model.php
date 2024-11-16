@@ -198,6 +198,8 @@ class class_model
 		$account_status,
 		$student_id
 	) {
+		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
 		$sql = "UPDATE `tbl_students` 
 				SET `first_name` = ?, 
 					`middle_name` = ?, 
@@ -222,7 +224,7 @@ class class_model
 			$email_address,
 			$mobile_number,
 			$username,
-			$password,
+			$hashed_password,
 			$account_status,
 			$student_id
 		);
