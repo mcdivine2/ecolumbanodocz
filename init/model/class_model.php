@@ -464,42 +464,42 @@ class class_model
 	}
 
 	public function count_numberoftotalrequest($student_id)
-{
-    $sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE student_id = ?";
-    $stmt = $this->conn->prepare($sql);
+	{
+		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE student_id = ?";
+		$stmt = $this->conn->prepare($sql);
 
-    // Bind the parameter
-    $stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+		// Bind the parameter
+		$stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
 
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = array();
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
 
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
 
-    return $data;
-}
+		return $data;
+	}
 
-public function count_Allpayments($student_id)
-{
-    $sql = "SELECT COUNT(payment_id) as count_payment FROM tbl_payment WHERE student_id = ?";
-    $stmt = $this->conn->prepare($sql);
+	public function count_Allpayments($student_id)
+	{
+		$sql = "SELECT COUNT(payment_id) as count_payment FROM tbl_payment WHERE student_id = ?";
+		$stmt = $this->conn->prepare($sql);
 
-    // Bind the parameter
-    $stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
+		// Bind the parameter
+		$stmt->bind_param("i", $student_id); // "i" denotes integer, adjust if it's not an integer
 
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = array();
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
 
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
 
-    return $data;
-}
+		return $data;
+	}
 
 
 	public function count_numberoftotalpending($student_id)
@@ -640,7 +640,8 @@ public function count_Allpayments($student_id)
 		$purpose,
 		$mode_request,
 		$student_id,
-		$recent_image
+		$recent_image,
+		$date_request // New parameter
 	) {
 		// Check if the connection is active
 		if (!$this->conn->ping()) {
@@ -660,8 +661,8 @@ public function count_Allpayments($student_id)
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
 			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
-			 accounting_status, purpose, mode_request, student_id, recent_image) 
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			 accounting_status, purpose, mode_request, student_id, recent_image, date_request) 
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
 		if (!$stmt) {
@@ -670,7 +671,7 @@ public function count_Allpayments($student_id)
 
 		// Bind parameters
 		$stmt->bind_param(
-			"ssssssssssssssssssis",
+			"ssssssssssssssssssiss",
 			$first_name,
 			$middle_name,
 			$last_name,
@@ -690,7 +691,8 @@ public function count_Allpayments($student_id)
 			$purpose,
 			$mode_request,
 			$student_id,
-			$recent_image
+			$recent_image,
+			$date_request // Bind the new parameter
 		);
 
 		// Execute the statement and handle result
