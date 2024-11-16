@@ -381,6 +381,22 @@
                     if (!selectedDocs.length) return showError('Please select at least one document.');
                     if (!$('#course').val()) return showError('Please select a course.');
 
+                     // Validate request type for each selected document
+                    let isValid = true;
+                    selectedDocs.each(function () {
+                        const docIndex = this.id.replace('document_name', '');
+                        const requestTypeRadios = $(`input[name="request_type_${docIndex}"]`);
+                        const isRequestTypeSelected = requestTypeRadios.is(':checked');
+
+                        if (!isRequestTypeSelected) {
+                            showError(`Please select a request type for the document: ${this.value}`);
+                            isValid = false;
+                            return false; // Exit the loop
+                        }
+                    });
+
+                    if (!isValid) return; // Stop form submission if validation fails
+
                     formData.delete('document_name[]');
                     formData.delete('no_ofcopies[]');
                     formData.delete('request_type[]');

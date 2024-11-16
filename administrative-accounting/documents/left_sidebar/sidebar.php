@@ -12,20 +12,20 @@
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="request.php"><i class="fa fa-fw fa-certificate"></i>All Requests <span class="badge badge-success">6</span></a>
-                    </li>
-                    <!-- <li class="nav-item ">
-                                <a class="nav-link" href="proof-of-payment.php"><i class="fa fa-fw fa-file-image"></i>Proof of Payment <span class="badge badge-success">6</span></a>
-                            </li> -->
-                    <!-- <li class="nav-item ">
-                                <a class="nav-link" href="student.php"><i class="fa fa-fw fa-user-graduate"></i>Clients  <span class="badge badge-success">6</span></a>
-                            </li> -->
+                    </li><br><br>
 
-                    <!-- <li class="nav-item ">
-                                <a class="nav-link" href="client-verification.php"><i class="fa fa-fw fa-file"></i>Client Verification  <span class="badge badge-success">6</span></a>
-                            </li> -->
-                    <!-- <li class="nav-item ">
-                                <a class="nav-link" href="users.php"><i class="fa fa-fw fa-user-lock"></i>Users <span class="badge badge-success">6</span></a>
-                            </li>      -->
+                    <li class="nav-item ">
+                        <a class="nav-link" href="pending.php"><i class="fa fa-fw fa-certificate"></i>Waiting for Payment <span class="badge badge-success">6</span></a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="proof-of-payment.php"><i class="fa fa-fw fa-certificate"></i>Paid Requests <span class="badge badge-success">6</span></a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="releasing.php"><i class="fa fa-fw fa-certificate"></i>Complete Request <span class="badge badge-success">6</span></a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="declined.php"><i class="fa fa-fw fa-certificate"></i>Declined Request<span class="badge badge-success">6</span></a>
+                    </li>
 
                 </ul>
             </div>

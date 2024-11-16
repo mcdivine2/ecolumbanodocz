@@ -111,7 +111,7 @@ $user = $conn->user_account($user_id);
         <div class="dashboard-header">
             <nav class="navbar navbar-expand-lg fixed-top" id="head-color">
                 <a class="navbar-brand" href="index.php">
-                    <p id="title-style"><img class="logo-scc" src="../assets/images/scc_logo.png" alt="logo" width="70px" height="50px">&nbsp;&nbsp;Online Request of Document</p>
+                    <p id="title-style"><img class="logo-scc" src="../assets/images/scc_logo.png" alt="logo" width="70px" height="50px">&nbsp;&nbsp;e-Docs-Columbano</p>
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
