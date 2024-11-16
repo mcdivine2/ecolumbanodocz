@@ -22,14 +22,10 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <h5 class="card-header">Request Information</h5>
+                    <h5 class="card-header">Payment Details</h5>
                     <div class="card-body">
                         <div id="message"></div>
                         <div class="table-responsive">
-                            <a href="add-request.php" class="btn btn-sm" style="background-color:#1269AF; color:white">
-                                <i class="fa fa-fw fa-plus"></i> Add Request
-                            </a>
-                            <br><br>
                             <table class="table table-striped table-bordered first">
                                 <thead>
                                     <tr>
