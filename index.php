@@ -115,7 +115,7 @@
                     <div class="form-group">
                         <button class="btn btn-lg btn-block button1" value="Sign in" id="btn-student" name="btn-student">Sign in</button>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="text-align: center;">
                         <u><a href="http://ecolumbanodocz.com/forgetpassword.php">Forgot Password?</a></u>
                     </div>
                     <div class="form-group">
