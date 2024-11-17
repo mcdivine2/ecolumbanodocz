@@ -119,8 +119,7 @@
                         <u><a href="http://ecolumbanodocz.com/forgetpassword.php">Forgot Password?</a></u>
                     </div>
                     <div class="form-group">
-                        <button><a href="http://ecolumbanodocz.com/admin/">Admin</a></button>
-
+                        <a href="http://ecolumbanodocz.com/admin/" class="btn btn-warning btn-block">Admin</a>
                     </div>
                     <div class="form-group" id="alert-msg"></div>
                 </form>
