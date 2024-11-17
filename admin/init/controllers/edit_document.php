@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo '<div class="alert alert-danger">Failed to update document!</div>';
     }
 }
+
 ?>
 
 

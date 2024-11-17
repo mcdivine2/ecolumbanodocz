@@ -83,6 +83,50 @@
                    <!-- end responsive table -->
                    <!-- ============================================================== -->
                </div>
+               <!-- // shipping section -->
+               <div class="row">
+                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                       <div class="card">
+                           <h5 class="card-header">Documents Shipping Information</h5>
+                           <div class="card-body">
+                               <div id="message"></div>
+                               <div class="table-responsive">
+                                   <a href="add-shipping.php" class="btn btn-sm" style="background-color:#1269AF !important; color:white"><i class="fa fa-fw fa-plus"></i> Add Shipping Fee</a><br><br>
+                                   <table class="table table-striped table-bordered first">
+                                       <thead>
+                                           <tr>
+                                               <th scope="col">Location</th>
+                                               <th scope="col">Shipping Fee</th>
+                                               <th scope="col">Actions</th>
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                           <?php
+                                            $conn = new class_model();
+                                            $shippingFees = $conn->fetchAll_shippingfee();
+                                            ?>
+                                           <?php foreach ($shippingFees as $row) { ?>
+                                               <tr>
+                                                   <td><?= $row['location']; ?></td>
+                                                   <td><?= $row['price']; ?></td>
+                                                   <td class="align-right">
+                                                       <a href="edit-shipping.php?shipping_id=<?= $row['id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                                           <i class="fa fa-edit"></i>
+                                                       </a>
+                                                       <button class="btn btn-danger btn-sm delete-shipping" data-id="<?= $row['id']; ?>">Delete</button>
+                                                   </td>
+                                               </tr>
+                                           <?php } ?>
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <!-- ============================================================== -->
+                   <!-- end responsive table -->
+                   <!-- ============================================================== -->
+               </div>
 
            </div>
 
@@ -166,6 +210,30 @@
                    load_unseen_notification();;
                }, 5000);
 
+           });
+       </script>
+       <script>
+           $(document).ready(function() {
+               $(document).on('click', '.delete-shipping', function() {
+                   var shipping_id = $(this).data('id');
+
+                   if (confirm("Are you sure you want to delete this shipping fee?")) {
+                       $.ajax({
+                           url: "../init/controllers/delete_shippingfee.php", // Path to your delete logic
+                           method: "POST",
+                           data: {
+                               shipping_id: shipping_id
+                           },
+                           success: function(response) {
+                               $("#message").html(response);
+                               location.reload(); // Reload the page
+                           },
+                           error: function(error) {
+                               console.error("Error:", error);
+                           }
+                       });
+                   }
+               });
            });
        </script>
 

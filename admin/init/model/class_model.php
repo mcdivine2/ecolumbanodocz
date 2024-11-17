@@ -328,6 +328,50 @@ class class_model
 		}
 		return $data;
 	}
+	public function fetchAll_shippingfee()
+	{
+		$sql = "SELECT * FROM  tbl_shippingfee ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function fetch_shipping_by_id($id)
+	{
+		$sql = "SELECT * FROM tbl_shippingfee WHERE id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		return $stmt->get_result()->fetch_assoc();
+	}
+
+	public function update_shippingfee($id, $location, $price)
+	{
+		$sql = "UPDATE tbl_shippingfee SET location = ?, price = ? WHERE id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("ssi", $location, $price, $id);
+		return $stmt->execute();
+	}
+
+	public function delete_shippingfee($id)
+	{
+		$sql = "DELETE FROM tbl_shippingfee WHERE id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $id);
+		return $stmt->execute();
+	}
+	public function add_shippingfee($location, $price)
+	{
+		$sql = "INSERT INTO tbl_shippingfee (location, price) VALUES (?, ?)";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("sd", $location, $price); // "s" for string, "d" for decimal
+		return $stmt->execute();
+	}
+
 
 
 
