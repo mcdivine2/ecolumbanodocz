@@ -101,7 +101,7 @@
                                         <th>Document Name</th>
                                         <th>Mode Request</th>
                                         <th>Date Releasing</th>
-                                        <th>Processing Officer</th>
+                                        <th>Request Type</th>
                                         <th>Status</th>
                                         <th>Clearance</th>
                                         <th>Action</th>
@@ -143,10 +143,10 @@
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= htmlspecialchars($row['first_name'] . " " . $row['last_name']); ?></td>
-                                            <td><?= htmlspecialchars($row['document_name']); ?></td>
+                                            <td><?= $row['document_name']; ?></td>
                                             <td><?= htmlspecialchars($row['mode_request']); ?></td>
                                             <td><?= $row['date_releasing']; ?></td>
-                                            <td><?= htmlspecialchars($row['processing_officer']); ?></td>
+                                            <td><?=($row['request_type']); ?></td>
                                             <td><span class='badge bg-<?= $badge_class; ?> text-white'><?= $status_text; ?></span></td>
                                             <td>
                                                 <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
