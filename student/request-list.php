@@ -207,14 +207,12 @@
                                                    </td>
                                                    <td class="align-right">
 
-                                                       <div class="three">
-                                                           <!-- Modal Trigger Button -->
-                                                           <button class="btn btn-sm btn-primary text-xs view-document"
-                                                               data-request-id="<?= $row['request_id']; ?>"
-                                                               data-student-id="<?= $row['student_id']; ?>"
-                                                               data-toggle="modal" data-target="#documentStatusModal">
-                                                               View
-                                                           </button>
+                                                       <div class="box">
+                                                           <div class="four">
+                                                               <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
+                                                                   Clearance
+                                                               </a>
+                                                           </div>
                                                        </div>
                                                    </td>
                                                </tr>
@@ -228,27 +226,7 @@
                    </div>
 
 
-                   <!-- Modal Structure -->
-                   <div class="modal fade" id="documentStatusModal" tabindex="-1" role="dialog" aria-labelledby="documentStatusModalLabel" aria-hidden="true">
-                       <div class="modal-dialog modal-lg" role="document">
-                           <div class="modal-content">
-                               <div class="modal-header">
-                                   <h5 class="modal-title" id="documentStatusModalLabel">Document Status Overview</h5>
-                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                       <span aria-hidden="true">&times;</span>
-                                   </button>
-                               </div>
-                               <div class="modal-body">
-                                   <div id="document-status-content">
-                                       <!-- Content will be dynamically loaded via JavaScript -->
-                                   </div>
-                               </div>
-                               <div class="modal-footer">
-                                   <p id="selected-department" class="text-muted"></p> <!-- This will show the selected department -->
-                               </div>
-                           </div>
-                       </div>
-                   </div>
+
 
 
 

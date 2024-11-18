@@ -1,55 +1,75 @@
 <?php
+include '../model/config/connection2.php';
 
- include '../model/config/connection2.php';
+// Get the filter type from the AJAX request (weekly, monthly, yearly)
+$filterType = isset($_GET['filterType']) ? $_GET['filterType'] : 'weekly';
 
+// Initialize an empty array to store document counts
+$documentCounts = [];
 
-if(isset($_POST['view'])){
+// Build the base query to fetch rows from tbl_documentrequest based on the filter type
+switch ($filterType) {
+  case 'monthly':
+    $query = "
+            SELECT document_name 
+            FROM tbl_documentrequest 
+            WHERE MONTH(date_request) = MONTH(CURRENT_DATE()) 
+            AND YEAR(date_request) = YEAR(CURRENT_DATE())
+        ";
+    break;
 
-  if($_POST["view"] != ''){
+  case 'yearly':
+    $query = "
+            SELECT document_name 
+            FROM tbl_documentrequest 
+            WHERE YEAR(date_request) = YEAR(CURRENT_DATE())
+        ";
+    break;
 
-      $stmt = $conn->prepare('UPDATE tbl_documentrequest SET `notif` = 1 WHERE `notif`= 0');
-      $stmt->execute();
-      $stmt->get_result();
+  default: // Weekly by default
+    $query = "
+            SELECT document_name 
+            FROM tbl_documentrequest 
+            WHERE WEEK(date_request) = WEEK(CURRENT_DATE()) 
+            AND YEAR(date_request) = YEAR(CURRENT_DATE())
+        ";
+    break;
+}
 
+// Execute the query
+$result = $conn->query($query);
 
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    // Get the concatenated document names with quantities
+    $documents = $row['document_name'];
+
+    // Split the string into individual documents using <br> as the separator
+    $docArray = explode('<br>', $documents);
+
+    // Loop through each document and extract its name and quantity
+    foreach ($docArray as $doc) {
+      // Use regex to extract the document name and quantity (e.g., "Transfer Credential (x2)")
+      if (preg_match('/^(.*)\s\(x(\d+)\)$/', $doc, $matches)) {
+        $docName = trim($matches[1]); // Document name
+        $quantity = (int)$matches[2]; // Quantity
+
+        // Add the quantity to the document's count
+        if (!isset($documentCounts[$docName])) {
+          $documentCounts[$docName] = 0;
+        }
+        $documentCounts[$docName] += $quantity;
+      }
+    }
   }
+}
 
-  $stmt = $conn->prepare('SELECT * FROM tbl_documentrequest ORDER BY request_id DESC LIMIT 5');
-  $stmt->execute();
-  $result = $stmt->get_result();
-   $output = '';
-   if($result->num_rows > 0){
-   while ($row = $result->fetch_assoc()) {
+// Prepare the data for JSON output
+$data = [];
+foreach ($documentCounts as $docName => $count) {
+  $data[] = [$docName, $count];
+}
 
-     $output .= '
-
-
-     <li style =" background-color:#ededed;width:100%">
-       <a class="nav-item href="#" style="margin-left:10px;">
-       <b><a href="request.php" style="color: #000000 !important;"><i class="fa fa-fw fa-file" style="color: #1269af !important"></i>Document Name: '.$row["document_name"].'</b></a>
-       <p style="margin-left:14px;font-size:11px"><i class="fa fa-calendar"></i> Date Requested: <i>'.date("M d, Y",strtotime($row["date_request"])).'</i></p>
-       <p style ="border-bottom:1px dotted blue;width:100%;"></p>
-       </a>
-     </li>
-     ';
-
-   }
-  }else{
-       $output .= '
-       <li><a href="#" class="text-bold text-italic">No Notif Found</a></li>';
-  }
-
-$stmt = $conn->prepare("SELECT * FROM tbl_documentrequest WHERE `notif`= 0");
-$stmt->execute();
-$result = $stmt->get_result();
-    $count = $result->num_rows;
-    $data = array(
-        'notification' => $output,
-        'unseen_notification'  => $count
-    );
-
-    echo json_encode($data);
-
-  }
-
-?>
+// Output the data as JSON
+header('Content-Type: application/json');
+echo json_encode($data, JSON_PRETTY_PRINT);

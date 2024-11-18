@@ -29,12 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $library_status = "Pending";
     $accounting_status = "Pending";
 
+    // Capture current date and time
+    $date_request = date("Y-m-d H:i:s");
+
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required!';
     if (empty($purposes)) $errors[] = 'Purpose is required!';
     if (empty($mode_request)) $errors[] = 'Mode Request is required!';
     if (empty($birthdate)) $errors[] = 'Birthdate is required!';
-    
+
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address!';
 
     $recent_image = "Not Required";
@@ -99,7 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         implode(", ", $purposes),
         $mode_request,
         $student_id,
-        $recent_image // This will either be the uploaded file path or "Not Required"
+        $recent_image, // This will either be the uploaded file path or "Not Required"
+        $date_request // New date_request field
     );
 
     echo $request

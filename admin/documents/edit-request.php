@@ -85,12 +85,31 @@
                                                <input type="date" value="<?= strftime('%Y-%m-%d', strtotime($row['date_request'])); ?>" name="date_request" class="form-control" readonly>
                                            </div>
                                        </div>
+                                       <?php
+                                        $hideDateReleasing = (
+                                            $row['library_status'] !== "Verified" ||
+                                            $row['custodian_status'] !== "Verified" ||
+                                            $row['accounting_status'] !== "Verified" ||
+                                            !in_array($row['dean_status'], ["Verified", "Not Included"])
+                                        );
+                                        ?>
+
                                        <div class="form-group row">
-                                           <label class="col-12 col-sm-3 col-form-label text-sm-right">Date Releasing</label>
-                                           <div class="col-12 col-sm-8 col-lg-6">
-                                               <input type="date" value="<?= $row['date_releasing']; ?>" name="date_releasing" class="form-control">
-                                           </div>
+                                           <?php if ($hideDateReleasing): ?>
+                                               <label class="col-12 col-sm-3 col-form-label text-sm-right">Notice</label>
+                                               <div class="col-12 col-sm-8 col-lg-6">
+                                                   <p class="form-control-plaintext text-danger">
+                                                       Date Releasing cannot be set because one or more statuses are not verified.
+                                                   </p>
+                                               </div>
+                                           <?php else: ?>
+                                               <label class="col-12 col-sm-3 col-form-label text-sm-right">Date Releasing</label>
+                                               <div class="col-12 col-sm-8 col-lg-6">
+                                                   <input type="date" value="<?= $row['date_releasing']; ?>" name="date_releasing" class="form-control">
+                                               </div>
+                                           <?php endif; ?>
                                        </div>
+
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Processing Officer</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
@@ -104,7 +123,7 @@
                                            <div class="col-12 col-sm-8 col-lg-6">
                                                <select name="status" id="status" class="form-control" onchange="updateEmailBody()">
                                                    <option value="<?= $row['status']; ?>" hidden><?= $row['status']; ?></option>
-                                                   <option value="Pending Request">Pending Request</option>
+                                                   <option value="Pending">Pending</option>
                                                    <option value="Declined">Declined</option>
                                                    <option value="Verified">Verified</option>
                                                    <option value="Released">Released</option>
@@ -163,7 +182,7 @@
                let message = "Hello, This is a test! ";
 
                switch (status) {
-                   case "Pending Request":
+                   case "Pending":
                        message += `Your request for ${documentName} has been marked as Pending with Reference # ${controlNo}.`;
                        break;
                    case "Declined":

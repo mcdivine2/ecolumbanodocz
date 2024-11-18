@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$student_id = trim($_POST['student_id']);
 	$document_name = trim($_POST['document_name']);
 	$date_request = trim($_POST['date_request']);
-	$date_releasing = trim($_POST['date_releasing']);
+	$date_releasing = isset($_POST['date_releasing']) ? $_POST['date_releasing'] : null;
+
 	$processing_officer = trim($_POST['processing_officer']);
 	$status = trim($_POST['status']);
 	$request_id = trim($_POST['request_id']);

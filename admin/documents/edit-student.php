@@ -1,263 +1,191 @@
-       <?php include('main_header/header.php');?>
+<?php include('main_header/header.php'); ?>
+<?php include('left_sidebar/sidebar.php'); ?>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid dashboard-content">
         <!-- ============================================================== -->
-        <!-- end navbar -->
+        <!-- Page Header -->
         <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-header">
+                    <h2 class="pageheader-title"><i class="fa fa-fw fa-user-graduate"></i> Edit Student</h2>
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Student</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ============================================================== -->
-        <!-- left sidebar -->
+        <!-- Fetch Student Data -->
         <!-- ============================================================== -->
-         <?php include('left_sidebar/sidebar.php');?>
-        <!-- ============================================================== -->
-        <!-- end left sidebar -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- wrapper  -->
-        <!-- ============================================================== -->
-        <div class="dashboard-wrapper">
-            <div class="container-fluid  dashboard-content">
-               <!-- ============================================================== -->
-                <!-- pageheader -->
-                <!-- ============================================================== -->
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="page-header">
-                             <h2 class="pageheader-title"><i class="fa fa-fw fa-user-graduate"></i>  Edit Student </h2>
-                            <div class="page-breadcrumb">
-                                <nav aria-label="breadcrumb">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
-                                        <li class="breadcrumb-item active" aria-current="page">Student</li>
-                                    </ol>
-                                </nav>
-                            </div>
+        <?php
+        include '../init/model/config/connection2.php';
+
+        $studentId = intval($_GET['student']);
+        $studentNumber = $_GET['student-number'];
+
+        $sql = "SELECT * FROM `tbl_students` WHERE `student_id` = ? AND `student_id` = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $studentId, $studentNumber);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+        ?>
+            <!-- ============================================================== -->
+            <!-- Student Edit Form -->
+            <!-- ============================================================== -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card influencer-profile-data">
+                        <div class="card-body">
+                            <div id="message"></div>
+                            <form id="validationform" name="student_form" method="POST" data-parsley-validate novalidate>
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right"><i class="fa fa-user"></i> Student Info</label>
+                                </div>
+
+                                <!-- Student Number -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Student Number</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="text" name="student_id" value="<?= htmlspecialchars($row['student_id']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- First Name -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">First Name</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="text" name="first_name" value="<?= htmlspecialchars($row['first_name']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- Middle Name -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Middle Name</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="text" name="middle_name" value="<?= htmlspecialchars($row['middle_name']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Last Name</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="text" name="last_name" value="<?= htmlspecialchars($row['last_name']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- Complete Address -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Complete Address</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <textarea name="complete_address" required class="form-control"><?= htmlspecialchars($row['complete_address']); ?></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Email Address -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Email Address</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="email" name="email_address" value="<?= htmlspecialchars($row['email_address']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Number -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Mobile Number</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="text" name="mobile_number" value="<?= htmlspecialchars($row['mobile_number']); ?>" minlength="11" maxlength="11" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- Username -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Username</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="text" name="username" value="<?= htmlspecialchars($row['username']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- //translate the hashcode -->
+
+                                <!-- Password -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Password</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <input type="password" name="password" value="<?= htmlspecialchars($row['password']); ?>" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="form-group row">
+                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Status</label>
+                                    <div class="col-12 col-sm-8 col-lg-6">
+                                        <select name="account_status" class="form-control" required>
+                                            <option value="<?= htmlspecialchars($row['account_status']); ?>" hidden>
+                                                <?= htmlspecialchars($row['account_status']); ?>
+                                            </option>
+                                            <option value="Active">Verified</option>
+                                            <option value="Inactive">Declined</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="form-group row text-right">
+                                    <div class="col-12 col-sm-8 col-lg-6 offset-sm-3">
+                                        <button type="submit" class="btn btn-space btn-primary">Update</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <!-- ============================================================== -->
-                <!-- end pageheader -->
-                <!-- ============================================================== -->
-
-                    <?php 
-                    include '../init/model/config/connection2.php';
-                    $GET_studid = intval($_GET['student']);
-                    $student_number = $_GET['student-number'];
-                    $sql = "SELECT * FROM `tbl_students` WHERE `student_id`= ? AND student_id = ?";
-                    $stmt = $conn->prepare($sql); 
-                    $stmt->bind_param("is", $GET_studid, $student_number);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    while ($row = $result->fetch_assoc()) {
-                    
-                     $student_id = $row['student_id'];
-                     $first_name = $row['first_name'];
-                     $middle_name = $row['middle_name'];
-                     $last_name = $row['last_name'];
-                     $complete_address = $row['complete_address'];
-                     $email_address = $row['email_address'];
-                     $mobile_number = $row['mobile_number'];
-                     $username = $row['username'];
-                     $password = $row['password'];
-                     $account_status = $row['account_status']; 
-                     $student_id = $row['student_id'];  
-                     
-                     
-
-                   ?>
-                    <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                    <div class="card influencer-profile-data">
-                                        <div class="card-body">
-                                            <div class="" id="message"></div>
-                                            <form id="validationform" name="student_form" data-parsley-validate="" novalidate="" method="POST">
-                                                <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right"><i class="fa fa-user"></i> Student Info</label>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Student Number</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" name="student_id" value="<?= $student_id; ?>" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">First Name</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" name="first_name" value="<?= $first_name; ?>" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                  <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Middle Name</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" name="middle_name" value="<?= $middle_name; ?>" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                   <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Last Name</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" name="last_name" value="<?= $last_name; ?>" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                               
-
-                                               <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Complete Address</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                       <textarea rows="1" data-parsley-type="alphanum" type="text" name="complete_address" required="" placeholder="" class="form-control"><?= $complete_address; ?></textarea>
-                                                    </div>
-                                                </div>
-                                                  <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Email Address</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="email" value="<?= $email_address; ?>" name="email_address" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                   <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Mobile Number</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" value="<?= $mobile_number;?>" name="mobile_number" minlength="11" maxlength="11" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right"><i class="fa fa-user-lock"></i> Account Info</label>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Username</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="text" value="<?= $username;?>" name="username" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Password</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                        <input data-parsley-type="alphanum" type="passwrd" value="<?= $password; ?>" name="password" required="" placeholder="" class="form-control">
-                                                    </div>
-                                                </div>
-                                                 <div class="form-group row">
-                                                    <label class="col-12 col-sm-3 col-form-label text-sm-right">Status</label>
-                                                    <div class="col-12 col-sm-8 col-lg-6">
-                                                       <select data-parsley-type="alphanum" type="text" value="<?= $account_status; ?>" id="account_status" required="" placeholder="" class="form-control">
-                                                           <option value="<?= $account_status; ?>" hidden><?= $account_status; ?></option>
-                                                           <option value="Active" style="background-color: green;color: #fff">Verified</option>
-                                                           <option value="Inactive" style="background-color: red;color: #fff">Declined</option>
-                                                       </select>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                                <div class="form-group row text-right">
-                                                    <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
-                                                       <input name="student_id" value="<?= $student_id; ?>" type="hidden">
-                                                        <button  class="btn btn-space btn-primary">Update</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        <?php } ?>
-                                        </div>
-                                    </div>
-                             </div>
-                        </div>
-                    </div>
             </div>
-        </div>
+        <?php } else { ?>
+            <div class="alert alert-danger">No student data found!</div>
+        <?php } ?>
     </div>
-    <!-- ============================================================== -->
-    <!-- end main wrapper -->
-    <!-- ============================================================== -->
-    <!-- Optional JavaScript -->
-    <script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="../assets/vendor/parsley/parsley.js"></script>
-    <script src="../assets/libs/js/main-js.js"></script>
-     <script type="text/javascript">
-        $(document).ready(function(){
-          var firstName = $('#firstName').text();
-          var lastName = $('#lastName').text();
-          var intials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
-          var profileImage = $('#profileImage').text(intials);
-        });
-    </script>
-    <script>
-    $('#form').parsley();
-    </script>
-    <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
-    </script>
-    <script>
-      $(document).ready(function() {
-       $('form[name="student_form"]').on('submit', function(e){
-          e.preventDefault();
-        
-          var a = $(this).find('input[name="student_id"]').val();
-          var b = $(this).find('input[name="first_name"]').val();
-          var c = $(this).find('input[name="middle_name"]').val();
-          var d = $(this).find('input[name="last_name"]').val();
-          var e = $('#course option:selected').val();
-          var f = $('#year_level option:selected').val();
-          var g = $(this).find('input[name="date_ofbirth"]').val();
-          var h = $('#gender option:selected').val();
-          var i = $(this).find('textarea[name="complete_address"]').val();
-          var j = $(this).find('input[name="email_address"]').val();
-          var k = $(this).find('input[name="mobile_number"]').val(); 
-          var l = $(this).find('input[name="username"]').val();
-          var m = $(this).find('input[name="password"]').val();
-          var n = $('#account_status option:selected').val();
-          const p = document.querySelector('input[name=student_id]').value;
+</div>
 
+<!-- ============================================================== -->
+<!-- JavaScript -->
+<!-- ============================================================== -->
+<script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../assets/vendor/parsley/parsley.js"></script>
+<script src="../assets/libs/js/main-js.js"></script>
+<script>
+    $(document).ready(function() {
+        $('form[name="student_form"]').on('submit', function(e) {
+            e.preventDefault();
 
-         if (a === '' &&  b ==='' &&  c==='' &&  d ==='' &&  e ==='' &&  f ==='' &&  g ==='' &&  h ==='' &&  i ==='' &&  j ==='' &&  k==='' &&  l ==='' &&  m ===''){
-              $('#message').html('<div class="alert alert-danger"> Required All Fields!</div>');
-              window.scrollTo(0, 0);
-            }else{
+            const formData = $(this).serialize();
+
             $.ajax({
                 url: '../init/controllers/edit_student.php',
-                method: 'post',
-                data: {
-                  student_id: a,
-                  first_name: b,
-                  middle_name: c,
-                  last_name: d,
-                  course: e,
-                  year_level: f,
-                  date_ofbirth: g,
-                  gender: h,
-                  complete_address: i,
-                  email_address: j,
-                  mobile_number: k,
-                  username: l,
-                  password: m,
-                  account_status: n,
-                  student_id: p
-
-                },
+                method: 'POST',
+                data: formData,
                 success: function(response) {
-                  $("#message").html(response);
+                    $('#message').html(response);
                     window.scrollTo(0, 0);
-                  },
-                  error: function(response) {
-                    console.log("Failed");
-       
-                  }
-              });
-           }
-         });
-      });
- </script>
+                },
+                error: function() {
+                    console.error("Error occurred during form submission.");
+                }
+            });
+        });
+    });
+</script>
 </body>
- 
+
 </html>

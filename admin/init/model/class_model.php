@@ -186,17 +186,35 @@ class class_model
 
 
 
-	public function edit_student($first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $username, $password, $account_status, $student_id)
-	{
+	public function edit_student(
+		$first_name,
+		$middle_name,
+		$last_name,
+		$complete_address,
+		$email_address,
+		$mobile_number,
+		$username,
+		$password,
+		$account_status,
+		$student_id
+	) {
+		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
 		$sql = "UPDATE `tbl_students` 
-					SET `first_name` = ?, `middle_name` = ?, `last_name` = ?, 
-						`complete_address` = ?, `email_address` = ?, 
-						`mobile_number` = ?, `username` = ?, `password` = ?, `account_status` = ? 
-					WHERE `student_id` = ?";
+				SET `first_name` = ?, 
+					`middle_name` = ?, 
+					`last_name` = ?, 
+					`complete_address` = ?, 
+					`email_address` = ?, 
+					`mobile_number` = ?, 
+					`username` = ?, 
+					`password` = ?, 
+					`account_status` = ? 
+				WHERE `student_id` = ?";
 
 		$stmt = $this->conn->prepare($sql);
 
-		// Bind parameters correctly without trailing comma
+		// Bind parameters
 		$stmt->bind_param(
 			"sssssssssi",
 			$first_name,
@@ -206,23 +224,22 @@ class class_model
 			$email_address,
 			$mobile_number,
 			$username,
-			$password,
+			$hashed_password,
 			$account_status,
 			$student_id
 		);
 
+		// Execute the query and check for success
 		if ($stmt->execute()) {
 			$stmt->close();
-			$this->conn->close();
-			return true;
+			return true; // Update successful
 		} else {
-			// Optional: Handle errors (e.g., logging or returning false)
+			// Log the error for debugging
+			error_log("Database error: " . $this->conn->error);
 			$stmt->close();
-			$this->conn->close();
-			return false;
+			return false; // Update failed
 		}
 	}
-
 
 	public function add_account($student_id, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $username, $password, $status)
 	{
@@ -311,6 +328,50 @@ class class_model
 		}
 		return $data;
 	}
+	public function fetchAll_shippingfee()
+	{
+		$sql = "SELECT * FROM  tbl_shippingfee ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function fetch_shipping_by_id($id)
+	{
+		$sql = "SELECT * FROM tbl_shippingfee WHERE id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		return $stmt->get_result()->fetch_assoc();
+	}
+
+	public function update_shippingfee($id, $location, $price)
+	{
+		$sql = "UPDATE tbl_shippingfee SET location = ?, price = ? WHERE id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("ssi", $location, $price, $id);
+		return $stmt->execute();
+	}
+
+	public function delete_shippingfee($id)
+	{
+		$sql = "DELETE FROM tbl_shippingfee WHERE id = ?";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $id);
+		return $stmt->execute();
+	}
+	public function add_shippingfee($location, $price)
+	{
+		$sql = "INSERT INTO tbl_shippingfee (location, price) VALUES (?, ?)";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("sd", $location, $price); // "s" for string, "d" for decimal
+		return $stmt->execute();
+	}
+
 
 
 
@@ -339,39 +400,39 @@ class class_model
 
 	public function fetchAll_documentrequest($day = null, $month = null, $year = null)
 	{
-    // Start the base SQL query
-    $sql = "SELECT * FROM tbl_documentrequest WHERE 1=1";
-    
-    // Add conditions based on the provided filters
-    if ($day) {
-        $sql .= " AND DAY(date_request) = ?";
-    }
-    if ($month) {
-        $sql .= " AND MONTH(date_request) = ?";
-    }
-    if ($year) {
-        $sql .= " AND YEAR(date_request) = ?";
-    }
-    
-    // Prepare the statement
-    $stmt = $this->conn->prepare($sql);
+		// Start the base SQL query
+		$sql = "SELECT * FROM tbl_documentrequest WHERE 1=1";
 
-    // Bind parameters dynamically
-    $params = [];
-    if ($day) $params[] = $day;
-    if ($month) $params[] = $month;
-    if ($year) $params[] = $year;
-    
-    // Execute with parameters
-    $stmt->execute($params);
+		// Add conditions based on the provided filters
+		if ($day) {
+			$sql .= " AND DAY(date_request) = ?";
+		}
+		if ($month) {
+			$sql .= " AND MONTH(date_request) = ?";
+		}
+		if ($year) {
+			$sql .= " AND YEAR(date_request) = ?";
+		}
 
-    // Fetch the result set
-    $result = $stmt->get_result();
-    $data = array();
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
-    return $data;
+		// Prepare the statement
+		$stmt = $this->conn->prepare($sql);
+
+		// Bind parameters dynamically
+		$params = [];
+		if ($day) $params[] = $day;
+		if ($month) $params[] = $month;
+		if ($year) $params[] = $year;
+
+		// Execute with parameters
+		$stmt->execute($params);
+
+		// Fetch the result set
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
 	}
 
 	public function print_documentrequest()
@@ -597,10 +658,10 @@ class class_model
 		}
 	}
 
-	public function add_user($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status)
+	public function add_user($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`) VALUES(?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
-		$stmt->bind_param("sssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`, `role`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt->bind_param("ssssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
@@ -608,10 +669,10 @@ class class_model
 		}
 	}
 
-	public function add_admin_treasurer($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status)
+	public function add_admin_treasurer($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`) VALUES(?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
-		$stmt->bind_param("sssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status` , `role`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt->bind_param("ssssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
@@ -619,10 +680,10 @@ class class_model
 		}
 	}
 
-	public function add_admin_library($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status)
+	public function add_admin_library($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`) VALUES(?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
-		$stmt->bind_param("sssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status` , `role`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt->bind_param("ssssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
@@ -630,10 +691,10 @@ class class_model
 		}
 	}
 
-	public function add_admin_custudian($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status)
+	public function add_admin_custodian($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`) VALUES(?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
-		$stmt->bind_param("sssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`, `role`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt->bind_param("ssssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
@@ -641,10 +702,10 @@ class class_model
 		}
 	}
 
-	public function add_admin_dean($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status)
+	public function add_admin_dean($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`) VALUES(?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
-		$stmt->bind_param("sssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_usermanagement` (`complete_name`, `desgination`, `email_address`, `phone_number`, `username`, `password`, `status`, `role`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt->bind_param("ssssssss", $complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
 		if ($stmt->execute()) {
 			$stmt->close();
 			$this->conn->close();
@@ -844,28 +905,25 @@ class class_model
 	}
 
 	public function fetchMonthly_documentrequest($year = null)
-{
-    $sql = "SELECT MONTH(date_request) as month, COUNT(*) as count FROM tbl_documentrequest WHERE 1=1";
-    if ($year) {
-        $sql .= " AND YEAR(date_request) = ?";
-    }
-    $sql .= " GROUP BY MONTH(date_request)";
-    
-    $stmt = $this->conn->prepare($sql);
-    $params = [];
-    if ($year) $params[] = $year;
-    
-    $stmt->execute($params);
-    $result = $stmt->get_result();
-    $data = array();
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
-    return $data;
-}
-	
+	{
+		$sql = "SELECT MONTH(date_request) as month, COUNT(*) as count FROM tbl_documentrequest WHERE 1=1";
+		if ($year) {
+			$sql .= " AND YEAR(date_request) = ?";
+		}
+		$sql .= " GROUP BY MONTH(date_request)";
 
-	
+		$stmt = $this->conn->prepare($sql);
+		$params = [];
+		if ($year) $params[] = $year;
+
+		$stmt->execute($params);
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
 }
 
 ?>

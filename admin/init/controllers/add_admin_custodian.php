@@ -10,9 +10,9 @@ if (isset($_POST)) {
 	$username = trim($_POST['username']);
 	$password = trim($_POST['password']);
 	$status = "Active";
-	$role = "Library";
+	$role = "Custodian";
 
-	$user = $conn->add_admin_library($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
+	$user = $conn->add_admin_custodian($complete_name, $desgination, $email_address, $phone_number, $username, $password, $status, $role);
 	if ($user == TRUE) {
 		echo '<div class="alert alert-success">Add User Successfully!</div><script> setTimeout(function() {  window.history.go(-1); }, 1000); </script>';
 	} else {
