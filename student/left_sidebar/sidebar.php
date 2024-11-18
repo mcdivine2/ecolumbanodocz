@@ -20,8 +20,8 @@ $totalRequestData = $conn->count_numberoftotalrequest($student_id);
 $totalRequestCount = !empty($totalRequestData) ? $totalRequestData[0]['count_request'] : 0;
 
 // Fetch the total payment count
-$totalPaymentData = $conn->count_Allpayments($student_id);
-$totalPaymentCount = !empty($totalPaymentData) ? $totalPaymentData[0]['count_payment'] : 0;
+$totalPaymentData = $conn->count_numberoftotalpending($student_id);
+$totalPaymentCount = !empty($totalPaymentData) ? $totalPaymentData[0]['count_pending'] : 0;
 ?>
 
 <style>
@@ -150,13 +150,13 @@ $totalPaymentCount = !empty($totalPaymentData) ? $totalPaymentData[0]['count_pay
                             <ul class="navbar-nav flex-column ml-3">
                                 <li class="nav-item">
                                     <a class="nav-link" href="pending-payment.php">
-                                        <i class="fa fa-clock"></i>Waiting for Payment
+                                        <i class="fa fa-clock"></i>Waiting for Payment <span class="badge badge-success"><?= $totalPaymentCount ?></span>
                                     </a>
                                 </li>
                 
                                 <li class="nav-item">
                                     <a class="nav-link" href="payment.php"><i class="fa fa-fw fa-money-bill-wave">
-                                        </i>Proof of Payment <span class="badge badge-success"><?= $totalPaymentCount ?></span>
+                                        </i>Proof of Payment 
                                     </a>
                                 </li>
                             </ul>
