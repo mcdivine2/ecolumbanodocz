@@ -638,18 +638,18 @@ class class_model
 		$library_status,
 		$accounting_status,
 		$purpose,
-		$mode_request,
 		$student_id,
 		$recent_image,
-		$date_request // New parameter
+		$date_request
 	) {
 		// Check if the connection is active
 		if (!$this->conn->ping()) {
-			die('MySQL connection lost');
+			error_log('MySQL connection lost');
+			return false;
 		}
 
-		// Set dean_status based on specific document name
-		if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document_name)) {
+		// Ensure dean_status logic is consistent
+		if (stripos($document_name, "Honorable Dismissal w/ TOR for evaluation") !== false) {
 			$dean_status = "Pending";
 		} else {
 			$dean_status = "Not Included";
@@ -661,41 +661,41 @@ class class_model
 			(first_name, middle_name, last_name, complete_address, birthdate, course, 
 			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
-			 accounting_status, purpose, mode_request, student_id, recent_image, date_request) 
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			 accounting_status, purpose, student_id, recent_image, date_request) 
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 		);
 
 		if (!$stmt) {
-			die('Prepare failed: ' . $this->conn->error);
+			error_log('Prepare failed: ' . $this->conn->error);
+			return false;
 		}
 
-		// Bind parameters
+		// Correct bind parameter type string
 		$stmt->bind_param(
-			"ssssssssssssssssssiss",
-			$first_name,
-			$middle_name,
-			$last_name,
-			$complete_address,
-			$birthdate,
-			$course,
-			$email_address,
-			$control_no,
-			$document_name,
-			$price,
-			$request_type,
-			$registrar_status,
-			$custodian_status,
-			$dean_status,
-			$library_status,
-			$accounting_status,
-			$purpose,
-			$mode_request,
-			$student_id,
-			$recent_image,
-			$date_request // Bind the new parameter
+			"ssssssssssssssssssss", // Updated type definition string (all are strings)
+			$first_name,          // 1
+			$middle_name,         // 2
+			$last_name,           // 3
+			$complete_address,    // 4
+			$birthdate,           // 5
+			$course,              // 6
+			$email_address,       // 7
+			$control_no,          // 8
+			$document_name,       // 9
+			$price,               // 10
+			$request_type,        // 11
+			$registrar_status,    // 12
+			$custodian_status,    // 13
+			$dean_status,         // 14
+			$library_status,      // 15
+			$accounting_status,   // 16
+			$purpose,             // 17
+			$student_id,          // 18
+			$recent_image,        // 19
+			$date_request         // 20
 		);
 
-		// Execute the statement and handle result
+		// Execute the statement and handle the result
 		if ($stmt->execute()) {
 			$stmt->close();
 			return true;
@@ -705,6 +705,8 @@ class class_model
 			return false;
 		}
 	}
+
+
 
 
 

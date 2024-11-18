@@ -13,14 +13,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course = trim($_POST['course']);
     $email_address = trim($_POST['email_address']);
     $control_no = trim($_POST['control_no']);
-    $mode_request = trim($_POST['mode_request']);
     $student_id = trim($_POST['student_id']);
-    $price = str_replace('₱', '', trim($_POST['price']));
+    $total_price = str_replace('₱', '', trim($_POST['total_price']));
 
     $document_names = $_POST['document_name'] ?? [];
-    $no_ofcopies = $_POST['no_ofcopies'] ?? [];
+    $no_ofcopies = $_POST['copies'] ?? [];
     $purposes = $_POST['purpose'] ?? [];
-    $request_types = $_POST['request_type'] ?? [];
+    $request_types = [];
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'request_type_') === 0) {
+            $request_types[] = $value;
+        }
+    }
 
     // Status fields
     $registrar_status = "Pending";
@@ -35,17 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required!';
     if (empty($purposes)) $errors[] = 'Purpose is required!';
-    if (empty($mode_request)) $errors[] = 'Mode Request is required!';
     if (empty($birthdate)) $errors[] = 'Birthdate is required!';
 
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address!';
 
     $recent_image = "Not Required";
 
-    // Check for specific document and handle file upload
+    // Handle specific document file upload
     if (in_array("Honorable Dismissal w/ TOR for evaluation", $document_names)) {
         if ($_FILES["upload_recent"]["error"] === UPLOAD_ERR_OK) {
-            // Use a relative path for student/student_uploads directory
             $target_dir = __DIR__ . "/../../student/student_uploads/";
             $file_name = uniqid() . '-' . basename($_FILES["upload_recent"]["name"]);
             $target_file = $target_dir . $file_name;
@@ -76,9 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($document_names as $index => $document_name) {
         $copies = $no_ofcopies[$index] ?? 1;
         $request_type = $request_types[$index] ?? '';
-        if ($request_type === 'other') {
-            $request_type .= ': ' . trim($_POST['other_specify_' . ($index + 1)]);
-        }
         $documents[] = "$document_name (x$copies)";
     }
 
@@ -92,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email_address,
         $control_no,
         implode("<br>", $documents),
-        $price,
+        $total_price,
         implode("<br>", $request_types),
         $registrar_status,
         $custodian_status,
@@ -100,10 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $library_status,
         $accounting_status,
         implode(", ", $purposes),
-        $mode_request,
         $student_id,
-        $recent_image, // This will either be the uploaded file path or "Not Required"
-        $date_request // New date_request field
+        $recent_image,
+        $date_request
     );
 
     echo $request

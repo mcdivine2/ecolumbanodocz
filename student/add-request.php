@@ -112,15 +112,15 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Course</label>
-                                        <select data-parsley-type="alphanum" id="course" required class="form-control">
+                                        <select name="course" data-parsley-type="alphanum" id="course" required class="form-control">
+                                            <option value="">&larr; Select Course &rarr;</option>
                                             <?php
                                             $conn = new class_model();
                                             $course = $conn->fetchAll_course();
+                                            foreach ($course as $row) {
+                                                echo '<option value="' . $row['course_name'] . '">' . $row['course_name'] . '</option>';
+                                            }
                                             ?>
-                                            <option value="">&larr; Select Course &rarr;</option>
-                                            <?php foreach ($course as $row) { ?>
-                                                <option value="<?= $row['course_name']; ?>"><?= $row['course_name']; ?></option>
-                                            <?php } ?>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -150,59 +150,62 @@
                             <!-- Request For Section -->
                             <div class="form-group mt-4">
                                 <h4 class="section-title">Request For</h4>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>Select Document</label>
-                                        <?php
-                                        $conn = new class_model();
-                                        $doc = $conn->fetchAll_document();
-                                        if ($doc && count($doc) > 0) {
-                                            foreach ($doc as $index => $document) {
-                                                echo '<div class="form-check">';
-                                                echo '<input class="form-check-input document-checkbox" type="checkbox" name="document_name[]" id="document_name' . ($index + 1) . '" value="' . $document['document_name'] . '" data-price="' . $document['price'] . '">';
-                                                echo '<label class="form-check-label" for="document_name' . ($index + 1) . '">' . $document['document_name'] . ' (₱' . $document['price'] . ')</label>';
-                                                echo '<div id="quantity' . ($index + 1) . '" class="mt-2" style="display:none;">';
-                                                echo '<label for="no_ofcopies' . ($index + 1) . '" class="mr-2">Copies:</label>';
-                                                echo '<input type="number" name="no_ofcopies[]" value="1" class="form-control no-of-copies" min="1" id="no_ofcopies' . ($index + 1) . '" style="width: 80px;">';
-                                                echo '</div>';
-                                                echo '<div id="requestType' . ($index + 1) . '" class="mt-2" style="display:none;">';
-                                                if ($document['document_name'] === 'Certificate') {
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="as unit earn" required><label class="form-check-label">As Unit Earn</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="as graduate" required><label class="form-check-label">As Graduate</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="other" required onclick="showSpecifyInput(' . ($index + 1) . ')"><label class="form-check-label">Other (please specify)</label></div>';
-                                                    echo '<input type="text" name="other_specify_' . ($index + 1) . '" placeholder="Please specify" class="form-control mt-2" style="display:none;" id="other_specify' . ($index + 1) . '">';
-                                                } elseif ($document['document_name'] === 'Honorable Dismissal w/ TOR for evaluation') {
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="1st request" required><label class="form-check-label">1st Request</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="re-issuance" required><label class="form-check-label">Re-Issuance</label></div>';
-                                                    echo '<div class="mt-3"><label for="upload_recent" class="form-label"><strong>Upload Recent 2x2</strong></label><input type="file" class="form-control" id="upload_recent" name="upload_recent" accept=".jpg, .jpeg, .png, .pdf"><small class="form-text text-muted">Accepted formats: JPG, PNG, PDF</small></div>';
+                                <div id="requestContainer">
+                                    <!-- First Row (Default) -->
+                                    <div class="row request-row" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                                        <div class="col-md-4" style="margin-bottom: 10px;">
+                                            <label style="font-weight: bold;">Select Document:</label>
+                                            <select name="document_name[]" class="form-control document-select" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px;">
+                                                <option value="" disabled selected>&larr; Select Document &rarr;</option>
+                                                <?php
+                                                $conn = new class_model();
+                                                $documents = $conn->fetchAll_document();
+                                                if ($documents && count($documents) > 0) {
+                                                    foreach ($documents as $doc) {
+                                                        echo '<option value="' . $doc['document_name'] . '" data-price="' . $doc['price'] . '">' . $doc['document_name'] . ' (₱' . $doc['price'] . ')</option>';
+                                                    }
                                                 } else {
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="1st request" required><label class="form-check-label">1st Request</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="re-issuance" required><label class="form-check-label">Re-Issuance</label></div>';
+                                                    echo '<option value="">No documents available</option>';
                                                 }
-                                                echo '</div></div>';
-                                            }
-                                        } else {
-                                            echo "No documents found.";
-                                        }
-                                        ?>
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 10px;">
+                                            <label style="font-weight: bold;">Copies:</label>
+                                            <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required disabled style="border: 2px solid #007bff; border-radius: 5px; padding: 5px;">
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 10px;">
+                                            <label style="font-weight: bold;">Request Type:</label>
+                                            <div class="request-type-options d-flex" style="display: none; gap: 15px;">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="request_type_0" value="1st request" disabled>
+                                                    <label class="form-check-label" style="font-size: 14px;">1st Request</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="request_type_0" value="re-issuance" disabled>
+                                                    <label class="form-check-label" style="font-size: 14px;">Re-Issuance</label>
+                                                </div>
+                                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="margin-left: 15px;">Cancel</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Request Date and Mode -->
+                                <!-- Total Amount -->
                                 <div class="row mt-3">
-                                    <div class="col-md-3">
-                                        <label>Mode:</label>
-                                        <select name="mode_request" id="mode_request" class="form-control" required>
-                                            <option value="">&larr; Select Mode &rarr;</option>
-                                            <option value="Pick Up">Pick-Up</option>
-                                            <option value="Delivery">Delivery</option>
-                                        </select>
-                                        <label id="deliveryFeeSection" style="display:none;">Delivery Fee: ₱50</label>
+                                    <div class="col-md-4">
+                                        <label style="font-weight: bold;">Total Amount:</label>
+                                        <input type="text" name="total_price" id="totalPrice" class="form-control" value="₱0" readonly style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; font-size: 16px;">
                                     </div>
-                                    <div class="col-md-3">
-                                        <label>Total Amount:</label>
-                                        <input type="text" name="price" id="totalAmount" class="form-control" placeholder="₱0" readonly>
-                                    </div>
+                                </div>
+
+
+                                <!-- Add New Row Button -->
+                                <div class="text-right" style="margin-top: 10px;">
+                                    <button type="button" id="addRowBtn" class="btn btn-success" style="background-color: #28a745; border-color: #28a745; border-radius: 5px; padding: 10px 20px; font-size: 16px;"
+                                        <?php echo (empty($documents) ? 'disabled' : ''); ?>>
+                                        Add Another Document
+                                    </button>
                                 </div>
                             </div>
 
@@ -247,7 +250,6 @@
                         <p><strong>Student Name: </strong> <span id="modalStudentName"></span></p>
                         <p><strong>Control No.: </strong> <span id="modalControlNo"></span></p>
                         <p><strong>Document Name: </strong> <span id="modalDocumentName"></span></p>
-                        <p><strong>Mode: </strong> <span id="modalMode"></span></p>
                         <p><strong>Total Amount: </strong> <span id="modalTotalAmount"></span></p>
 
                         <!-- Image Preview Section -->
@@ -289,209 +291,242 @@
 
         <script>
             $(document).ready(function() {
-                let formData = null;
-                const deliveryFee = 50;
+                const requestContainer = $('#requestContainer');
+                const addRowBtn = $('#addRowBtn');
+                const totalPriceField = $('#totalPrice');
 
-                // Toggle visibility of quantity input and request type when checkbox is checked/unchecked
-                $('input[name="document_name[]"]').change(function() {
-                    const docIndex = this.id.replace('document_name', '');
-                    const qtyDiv = `#quantity${docIndex}`;
-                    const requestTypeDiv = `#requestType${docIndex}`;
+                const deliveryFee = 50; // Adjust if needed
 
-                    if (this.checked) {
-                        $(qtyDiv).show();
-                        $(requestTypeDiv).show();
+                // Function to calculate the total amount dynamically
+                function updateTotalPrice() {
+                    let total = 0;
+                    requestContainer.find('.request-row').each(function() {
+                        const documentSelect = $(this).find('.document-select');
+                        const copiesInput = $(this).find('.copies-input');
+                        const price = parseFloat(documentSelect.find(':selected').data('price')) || 0;
+                        const copies = parseInt(copiesInput.val()) || 1;
 
-                        // Check if "Honorable Dismissal w/ TOR for evaluation" is selected and show image preview if uploaded
-                        if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
-                            previewImage(); // Call the image preview function
-                        }
-                    } else {
-                        $(qtyDiv).hide().find('input').val('');
-                        $(requestTypeDiv).hide();
-                        $(`input[name="request_type_${docIndex}"]`).prop('checked', false);
-
-                        // Hide image preview if "Honorable Dismissal w/ TOR for evaluation" is deselected
-                        if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
-                            $('#imagePreviewContainer').hide();
-                            $('#imagePreview').attr('src', '');
-                        }
-                    }
-
-                    calculateTotal();
-                });
-
-                // Function to preview the uploaded image
-                function previewImage() {
-                    const fileInput = $('#upload_recent')[0].files[0];
-                    if (fileInput) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            $('#imagePreview').attr('src', e.target.result);
-                            $('#imagePreviewContainer').show();
-                        };
-                        reader.readAsDataURL(fileInput);
-                    } else {
-                        $('#imagePreviewContainer').hide();
-                        $('#imagePreview').attr('src', '');
-                    }
-                }
-
-                // Trigger the previewImage function when a new file is chosen
-                $('#upload_recent').change(function() {
-                    previewImage();
-                });
-
-                // Recalculate total on request type change
-                $(document).on('input', '.no-of-copies', calculateTotal);
-                $(document).on('change', 'input[type="radio"][name^="request_type_"]', calculateTotal);
-
-                // Toggle visibility of "Other" purpose input
-                $('#otherPurposeCheckbox').change(function() {
-                    $('#otherPurposeInput').toggle(this.checked).val('');
-                });
-
-                // Show/hide delivery fee and recalculate total
-                $('#mode_request').change(function() {
-                    $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
-                    calculateTotal();
-                });
-
-                // Calculate total amount
-                // Calculate total amount
-                function calculateTotal() {
-                    let totalAmount = 0;
-
-                    $('input[name="document_name[]"]:checked').each(function() {
-                        const docIndex = this.id.replace('document_name', '');
-                        const price = parseFloat($(this).data('price')) || 0;
-                        const copies = parseInt($(`#no_ofcopies${docIndex}`).val()) || 1;
-                        const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
-
-                        if (requestType === '1st request') {
-                            totalAmount += price * Math.max(0, copies - 1);
-                        } else {
-                            totalAmount += price * copies;
+                        if (documentSelect.val()) {
+                            total += price * copies;
                         }
                     });
 
+                    // Add delivery fee if delivery mode is selected
                     if ($('#mode_request').val() === 'Delivery') {
-                        totalAmount += deliveryFee;
+                        total += deliveryFee;
                     }
 
-                    $('#totalAmount').val(totalAmount > 0 ? `₱${totalAmount.toFixed(2)}` : '₱0');
-                    return totalAmount;
+                    totalPriceField.val(`₱${total.toFixed(2)}`);
                 }
 
-                // Form submission
-                $('#submitForm').click(function(e) {
-                    e.preventDefault();
-                    formData = new FormData($('form[name="docu_forms"]')[0]);
-
-                    const selectedDocs = $('input[name="document_name[]"]:checked');
-                    const selectedPurpose = $('input[name="purpose[]"]:checked');
-
-                    if (!selectedDocs.length) return showError('Please select at least one document.');
-                    if (!$('#course').val()) return showError('Please select a course.');
-                    if (!selectedPurpose.length) return showError('Please select at least one purpose.');
-
-                    // Validate request type for each selected document
-                    let isValid = true;
-                    selectedDocs.each(function() {
-                        const docIndex = this.id.replace('document_name', '');
-                        const requestTypeRadios = $(`input[name="request_type_${docIndex}"]`);
-                        const isRequestTypeSelected = requestTypeRadios.is(':checked');
-
-                        if (!isRequestTypeSelected) {
-                            showError(`Please select a request type for the document: ${this.value}`);
-                            isValid = false;
-                            return false; // Exit the loop
+                // Function to get selected document names
+                function getSelectedDocuments() {
+                    const selected = [];
+                    requestContainer.find('.document-select').each(function() {
+                        if ($(this).val()) {
+                            selected.push($(this).val());
                         }
                     });
+                    return selected;
+                }
 
-                    if (!isValid) return; // Stop form submission if validation fails
+                // Function to update dropdown options and check if Add Row button should be enabled
+                function updateDropdownOptionsAndButton() {
+                    const selectedDocuments = getSelectedDocuments();
+                    let availableOptions = 0;
 
-                    formData.delete('document_name[]');
-                    formData.delete('no_ofcopies[]');
-                    formData.delete('request_type[]');
+                    requestContainer.find('.document-select').each(function() {
+                        const currentSelect = $(this);
+                        const currentValue = currentSelect.val();
 
-                    let formattedDocuments = [];
-                    selectedDocs.each(function(index) {
-                        const docIndex = this.id.replace('document_name', '');
-                        const docName = this.value;
-                        const copies = $(this).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
-                        let requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+                        currentSelect.find('option').each(function() {
+                            const optionValue = $(this).val();
+                            if (selectedDocuments.includes(optionValue) && optionValue !== currentValue) {
+                                $(this).hide();
+                            } else {
+                                $(this).show();
+                            }
+                        });
 
-                        if (requestType === 'other') {
-                            const otherSpecifyValue = $(`input[name="other_specify_${docIndex}"]`).val().trim();
-                            if (otherSpecifyValue) requestType = `other: ${otherSpecifyValue}`;
-                        }
-
-                        formData.append('document_name[]', docName);
-                        formData.append('no_ofcopies[]', copies);
-                        formData.append('request_type[]', requestType);
-
-                        formattedDocuments.push(`${index + 1}. ${docName} (x${copies}), ${requestType}`);
+                        // Count remaining available options
+                        availableOptions += currentSelect.find('option:visible').not('[value=""]').length;
                     });
 
-                    const total = calculateTotal();
-                    formData.append('price', total);
-                    formData.append('course', $('#course').val());
+                    // Disable Add Row button if no more options are available
+                    const allFieldsComplete = checkLastRowCompleteness();
+                    addRowBtn.prop('disabled', availableOptions === selectedDocuments.length || !allFieldsComplete);
+                }
 
-                    const file = $('#upload_recent')[0].files[0];
-                    if (file) formData.append('upload_recent', file);
+                // Function to check if all fields in the last row are filled
+                function checkLastRowCompleteness() {
+                    const lastRow = requestContainer.find('.request-row:last');
+                    const documentSelect = lastRow.find('.document-select');
+                    const copiesInput = lastRow.find('.copies-input');
+                    const requestTypeRadios = lastRow.find('input[name^="request_type"]:checked');
 
-                    $('#modalStudentName').text(`${getField('first_name')} ${getField('middle_name')} ${getField('last_name')}`);
-                    $('#modalControlNo').text(getField('control_no'));
-                    $('#modalDocumentName').html(formattedDocuments.join('<br>'));
-                    $('#modalMode').text($('#mode_request').val());
-                    $('#modalTotalAmount').text(`₱${total.toFixed(2)}`);
-                    $('#paymentModal').modal('show');
+                    return documentSelect.val() && copiesInput.val() && requestTypeRadios.length > 0;
+                }
+
+                // Event listener for document selection
+                requestContainer.on('change', '.document-select', function() {
+                    const parentRow = $(this).closest('.request-row');
+                    const copiesInput = parentRow.find('.copies-input');
+                    const requestTypeOptions = parentRow.find('.request-type-options');
+
+                    if ($(this).val()) {
+                        copiesInput.prop('disabled', false);
+                        requestTypeOptions.show();
+                        requestTypeOptions.find('input').prop('disabled', false);
+                    } else {
+                        copiesInput.prop('disabled', true).val(1);
+                        requestTypeOptions.hide();
+                        requestTypeOptions.find('input').prop('checked', false);
+                    }
+
+                    updateTotalPrice();
+                    updateDropdownOptionsAndButton();
                 });
 
+                // Event listener for copies input
+                requestContainer.on('input', '.copies-input', function() {
+                    updateTotalPrice();
+                    updateDropdownOptionsAndButton();
+                });
 
-                $('#confirmSubmit').click(function() {
-                    if (formData) {
+                // Event listener for request type selection
+                requestContainer.on('change', 'input[name^="request_type"]', function() {
+                    updateDropdownOptionsAndButton();
+                });
+
+                // Event listener for cancel button
+                requestContainer.on('click', '.cancel-row-btn', function() {
+                    const parentRow = $(this).closest('.request-row');
+                    parentRow.remove(); // Remove the row
+                    updateTotalPrice();
+                    updateDropdownOptionsAndButton();
+                });
+
+                // Event listener for "Add Another Document" button
+                addRowBtn.on('click', function() {
+                    const newRow = $('.request-row:first').clone();
+                    const newIndex = requestContainer.children().length;
+
+                    newRow.find('.document-select').val('');
+                    newRow.find('.copies-input').val(1).prop('disabled', true);
+                    newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
+
+                    // Update radio button names for the new row
+                    newRow.find('input[name^="request_type"]').each(function() {
+                        const name = `request_type_${newIndex}`;
+                        $(this).attr('name', name);
+                    });
+
+                    requestContainer.append(newRow);
+                    updateDropdownOptionsAndButton();
+                });
+
+                // Event listener for mode of request
+                $('#mode_request').on('change', function() {
+                    $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
+                    updateTotalPrice();
+                });
+
+                // Initial setup
+                updateTotalPrice();
+                updateDropdownOptionsAndButton();
+
+                $(document).ready(function() {
+                    $('#submitForm').on('click', function(e) {
+                        e.preventDefault(); // Prevent default form submission
+
+                        // Collect form data
+                        const formData = new FormData($('#validationform')[0]);
+                        const course = $('select[name="course"]').val();
+
+                        if (!course) {
+                            $('#message').html('<div class="alert alert-danger">Please select a course!</div>');
+                            window.scrollTo(0, 0);
+                            return;
+                        }
+
+                        // Validate required fields
+                        const controlNo = $('input[name="control_no"]').val();
+                        const totalAmount = $('input[name="total_price"]').val();
+                        const studentId = $('input[name="student_id"]').val();
+                        const birthdate = $('input[name="birthdate"]').val();
+                        const email = $('input[name="email_address"]').val();
+
+                        // Collect document names and validate
+                        const documentNames = [];
+                        $('.document-select').each(function() {
+                            const selectedValue = $(this).val();
+                            if (selectedValue) {
+                                documentNames.push(selectedValue);
+                            }
+                        });
+
+                        if (
+                            !controlNo ||
+                            !totalAmount ||
+                            !studentId ||
+                            !birthdate ||
+                            !email ||
+                            documentNames.length === 0
+                        ) {
+                            $('#message').html('<div class="alert alert-danger">All fields are required, including at least one document!</div>');
+                            window.scrollTo(0, 0);
+                            return;
+                        }
+
+                        // Make AJAX request
+                        // Make AJAX request
                         $.ajax({
-                            url: '../init/controllers/add_request.php',
+                            url: '../init/controllers/add_request.php', // Update this to your server-side script
                             type: 'POST',
                             data: formData,
                             processData: false,
                             contentType: false,
-                            success(response) {
-                                $('#message').html(response);
-                                $('#paymentModal').modal('hide');
+                            cache: false,
+                            async: false,
+                            beforeSend: function() {
+                                // Show a loading message while the request is processing
+                                $('#message').html('<div class="alert alert-info">Submitting your request, please wait...</div>');
                                 window.scrollTo(0, 0);
                             },
-                            error() {
-                                console.error('Failed to submit the form.');
+                            success: function(response) {
+                                // Check for a "success" keyword in the response
+                                if (response.includes('success')) {
+                                    $('#message').html('<div class="alert alert-success">Your request has been successfully submitted! Redirecting to the dashboard...</div>');
+                                    window.scrollTo(0, 0);
+                                    setTimeout(function() {
+                                        window.location.href = 'index.php'; // Redirect after a short delay
+                                    }, 3000); // 3-second delay before redirect
+                                } else {
+                                    // Handle other responses (e.g., validation errors)
+                                    $('#message').html('<div class="alert alert-warning">There was an issue with your submission: ' + response + '</div>');
+                                    window.scrollTo(0, 0);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('AJAX request failed: ' + status + ', ' + error);
+                                $('#message').html('<div class="alert alert-danger">An unexpected error occurred. Please try again later.</div>');
+                                window.scrollTo(0, 0);
                             }
                         });
-                    }
+
+                    });
                 });
 
-                function getField(name) {
-                    return $(`input[name="${name}"]`).val();
-                }
 
-                function showError(msg) {
-                    $('#message').html(`<div class="alert alert-danger">${msg}</div>`);
-                    setTimeout(() => $('#message').empty(), 3000);
-                }
-
-                $('.btn-secondary').click(function() {
-                    $('#paymentModal').modal('hide');
-                });
             });
-        </script>
 
-        <script>
             function showSpecifyInput(index) {
                 // Toggle visibility of the "Other" input when "Other (please specify)" radio button is selected
                 const specifyInput = $(`#other_specify${index}`);
                 specifyInput.toggle(); // Show or hide the input
             }
         </script>
+
 
         </body>
 
