@@ -199,12 +199,19 @@
                 <?php
 $conn = new class_model();
 
-// Weekly Data: Grouped by day of the current week
+// Weekly Data: Grouped by Monday-Sunday of the current week
 $weeklyData = [];
-for ($day = 1; $day <= 7; $day++) {
-    $date = date('Y-m-d', strtotime("this week +$day days"));
-    $weeklyData[$date] = count($conn->fetchAll_documentrequest(date('d', strtotime($date)), date('m', strtotime($date)), date('Y', strtotime($date))));
+$weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+$startOfWeek = strtotime('monday this week'); // Start of the current week (Monday)
+
+for ($day = 0; $day < 7; $day++) {
+    $currentDate = strtotime("+$day day", $startOfWeek);
+    $dayNum = date('d', $currentDate);
+    $monthNum = date('m', $currentDate);
+    $yearNum = date('Y', $currentDate);
+    $weeklyData[$weekdays[$day]] = count($conn->fetchAll_documentrequest($dayNum, $monthNum, $yearNum));
 }
+
 
 
 // Monthly Data (grouped by month for the current year)
@@ -324,19 +331,46 @@ $yearlyDataJSON = json_encode($yearlyData);
     <script type="text/javascript" src="../assets/js/loader.js"></script>
 
     <script>
-        // Weekly Chart
-    const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-    const weeklyData = <?= $weeklyDataJSON ?>;
-    new Chart(weeklyCtx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(weeklyData),
-            datasets: [{
-                label: 'Weekly Document Requests',
-                data: Object.values(weeklyData),
-            }]
+    // Weekly Chart
+const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+const weeklyData = <?= json_encode($weeklyData) ?>; // Convert PHP array to JSON
+new Chart(weeklyCtx, {
+    type: 'bar',
+    data: {
+        labels: Object.keys(weeklyData), // Directly use 'Monday', 'Tuesday', etc.
+        datasets: [{
+            label: 'Weekly Document Requests',
+            data: Object.values(weeklyData),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Optional: Bar background color
+            borderColor: 'rgba(75, 192, 192, 1)',      // Optional: Bar border color
+            borderWidth: 1                             // Optional: Bar border width
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Days of the Week'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
         }
-    });
+    }
+});
+
 
     // Monthly Chart
     const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
