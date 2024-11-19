@@ -77,7 +77,7 @@
                         <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
 
                             <!-- Applicant's Information Section -->
-                            <div class="form-group">
+                            <div class="form-group" style="border-top: 1px solid #ddd; padding-top: 15px;">
                                 <h4 class="section-title">Applicant's Information</h4>
                                 <div class="row">
                                     <div class="col-md-4">
@@ -112,15 +112,16 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Course</label>
-                                        <select data-parsley-type="alphanum" id="course" required class="form-control">
+                                        <input type="text" id="courseSearch" class="form-control" placeholder="Search or select a course...">
+                                        <select name="course" id="courseDropdown" class="form-control mt-2" size="5" required>
+                                            <option value="">&larr; Select Course &rarr;</option>
                                             <?php
                                             $conn = new class_model();
                                             $course = $conn->fetchAll_course();
+                                            foreach ($course as $row) {
+                                                echo '<option value="' . $row['course_name'] . '">' . $row['course_name'] . '</option>';
+                                            }
                                             ?>
-                                            <option value="">&larr; Select Course &rarr;</option>
-                                            <?php foreach ($course as $row) { ?>
-                                                <option value="<?= $row['course_name']; ?>"><?= $row['course_name']; ?></option>
-                                            <?php } ?>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -128,83 +129,105 @@
                                         <input type="email" name="email_address" value="<?= $getstudno['email_address']; ?>" class="form-control">
                                     </div>
                                 </div>
+                                <script>
+                                    document.getElementById('courseSearch').addEventListener('input', function() {
+                                        const searchValue = this.value.toLowerCase();
+                                        const courseDropdown = document.getElementById('courseDropdown');
+                                        const options = courseDropdown.getElementsByTagName('option');
 
-                                <!-- Control Number Section -->
-                                <?php
-                                function createRandomcnumber()
-                                {
-                                    $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                                    $control = '';
-                                    for ($i = 0; $i < 4; $i++) {
-                                        $control .= $chars[rand(0, strlen($chars) - 1)];
-                                    }
-                                    return $control;
-                                }
-                                $cNumber = 'CTRL-' . createRandomcnumber();
-                                ?>
+                                        for (let i = 0; i < options.length; i++) {
+                                            const optionText = options[i].textContent.toLowerCase();
+                                            if (optionText.includes(searchValue) || options[i].value === "") {
+                                                options[i].style.display = "";
+                                            } else {
+                                                options[i].style.display = "none";
+                                            }
+                                        }
+                                    });
+
+                                    // Automatically select the option when clicked or when the user types and presses Enter
+                                    document.getElementById('courseDropdown').addEventListener('change', function() {
+                                        const selectedOption = this.options[this.selectedIndex].text;
+                                        document.getElementById('courseSearch').value = selectedOption;
+                                    });
+                                </script>
+
                                 <div class="row mt-2">
-                                    <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" readonly>
+                                    <div class="col-md-6">
+                                        <label>Civil Status</label>
+                                        <select name="civil_status" class="form-control" required>
+                                            <option value="" disabled selected>&larr; Select Civil Status &rarr;</option>
+                                            <option value="Single">Single</option>
+                                            <option value="Married">Married</option>
+                                            <option value="Widow">Widow</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Control Number</label>
+                                        <?php
+                                        function createRandomcnumber()
+                                        {
+                                            $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                                            $control = '';
+                                            for ($i = 0; $i < 4; $i++) {
+                                                $control .= $chars[rand(0, strlen($chars) - 1)];
+                                            }
+                                            return $control;
+                                        }
+                                        $cNumber = 'CTRL-' . createRandomcnumber();
+                                        ?>
+                                        <input type="text" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" class="form-control" readonly>
+                                    </div>
                                 </div>
                             </div>
+
 
                             <!-- Request For Section -->
                             <div class="form-group mt-4">
                                 <h4 class="section-title">Request For</h4>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>Select Document</label>
-                                        <?php
-                                        $conn = new class_model();
-                                        $doc = $conn->fetchAll_document();
-                                        if ($doc && count($doc) > 0) {
-                                            foreach ($doc as $index => $document) {
-                                                echo '<div class="form-check">';
-                                                echo '<input class="form-check-input document-checkbox" type="checkbox" name="document_name[]" id="document_name' . ($index + 1) . '" value="' . $document['document_name'] . '" data-price="' . $document['price'] . '">';
-                                                echo '<label class="form-check-label" for="document_name' . ($index + 1) . '">' . $document['document_name'] . ' (₱' . $document['price'] . ')</label>';
-                                                echo '<div id="quantity' . ($index + 1) . '" class="mt-2" style="display:none;">';
-                                                echo '<label for="no_ofcopies' . ($index + 1) . '" class="mr-2">Copies:</label>';
-                                                echo '<input type="number" name="no_ofcopies[]" value="1" class="form-control no-of-copies" min="1" id="no_ofcopies' . ($index + 1) . '" style="width: 80px;">';
-                                                echo '</div>';
-                                                echo '<div id="requestType' . ($index + 1) . '" class="mt-2" style="display:none;">';
-                                                if ($document['document_name'] === 'Certificate') {
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="as unit earn" required><label class="form-check-label">As Unit Earn</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="as graduate" required><label class="form-check-label">As Graduate</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="other" required onclick="showSpecifyInput(' . ($index + 1) . ')"><label class="form-check-label">Other (please specify)</label></div>';
-                                                    echo '<input type="text" name="other_specify_' . ($index + 1) . '" placeholder="Please specify" class="form-control mt-2" style="display:none;" id="other_specify' . ($index + 1) . '">';
-                                                } elseif ($document['document_name'] === 'Honorable Dismissal w/ TOR for evaluation') {
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="1st request" required><label class="form-check-label">1st Request</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="re-issuance" required><label class="form-check-label">Re-Issuance</label></div>';
-                                                    echo '<div class="mt-3"><label for="upload_recent" class="form-label"><strong>Upload Recent 2x2</strong></label><input type="file" class="form-control" id="upload_recent" name="upload_recent" accept=".jpg, .jpeg, .png, .pdf"><small class="form-text text-muted">Accepted formats: JPG, PNG, PDF</small></div>';
+                                <div id="requestContainer">
+                                    <!-- First Row (Default) -->
+                                    <div class="row request-row" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                                        <!-- Document Selection -->
+                                        <div class="col-md-4" style="margin-bottom: 10px;">
+                                            <label style="font-weight: bold;">Select Document:</label>
+                                            <select name="document_name[]" class="form-control document-select" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px;">
+                                                <option value="" disabled selected>&larr; Select Document &rarr;</option>
+                                                <?php
+                                                $conn = new class_model();
+                                                $documents = $conn->fetchAll_document();
+                                                if ($documents && count($documents) > 0) {
+                                                    foreach ($documents as $doc) {
+                                                        echo '<option value="' . $doc['document_name'] . '" data-price="' . $doc['price'] . '">' . $doc['document_name'] . ' (₱' . $doc['price'] . ')</option>';
+                                                    }
                                                 } else {
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="1st request" required><label class="form-check-label">1st Request</label></div>';
-                                                    echo '<div class="form-check"><input class="form-check-input" type="radio" name="request_type_' . ($index + 1) . '" value="re-issuance" required><label class="form-check-label">Re-Issuance</label></div>';
+                                                    echo '<option value="">No documents available</option>';
                                                 }
-                                                echo '</div></div>';
-                                            }
-                                        } else {
-                                            echo "No documents found.";
-                                        }
-                                        ?>
+                                                ?>
+                                            </select>
+                                        </div>
+
+
                                     </div>
                                 </div>
 
-                                <!-- Request Date and Mode -->
+                                <!-- Total Amount -->
                                 <div class="row mt-3">
-                                    <div class="col-md-3">
-                                        <label>Mode:</label>
-                                        <select name="mode_request" id="mode_request" class="form-control" required>
-                                            <option value="">&larr; Select Mode &rarr;</option>
-                                            <option value="Pick Up">Pick-Up</option>
-                                            <option value="Delivery">Delivery</option>
-                                        </select>
-                                        <label id="deliveryFeeSection" style="display:none;">Delivery Fee: ₱50</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>Total Amount:</label>
-                                        <input type="text" name="price" id="totalAmount" class="form-control" placeholder="₱0" readonly>
+                                    <div class="col-md-4">
+                                        <label style="font-weight: bold;">Total Amount:</label>
+                                        <input type="text" name="total_price" id="totalPrice" class="form-control" value="₱0" readonly style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; font-size: 16px;">
                                     </div>
                                 </div>
+
+                                <!-- Add New Row Button -->
+                                <div class="text-right" style="margin-top: 10px;">
+                                    <button type="button" id="addRowBtn" class="btn btn-success" style="background-color: #28a745; border-color: #28a745; border-radius: 5px; padding: 10px 20px; font-size: 16px;"
+                                        <?php echo (empty($documents) ? 'disabled' : ''); ?>>
+                                        Add Another Document
+                                    </button>
+                                </div>
                             </div>
+
 
                             <!-- Purpose Section -->
                             <div class="form-group mt-4">
@@ -218,7 +241,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-5">
-                                    <input type="text" id="otherPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
+                                    <input type="text" id="docsPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
                                 </div>
                             </div>
 
@@ -247,7 +270,6 @@
                         <p><strong>Student Name: </strong> <span id="modalStudentName"></span></p>
                         <p><strong>Control No.: </strong> <span id="modalControlNo"></span></p>
                         <p><strong>Document Name: </strong> <span id="modalDocumentName"></span></p>
-                        <p><strong>Mode: </strong> <span id="modalMode"></span></p>
                         <p><strong>Total Amount: </strong> <span id="modalTotalAmount"></span></p>
 
                         <!-- Image Preview Section -->
@@ -289,210 +311,538 @@
 
         <script>
             $(document).ready(function() {
-                let formData = null;
-                const deliveryFee = 50;
+                const requestContainer = $('#requestContainer');
+                const totalPriceField = $('#totalPrice');
+                const deliveryFee = 50; // Example delivery fee
 
-                // Toggle visibility of quantity input and request type when checkbox is checked/unchecked
-                $('input[name="document_name[]"]').change(function() {
-                    const docIndex = this.id.replace('document_name', '');
-                    const qtyDiv = `#quantity${docIndex}`;
-                    const requestTypeDiv = `#requestType${docIndex}`;
-
-                    if (this.checked) {
-                        $(qtyDiv).show();
-                        $(requestTypeDiv).show();
-
-                        // Check if "Honorable Dismissal w/ TOR for evaluation" is selected and show image preview if uploaded
-                        if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
-                            previewImage(); // Call the image preview function
-                        }
-                    } else {
-                        $(qtyDiv).hide().find('input').val('');
-                        $(requestTypeDiv).hide();
-                        $(`input[name="request_type_${docIndex}"]`).prop('checked', false);
-
-                        // Hide image preview if "Honorable Dismissal w/ TOR for evaluation" is deselected
-                        if (this.value === "Honorable Dismissal w/ TOR for evaluation") {
-                            $('#imagePreviewContainer').hide();
-                            $('#imagePreview').attr('src', '');
-                        }
-                    }
-
-                    calculateTotal();
-                });
-
-                // Function to preview the uploaded image
-                function previewImage() {
-                    const fileInput = $('#upload_recent')[0].files[0];
-                    if (fileInput) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            $('#imagePreview').attr('src', e.target.result);
-                            $('#imagePreviewContainer').show();
-                        };
-                        reader.readAsDataURL(fileInput);
-                    } else {
-                        $('#imagePreviewContainer').hide();
-                        $('#imagePreview').attr('src', '');
-                    }
+                // Function to reset the default row
+                function resetDefaultRow(parentRow) {
+                    parentRow.find('.document-select').val(''); // Reset document selection
+                    parentRow.find('.copies-input').val(1).prop('disabled', true); // Reset and disable copies input
+                    parentRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true); // Reset request type options
+                    parentRow.find('.additional-inputs').remove(); // Remove any additional dynamic inputs
                 }
 
-                // Trigger the previewImage function when a new file is chosen
-                $('#upload_recent').change(function() {
-                    previewImage();
+                // Toggle "Other (specify)" input field for Certification Type
+                $('input[name="certification_type"]').on('change', function() {
+                    const certOtherInput = $('#certOtherInput');
+                    if ($(this).val() === 'Other') {
+                        certOtherInput.show().prop('required', true); // Show and make required
+                    } else {
+                        certOtherInput.hide().val('').prop('required', false); // Hide and reset
+                    }
                 });
 
-                // Recalculate total on request type change
-                $(document).on('input', '.no-of-copies', calculateTotal);
-                $(document).on('change', 'input[type="radio"][name^="request_type_"]', calculateTotal);
+                // Event listener for document selection change
+                requestContainer.on('change', '.document-select', function() {
+                    const parentRow = $(this).closest('.request-row');
+                    const copiesInput = parentRow.find('.copies-input');
+                    const requestTypeOptions = parentRow.find('.request-type-options');
 
-                // Toggle visibility of "Other" purpose input
-                $('#otherPurposeCheckbox').change(function() {
-                    $('#otherPurposeInput').toggle(this.checked).val('');
+                    if ($(this).val()) {
+                        // Enable copies input and show request type options
+                        copiesInput.prop('disabled', false);
+                        requestTypeOptions.show().find('input').prop('disabled', false);
+                    } else {
+                        // Disable and reset fields if no document is selected
+                        copiesInput.prop('disabled', true).val(1);
+                        requestTypeOptions.hide().find('input').prop('checked', false).prop('disabled', true);
+                    }
+
+                    updateTotalPrice();
                 });
 
-                // Show/hide delivery fee and recalculate total
-                $('#mode_request').change(function() {
-                    $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
-                    calculateTotal();
+                // Event listener for request type radio button change
+                requestContainer.on('change', 'input[type="radio"]', function() {
+                    updateTotalPrice();
                 });
 
-                // Calculate total amount
-                // Calculate total amount
-                function calculateTotal() {
-                    let totalAmount = 0;
+                // Event listener for changes in the copies input
+                requestContainer.on('input', '.copies-input', function() {
+                    updateTotalPrice();
+                });
 
-                    $('input[name="document_name[]"]:checked').each(function() {
-                        const docIndex = this.id.replace('document_name', '');
-                        const price = parseFloat($(this).data('price')) || 0;
-                        const copies = parseInt($(`#no_ofcopies${docIndex}`).val()) || 1;
-                        const requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+                // Add new document row
+                $('#addRowBtn').on('click', function() {
+                    const newRow = $('.request-row:first').clone();
+                    newRow.find('.document-select').val('');
+                    newRow.find('.copies-input').val(1).prop('disabled', true);
+                    newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
+                    newRow.find('.additional-inputs').remove();
+                    requestContainer.append(newRow);
+                });
 
-                        if (requestType === '1st request') {
-                            totalAmount += price * Math.max(0, copies - 1);
-                        } else {
-                            totalAmount += price * copies;
+                // Cancel button to remove rows
+                requestContainer.on('click', '.cancel-row-btn', function() {
+                    $(this).closest('.request-row').remove();
+                    updateTotalPrice();
+                });
+
+                // Toggle "Other (specify)" input field for purpose
+                $('#otherPurposeCheckbox').on('change', function() {
+                    const docsPurposeInput = $('#docsPurposeInput');
+                    if ($(this).is(':checked')) {
+                        docsPurposeInput.show().prop('required', true);
+                    } else {
+                        docsPurposeInput.hide().val('').prop('required', false);
+                    }
+                });
+
+                // Function to calculate the total amount dynamically
+                function updateTotalPrice() {
+                    let total = 0;
+
+                    requestContainer.find('.request-row').each(function() {
+                        const documentSelect = $(this).find('.document-select');
+                        const copiesInput = $(this).find('.copies-input');
+                        const requestType = $(this).find('input[type="radio"]:checked').val(); // Selected request type
+                        const price = parseFloat(documentSelect.find(':selected').data('price')) || 0;
+                        const copies = parseInt(copiesInput.val()) || 1;
+
+                        if (documentSelect.val()) {
+                            if (requestType === '1st request' && copies > 1) {
+                                // First copy is free, charge for additional copies
+                                total += price * (copies - 1);
+                            } else if (requestType !== '1st request') {
+                                // Charge for all copies if not 1st Request
+                                total += price * copies;
+                            }
                         }
                     });
 
                     if ($('#mode_request').val() === 'Delivery') {
-                        totalAmount += deliveryFee;
+                        total += deliveryFee; // Add delivery fee if applicable
                     }
 
-                    $('#totalAmount').val(totalAmount > 0 ? `₱${totalAmount.toFixed(2)}` : '₱0');
-                    return totalAmount;
+                    totalPriceField.val(`₱${total.toFixed(2)}`);
                 }
 
-                // Form submission
-                $('#submitForm').click(function(e) {
-                    e.preventDefault();
-                    formData = new FormData($('form[name="docu_forms"]')[0]);
+                // Initial setup
+                updateTotalPrice();
 
-                    const selectedDocs = $('input[name="document_name[]"]:checked');
-                    const selectedPurpose = $('input[name="purpose[]"]:checked');
+                // Function to handle dynamic inputs for specific documents
+                function handleDynamicInputs(documentName, parentRow) {
+                    // Remove any existing dynamic inputs
+                    parentRow.find('.additional-inputs').remove();
 
-                    if (!selectedDocs.length) return showError('Please select at least one document.');
-                    if (!$('#course').val()) return showError('Please select a course.');
-                    if (!selectedPurpose.length) return showError('Please select at least one purpose.');
+                    let additionalInputs = '';
 
-                    // Validate request type for each selected document
-                    let isValid = true;
-                    selectedDocs.each(function() {
-                        const docIndex = this.id.replace('document_name', '');
-                        const requestTypeRadios = $(`input[name="request_type_${docIndex}"]`);
-                        const isRequestTypeSelected = requestTypeRadios.is(':checked');
+                    // Handle "Special Order" or "Diploma"
+                    if (documentName === 'Special Order') {
+                        additionalInputs = `
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-                        if (!isRequestTypeSelected) {
-                            showError(`Please select a request type for the document: ${this.value}`);
-                            isValid = false;
-                            return false; // Exit the loop
-                        }
-                    });
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
 
-                    if (!isValid) return; // Stop form submission if validation fails
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
 
-                    formData.delete('document_name[]');
-                    formData.delete('no_ofcopies[]');
-                    formData.delete('request_type[]');
+                                <!-- Request Type -->
+                                <div style="flex: 2; min-width: 250px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="SOrequest_type" value="1st request" required>
+                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="SOrequest_type" value="re-issuance" required>
+                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    let formattedDocuments = [];
-                    selectedDocs.each(function(index) {
-                        const docIndex = this.id.replace('document_name', '');
-                        const docName = this.value;
-                        const copies = $(this).closest('.form-check').find('input[name="no_ofcopies[]"]').val() || 1;
-                        let requestType = $(`input[name="request_type_${docIndex}"]:checked`).val();
+                            <!-- Cancel Row Button -->
+                            <div style="flex: 0; min-width: 100px; text-align: center;">
+                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    } else if (documentName === 'Diploma') {
+                        additionalInputs = `
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-                        if (requestType === 'other') {
-                            const otherSpecifyValue = $(`input[name="other_specify_${docIndex}"]`).val().trim();
-                            if (otherSpecifyValue) requestType = `other: ${otherSpecifyValue}`;
-                        }
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
 
-                        formData.append('document_name[]', docName);
-                        formData.append('no_ofcopies[]', copies);
-                        formData.append('request_type[]', requestType);
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
 
-                        formattedDocuments.push(`${index + 1}. ${docName} (x${copies}), ${requestType}`);
-                    });
+                                <!-- Request Type -->
+                                <div style="flex: 2; min-width: 250px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="Drequest_type" value="1st request" required>
+                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="Drequest_type" value="re-issuance" required>
+                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    const total = calculateTotal();
-                    formData.append('price', total);
-                    formData.append('course', $('#course').val());
-
-                    const file = $('#upload_recent')[0].files[0];
-                    if (file) formData.append('upload_recent', file);
-
-                    $('#modalStudentName').text(`${getField('first_name')} ${getField('middle_name')} ${getField('last_name')}`);
-                    $('#modalControlNo').text(getField('control_no'));
-                    $('#modalDocumentName').html(formattedDocuments.join('<br>'));
-                    $('#modalMode').text($('#mode_request').val());
-                    $('#modalTotalAmount').text(`₱${total.toFixed(2)}`);
-                    $('#paymentModal').modal('show');
-                });
+                            <!-- Cancel Row Button -->
+                            <div style="flex: 0; min-width: 100px; text-align: center;">
+                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    }
 
 
-                $('#confirmSubmit').click(function() {
-                    if (formData) {
-                        $.ajax({
-                            url: '../init/controllers/add_request.php',
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            success(response) {
-                                $('#message').html(response);
-                                $('#paymentModal').modal('hide');
-                                window.scrollTo(0, 0);
-                            },
-                            error() {
-                                console.error('Failed to submit the form.');
+                    // Handle "Transcript of Records"
+                    else if (documentName === 'Transcript of Records') {
+                        additionalInputs = `
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                                
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
+
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
+
+                                <!-- Request Type -->
+                                <div style="flex: 2; min-width: 200px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TOR_request_type" value="1st request" required>
+                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TOR_request_type" value="re-issuance" required>
+                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Purpose -->
+                                <div style="flex: 3; min-width: 300px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Purpose:</label>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Evaluation">
+                                            <label class="form-check-label" style="font-size: 13px;">Evaluation</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Employment">
+                                            <label class="form-check-label" style="font-size: 13px;">Employment</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="CBE BOARD EXAM">
+                                            <label class="form-check-label" style="font-size: 13px;">CBE BOARD EXAM</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Other" id="otherPurposeCheckbox">
+                                            <label class="form-check-label" style="font-size: 13px;">Other (specify)</label>
+                                        </div>
+                                    </div>
+                                    <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                                    <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">
+
+                                </div>
+
+                                <!-- Cancel Row Button -->
+                                <div style="flex: 0; min-width: 100px; text-align: center;">
+                                    <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        parentRow.on('change', 'input[name="TORpurpose"]', function() {
+                            const otherPurposeInput = parentRow.find('#otherPurposeInput');
+                            const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+
+                            if ($(this).val() === 'Other') {
+                                // Show the "Other (Specify)" input and make it required
+                                otherPurposeInput.show().prop('required', true);
+                            } else {
+                                // Hide the "Other (Specify)" input, clear its value, and make it not required
+                                otherPurposeInput.hide().val('').prop('required', false);
+                            }
+
+                            if ($(this).val() === 'CBE BOARD EXAM') {
+                                // Show the "Attach 2x2 Picture" input and make it required
+                                photoAttachmentInput.show().prop('required', true);
+                            } else {
+                                // Hide the "Attach 2x2 Picture" input and make it not required
+                                photoAttachmentInput.hide().prop('required', false);
                             }
                         });
+
+                    }
+
+                    // Handle "Certification"
+                    else if (documentName === 'Certification') {
+                        additionalInputs = `
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
+
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
+
+                            <!-- Certification Type -->
+                    <div style="flex: 2; min-width: 250px;">
+                        <label style="font-weight: bold; font-size: 14px;">Certification Type:</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 8px;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="certification_type" value="Unit Earned" required>
+                                <label class="form-check-label" style="font-size: 13px;">Unit Earned</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="certification_type" value="As Graduate" required>
+                                <label class="form-check-label" style="font-size: 13px;">As Graduate</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="certification_type" value="Other" id="certOtherOption">
+                                <label class="form-check-label" style="font-size: 13px;">Other (Specify)</label>
+                            </div>
+                        </div>
+                        <!-- Hidden input for "Other (Specify)" -->
+                        <input type="text" id="certOtherInput" name="certification_type_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">
+                    </div>
+
+                                <!-- Cancel Row Button -->
+                                <div style="flex: 0; min-width: 100px; text-align: center;">
+                                    <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                            
+                                            
+                        `;
+                        parentRow.on('change', 'input[name="certification_type"]', function() {
+                            if ($(this).val() === 'Other') {
+                                // Show the "Other (Specify)" input and make it required
+                                parentRow.find('#certOtherInput').show().prop('required', true);
+                            } else {
+                                // Hide the "Other (Specify)" input, clear its value, and make it not required
+                                parentRow.find('#certOtherInput').hide().val('').prop('required', false);
+                            }
+                        });
+
+                    } else if (documentName === 'Honorable Dismissal') {
+                        additionalInputs = `
+                    <div class="additional-inputs" ">
+                        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+
+                            <!-- Document Name -->
+                            <div style="flex: 1; min-width: 150px;">
+                                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                            </div>
+
+                            <!-- Copies -->
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                            </div>
+
+                            <!-- Cancel Row Button -->
+                            <div style="flex: 0; min-width: 100px; text-align: center;">
+                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    }
+
+
+                    // Append the additional inputs to the parent row
+                    if (additionalInputs) {
+                        parentRow.append(additionalInputs);
+                    }
+                }
+                $('input[name="certification_type"]').on('change', function() {
+                    if ($(this).val() === 'Other') {
+                        $('#certOtherInput').show().prop('required', true); // Show the input field and make it required
+                    } else {
+                        $('#certOtherInput').hide().val('').prop('required', false); // Hide and reset the input field
                     }
                 });
 
-                function getField(name) {
-                    return $(`input[name="${name}"]`).val();
-                }
+                requestContainer.on('change', '.document-select', function() {
+                    const parentRow = $(this).closest('.request-row');
+                    const copiesInput = parentRow.find('.copies-input');
+                    const requestTypeOptions = parentRow.find('.request-type-options');
 
-                function showError(msg) {
-                    $('#message').html(`<div class="alert alert-danger">${msg}</div>`);
-                    setTimeout(() => $('#message').empty(), 3000);
-                }
+                    const selectedValue = $(this).val();
 
-                $('.btn-secondary').click(function() {
-                    $('#paymentModal').modal('hide');
+                    if (selectedValue) {
+                        // Enable copies input
+                        copiesInput.prop('disabled', false);
+
+                        // Show and enable request type options
+                        requestTypeOptions.show();
+                        requestTypeOptions.find('input').prop('disabled', false);
+
+                        // Handle dynamic inputs for specific documents
+                        handleDynamicInputs(selectedValue, parentRow);
+                    } else {
+                        // Disable and reset fields if no document is selected
+                        copiesInput.prop('disabled', true).val(1);
+                        requestTypeOptions.hide();
+                        requestTypeOptions.find('input').prop('checked', false).prop('disabled', true);
+
+                        // Remove dynamic inputs if any
+                        parentRow.find('.additional-inputs').remove();
+                    }
+
+                    updateTotalPrice();
+                    updateDropdownOptionsAndButton();
                 });
+                // Event listener for cancel button
+                requestContainer.on('click', '.cancel-row-btn', function() {
+                    const parentRow = $(this).closest('.request-row');
+                    parentRow.remove(); // Remove the row
+                    updateTotalPrice(); // Update the total price after removing the row
+                    updateDropdownOptionsAndButton(); // Refresh dropdown and button states
+                });
+                docsPurposeInput
+                // Toggle "Other (specify)" input field
+                $('#otherPurposeCheckbox').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        // Show the "Other (specify)" input and make it required
+                        $('#docsPurposeInput').show().prop('required', true);
+                    } else {
+                        // Hide the "Other (specify)" input, clear its value, and make it not required
+                        $('#docsPurposeInput').hide().val('').prop('required', false);
+                    }
+                });
+
+                // Event listener for "Add Another Document" button
+                addRowBtn.on('click', function() {
+                    const newRow = $('.request-row:first').clone();
+                    newRow.find('.document-select').val('');
+                    newRow.find('.copies-input').val(1).prop('disabled', true);
+                    newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
+                    newRow.find('.additional-inputs').remove();
+                    requestContainer.append(newRow);
+                });
+
+                // Initial setup
+                updateTotalPrice();
             });
+        </script>
+        <script>
+
         </script>
 
         <script>
-            function showSpecifyInput(index) {
-                // Toggle visibility of the "Other" input when "Other (please specify)" radio button is selected
-                const specifyInput = $(`#other_specify${index}`);
-                specifyInput.toggle(); // Show or hide the input
-            }
-        </script>
+            $(document).on('click', '#submitForm', function(e) {
+                e.preventDefault();
 
+                let formData = new FormData();
+                formData.append('first_name', $('input[name="first_name"]').val());
+                formData.append('middle_name', $('input[name="middle_name"]').val());
+                formData.append('last_name', $('input[name="last_name"]').val());
+                formData.append('complete_address', $('input[name="complete_address"]').val());
+                formData.append('birthdate', $('input[name="birthdate"]').val());
+                formData.append('course', $('select[name="course"]').val());
+                formData.append('civil_status', $('select[name="civil_status"]').val());
+                formData.append('email_address', $('input[name="email_address"]').val());
+                formData.append('control_no', $('input[name="control_no"]').val());
+                formData.append('student_id', $('input[name="student_id"]').val());
+                formData.append('total_price', $('#totalPrice').val());
+
+                // Collect documents
+                $('.request-row').each(function() {
+                    const documentName = $(this).find('select[name="document_name[]"]').val();
+                    const requestType = $(this).find('input[type="radio"]:checked').val();
+                    const copies = $(this).find('input[name="copies[]"]').val();
+
+                    if (documentName && requestType && copies) {
+                        formData.append('document_name[]', documentName);
+                        formData.append('request_type[]', requestType);
+                        formData.append('copies[]', copies);
+                    }
+                });
+
+
+                if (!formData.has('civil_status')) {
+                    const civilStatus = $('select[name="civil_status"]').val();
+                    if (!civilStatus) {
+                        alert("Please select your civil status.");
+                        return; // Stop submission if not selected
+                    }
+                    formData.append('civil_status', civilStatus);
+                }
+
+                // Debugging output
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+                // Collect purposes
+                $('input[name="purpose[]"]:checked').each(function() {
+                    formData.append('purpose[]', $(this).val());
+                });
+
+                // Handle file uploads
+                $('input[name="photo_attachment[]"]').each(function() {
+                    if ($(this)[0].files[0]) {
+                        formData.append('photo_attachment[]', $(this)[0].files[0]);
+                    }
+                });
+
+                $.ajax({
+                    url: '../init/controllers/add_request.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Required for FormData
+                    contentType: false, // Required for FormData
+                    success: function(response) {
+                        const res = JSON.parse(response);
+                        if (res.status === 'success') {
+                            $('#message').html('<div class="alert alert-success">' + res.message + '</div>');
+                            window.scrollTo(0, 0)
+                            setTimeout(() => window.location.reload(), 4000);
+                        } else {
+                            window.scrollTo(0, 0)
+                            $('#message').html('<div class="alert alert-danger">' + (res.errors ? res.errors.join('<br>') : 'An error occurred.') + '</div>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        $('#message').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
+                    },
+                });
+            });
+        </script>
         </body>
 
         </html>
