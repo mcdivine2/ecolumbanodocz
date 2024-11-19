@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $complete_address = sanitize($_POST['complete_address']);
     $birthdate = sanitize($_POST['birthdate']);
     $course = sanitize($_POST['course']);
+    $civil_status = sanitize($_POST['civil_status']);
     $email_address = sanitize($_POST['email_address']);
     $control_no = sanitize($_POST['control_no']);
     $student_id = sanitize($_POST['student_id']);
@@ -84,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $complete_address,
         $birthdate,
         $course,
+        $civil_status,
         $email_address,
         $control_no,
         implode("<br>", $documents),

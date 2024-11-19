@@ -774,6 +774,7 @@
                 formData.append('complete_address', $('input[name="complete_address"]').val());
                 formData.append('birthdate', $('input[name="birthdate"]').val());
                 formData.append('course', $('select[name="course"]').val());
+                formData.append('civil_status', $('select[name="civil_status"]').val());
                 formData.append('email_address', $('input[name="email_address"]').val());
                 formData.append('control_no', $('input[name="control_no"]').val());
                 formData.append('student_id', $('input[name="student_id"]').val());
@@ -792,6 +793,20 @@
                     }
                 });
 
+
+                if (!formData.has('civil_status')) {
+                    const civilStatus = $('select[name="civil_status"]').val();
+                    if (!civilStatus) {
+                        alert("Please select your civil status.");
+                        return; // Stop submission if not selected
+                    }
+                    formData.append('civil_status', civilStatus);
+                }
+
+                // Debugging output
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
                 // Collect purposes
                 $('input[name="purpose[]"]:checked').each(function() {
                     formData.append('purpose[]', $(this).val());

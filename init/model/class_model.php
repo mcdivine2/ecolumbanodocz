@@ -627,6 +627,7 @@ class class_model
 		$complete_address,
 		$birthdate,
 		$course,
+		$civil_status,
 		$email_address,
 		$control_no,
 		$document_name,
@@ -658,11 +659,11 @@ class class_model
 		// Prepare the SQL statement
 		$stmt = $this->conn->prepare(
 			"INSERT INTO tbl_documentrequest 
-			(first_name, middle_name, last_name, complete_address, birthdate, course, 
+			(first_name, middle_name, last_name, complete_address, birthdate, course, civil_status,
 			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
 			 accounting_status, purpose, student_id, recent_image, date_request) 
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)"
 		);
 
 		if (!$stmt) {
@@ -672,13 +673,14 @@ class class_model
 
 		// Correct bind parameter type string
 		$stmt->bind_param(
-			"ssssssssssssssssssss", // Updated type definition string (all are strings)
+			"sssssssssssssssssssss", // Updated type definition string (all are strings)
 			$first_name,          // 1
 			$middle_name,         // 2
 			$last_name,           // 3
 			$complete_address,    // 4
 			$birthdate,           // 5
 			$course,              // 6
+			$civil_status,              // 6
 			$email_address,       // 7
 			$control_no,          // 8
 			$document_name,       // 9
