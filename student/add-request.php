@@ -241,7 +241,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-5">
-                                    <input type="text" id="otherPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
+                                    <input type="text" id="docsPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
                                 </div>
                             </div>
 
@@ -312,30 +312,113 @@
         <script>
             $(document).ready(function() {
                 const requestContainer = $('#requestContainer');
-                const addRowBtn = $('#addRowBtn');
                 const totalPriceField = $('#totalPrice');
-                const deliveryFee = 50;
+                const deliveryFee = 50; // Example delivery fee
+
+                // Function to reset the default row
+                function resetDefaultRow(parentRow) {
+                    parentRow.find('.document-select').val(''); // Reset document selection
+                    parentRow.find('.copies-input').val(1).prop('disabled', true); // Reset and disable copies input
+                    parentRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true); // Reset request type options
+                    parentRow.find('.additional-inputs').remove(); // Remove any additional dynamic inputs
+                }
+
+                // Toggle "Other (specify)" input field for Certification Type
+                $('input[name="certification_type"]').on('change', function() {
+                    const certOtherInput = $('#certOtherInput');
+                    if ($(this).val() === 'Other') {
+                        certOtherInput.show().prop('required', true); // Show and make required
+                    } else {
+                        certOtherInput.hide().val('').prop('required', false); // Hide and reset
+                    }
+                });
+
+                // Event listener for document selection change
+                requestContainer.on('change', '.document-select', function() {
+                    const parentRow = $(this).closest('.request-row');
+                    const copiesInput = parentRow.find('.copies-input');
+                    const requestTypeOptions = parentRow.find('.request-type-options');
+
+                    if ($(this).val()) {
+                        // Enable copies input and show request type options
+                        copiesInput.prop('disabled', false);
+                        requestTypeOptions.show().find('input').prop('disabled', false);
+                    } else {
+                        // Disable and reset fields if no document is selected
+                        copiesInput.prop('disabled', true).val(1);
+                        requestTypeOptions.hide().find('input').prop('checked', false).prop('disabled', true);
+                    }
+
+                    updateTotalPrice();
+                });
+
+                // Event listener for request type radio button change
+                requestContainer.on('change', 'input[type="radio"]', function() {
+                    updateTotalPrice();
+                });
+
+                // Event listener for changes in the copies input
+                requestContainer.on('input', '.copies-input', function() {
+                    updateTotalPrice();
+                });
+
+                // Add new document row
+                $('#addRowBtn').on('click', function() {
+                    const newRow = $('.request-row:first').clone();
+                    newRow.find('.document-select').val('');
+                    newRow.find('.copies-input').val(1).prop('disabled', true);
+                    newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
+                    newRow.find('.additional-inputs').remove();
+                    requestContainer.append(newRow);
+                });
+
+                // Cancel button to remove rows
+                requestContainer.on('click', '.cancel-row-btn', function() {
+                    $(this).closest('.request-row').remove();
+                    updateTotalPrice();
+                });
+
+                // Toggle "Other (specify)" input field for purpose
+                $('#otherPurposeCheckbox').on('change', function() {
+                    const docsPurposeInput = $('#docsPurposeInput');
+                    if ($(this).is(':checked')) {
+                        docsPurposeInput.show().prop('required', true);
+                    } else {
+                        docsPurposeInput.hide().val('').prop('required', false);
+                    }
+                });
 
                 // Function to calculate the total amount dynamically
                 function updateTotalPrice() {
                     let total = 0;
+
                     requestContainer.find('.request-row').each(function() {
                         const documentSelect = $(this).find('.document-select');
                         const copiesInput = $(this).find('.copies-input');
+                        const requestType = $(this).find('input[type="radio"]:checked').val(); // Selected request type
                         const price = parseFloat(documentSelect.find(':selected').data('price')) || 0;
                         const copies = parseInt(copiesInput.val()) || 1;
 
                         if (documentSelect.val()) {
-                            total += price * copies;
+                            if (requestType === '1st request' && copies > 1) {
+                                // First copy is free, charge for additional copies
+                                total += price * (copies - 1);
+                            } else if (requestType !== '1st request') {
+                                // Charge for all copies if not 1st Request
+                                total += price * copies;
+                            }
                         }
                     });
 
                     if ($('#mode_request').val() === 'Delivery') {
-                        total += deliveryFee;
+                        total += deliveryFee; // Add delivery fee if applicable
                     }
 
                     totalPriceField.val(`₱${total.toFixed(2)}`);
                 }
+
+                // Initial setup
+                updateTotalPrice();
 
                 // Function to handle dynamic inputs for specific documents
                 function handleDynamicInputs(documentName, parentRow) {
@@ -345,185 +428,258 @@
                     let additionalInputs = '';
 
                     // Handle "Special Order" or "Diploma"
-                    if (documentName === 'Special Order' || documentName === 'Diploma') {
+                    if (documentName === 'Special Order') {
                         additionalInputs = `
-    <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-            <!-- Document Name -->
-            <div style="flex: 1; min-width: 150px;">
-                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                <p style="font-size: 14px; margin: 0;">${documentName}</p>
-            </div>
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
 
-            <!-- Copies -->
-            <div style="flex: 1; min-width: 120px;">
-                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-            </div>
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
 
-            <!-- Request Type -->
-            <div style="flex: 2; min-width: 250px;">
-                <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="request_type[]" value="1st request" required>
-                        <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                <!-- Request Type -->
+                                <div style="flex: 2; min-width: 250px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="SOrequest_type" value="1st request" required>
+                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="SOrequest_type" value="re-issuance" required>
+                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- Cancel Row Button -->
+                            <div style="flex: 0; min-width: 100px; text-align: center;">
+                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="request_type[]" value="re-issuance" required>
-                        <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
-                    </div>
-                </div>
-            </div>
+                    `;
+                    } else if (documentName === 'Diploma') {
+                        additionalInputs = `
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-            <!-- Cancel Row Button -->
-            <div style="flex: 0; min-width: 100px; text-align: center;">
-                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-            </div>
-        </div>
-    </div>
-    `;
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
+
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
+
+                                <!-- Request Type -->
+                                <div style="flex: 2; min-width: 250px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="Drequest_type" value="1st request" required>
+                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="Drequest_type" value="re-issuance" required>
+                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- Cancel Row Button -->
+                            <div style="flex: 0; min-width: 100px; text-align: center;">
+                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
                     }
 
 
                     // Handle "Transcript of Records"
                     else if (documentName === 'Transcript of Records') {
                         additionalInputs = `
-    <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-            
-            <!-- Document Name -->
-            <div style="flex: 1; min-width: 150px;">
-                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                <p style="font-size: 14px; margin: 0;">${documentName}</p>
-            </div>
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                                
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
 
-            <!-- Copies -->
-            <div style="flex: 1; min-width: 120px;">
-                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-            </div>
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
 
-            <!-- Request Type -->
-            <div style="flex: 2; min-width: 200px;">
-                <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="request_type[]" value="1st request" required>
-                        <label class="form-check-label" style="font-size: 13px;">1st Request</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="request_type[]" value="re-issuance" required>
-                        <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
-                    </div>
-                </div>
-            </div>
+                                <!-- Request Type -->
+                                <div style="flex: 2; min-width: 200px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TOR_request_type" value="1st request" required>
+                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TOR_request_type" value="re-issuance" required>
+                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <!-- Purpose -->
-            <div style="flex: 3; min-width: 300px;">
-                <label style="font-weight: bold; font-size: 14px;">Purpose:</label>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="purpose[]" value="Evaluation">
-                        <label class="form-check-label" style="font-size: 13px;">Evaluation</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="purpose[]" value="Employment">
-                        <label class="form-check-label" style="font-size: 13px;">Employment</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="purpose[]" value="CBE BOARD EXAM">
-                        <label class="form-check-label" style="font-size: 13px;">CBE BOARD EXAM</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="otherPurposeCheckbox">
-                        <label class="form-check-label" style="font-size: 13px;">Other (specify)</label>
-                    </div>
-                </div>
-                <input type="text" id="otherPurposeInput" name="purpose[]" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
-                <label style="font-weight: bold; font-size: 14px; margin-top: 10px;">Attach 2x2 Picture:</label>
-                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" required style="margin-top: 10px;">
-            </div>
+                                <!-- Purpose -->
+                                <div style="flex: 3; min-width: 300px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Purpose:</label>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Evaluation">
+                                            <label class="form-check-label" style="font-size: 13px;">Evaluation</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Employment">
+                                            <label class="form-check-label" style="font-size: 13px;">Employment</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="CBE BOARD EXAM">
+                                            <label class="form-check-label" style="font-size: 13px;">CBE BOARD EXAM</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Other" id="otherPurposeCheckbox">
+                                            <label class="form-check-label" style="font-size: 13px;">Other (specify)</label>
+                                        </div>
+                                    </div>
+                                    <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                                    <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">
 
-            <!-- Cancel Row Button -->
-            <div style="flex: 0; min-width: 100px; text-align: center;">
-                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-            </div>
-        </div>
-    </div>
-    `;
+                                </div>
 
-                        // Toggle "Other" input visibility
-                        parentRow.on('change', '#otherPurposeCheckbox', function() {
-                            parentRow.find('#otherPurposeInput').toggle($(this).is(':checked'));
+                                <!-- Cancel Row Button -->
+                                <div style="flex: 0; min-width: 100px; text-align: center;">
+                                    <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        parentRow.on('change', 'input[name="TORpurpose"]', function() {
+                            const otherPurposeInput = parentRow.find('#otherPurposeInput');
+                            const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+
+                            if ($(this).val() === 'Other') {
+                                // Show the "Other (Specify)" input and make it required
+                                otherPurposeInput.show().prop('required', true);
+                            } else {
+                                // Hide the "Other (Specify)" input, clear its value, and make it not required
+                                otherPurposeInput.hide().val('').prop('required', false);
+                            }
+
+                            if ($(this).val() === 'CBE BOARD EXAM') {
+                                // Show the "Attach 2x2 Picture" input and make it required
+                                photoAttachmentInput.show().prop('required', true);
+                            } else {
+                                // Hide the "Attach 2x2 Picture" input and make it not required
+                                photoAttachmentInput.hide().prop('required', false);
+                            }
                         });
+
                     }
 
                     // Handle "Certification"
                     else if (documentName === 'Certification') {
                         additionalInputs = `
-    <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-            <!-- Document Name -->
-            <div style="flex: 1; min-width: 150px;">
-                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                <p style="font-size: 14px; margin: 0;">${documentName}</p>
-            </div>
+                                <!-- Document Name -->
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                                </div>
 
-            <!-- Copies -->
-            <div style="flex: 1; min-width: 120px;">
-                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-            </div>
+                                <!-- Copies -->
+                                <div style="flex: 1; min-width: 120px;">
+                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                                </div>
 
-            <!-- Certification Type -->
-            <div style="flex: 2; min-width: 250px;">
-                <label style="font-weight: bold; font-size: 14px;">Certification Type:</label>
-                <div style="display: flex; gap: 15px; margin-top: 8px;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="certification_type[]" value="Unit Earned" required>
-                        <label class="form-check-label" style="font-size: 13px;">Unit Earned</label>
+                            <!-- Certification Type -->
+                    <div style="flex: 2; min-width: 250px;">
+                        <label style="font-weight: bold; font-size: 14px;">Certification Type:</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 8px;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="certification_type" value="Unit Earned" required>
+                                <label class="form-check-label" style="font-size: 13px;">Unit Earned</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="certification_type" value="As Graduate" required>
+                                <label class="form-check-label" style="font-size: 13px;">As Graduate</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="certification_type" value="Other" id="certOtherOption">
+                                <label class="form-check-label" style="font-size: 13px;">Other (Specify)</label>
+                            </div>
+                        </div>
+                        <!-- Hidden input for "Other (Specify)" -->
+                        <input type="text" id="certOtherInput" name="certification_type_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="certification_type[]" value="As Graduate" required>
-                        <label class="form-check-label" style="font-size: 13px;">As Graduate</label>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Cancel Row Button -->
-            <div style="flex: 0; min-width: 100px; text-align: center;">
-                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-            </div>
-        </div>
-    </div>
-    `;
+                                <!-- Cancel Row Button -->
+                                <div style="flex: 0; min-width: 100px; text-align: center;">
+                                    <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                            
+                                            
+                        `;
+                        parentRow.on('change', 'input[name="certification_type"]', function() {
+                            if ($(this).val() === 'Other') {
+                                // Show the "Other (Specify)" input and make it required
+                                parentRow.find('#certOtherInput').show().prop('required', true);
+                            } else {
+                                // Hide the "Other (Specify)" input, clear its value, and make it not required
+                                parentRow.find('#certOtherInput').hide().val('').prop('required', false);
+                            }
+                        });
+
                     } else if (documentName === 'Honorable Dismissal') {
                         additionalInputs = `
-    <div class="additional-inputs" ">
-        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                    <div class="additional-inputs" ">
+                        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-            <!-- Document Name -->
-            <div style="flex: 1; min-width: 150px;">
-                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                <p style="font-size: 14px; margin: 0;">${documentName}</p>
-            </div>
+                            <!-- Document Name -->
+                            <div style="flex: 1; min-width: 150px;">
+                                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                <p style="font-size: 14px; margin: 0;">${documentName}</p>
+                            </div>
 
-            <!-- Copies -->
-            <div style="flex: 1; min-width: 120px;">
-                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-            </div>
+                            <!-- Copies -->
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+                            </div>
 
-            <!-- Cancel Row Button -->
-            <div style="flex: 0; min-width: 100px; text-align: center;">
-                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-            </div>
-        </div>
-    </div>
-    `;
+                            <!-- Cancel Row Button -->
+                            <div style="flex: 0; min-width: 100px; text-align: center;">
+                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
                     }
 
 
@@ -532,6 +688,13 @@
                         parentRow.append(additionalInputs);
                     }
                 }
+                $('input[name="certification_type"]').on('change', function() {
+                    if ($(this).val() === 'Other') {
+                        $('#certOtherInput').show().prop('required', true); // Show the input field and make it required
+                    } else {
+                        $('#certOtherInput').hide().val('').prop('required', false); // Hide and reset the input field
+                    }
+                });
 
                 requestContainer.on('change', '.document-select', function() {
                     const parentRow = $(this).closest('.request-row');
@@ -570,8 +733,17 @@
                     updateTotalPrice(); // Update the total price after removing the row
                     updateDropdownOptionsAndButton(); // Refresh dropdown and button states
                 });
-
-
+                docsPurposeInput
+                // Toggle "Other (specify)" input field
+                $('#otherPurposeCheckbox').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        // Show the "Other (specify)" input and make it required
+                        $('#docsPurposeInput').show().prop('required', true);
+                    } else {
+                        // Hide the "Other (specify)" input, clear its value, and make it not required
+                        $('#docsPurposeInput').hide().val('').prop('required', false);
+                    }
+                });
 
                 // Event listener for "Add Another Document" button
                 addRowBtn.on('click', function() {
@@ -586,6 +758,9 @@
                 // Initial setup
                 updateTotalPrice();
             });
+        </script>
+        <script>
+
         </script>
 
         <script>
@@ -624,10 +799,6 @@
                 }
             });
         </script>
-
-
-
-
         </body>
 
         </html>
