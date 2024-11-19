@@ -4,7 +4,6 @@ require_once "../model/class_model.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = new class_model();
 
-    // Sanitize and validate inputs
     function sanitize($data)
     {
         return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $document_names = $_POST['document_name'] ?? [];
     $no_ofcopies = $_POST['copies'] ?? [];
     $purposes = $_POST['purpose'] ?? [];
-    $request_types = $_POST['request_type'] ?? [];
+    $request_types = $_POST['request_type'] ?? []; // This comes as a flat array
 
     $registrar_status = "Pending";
     $custodian_status = "Pending";
@@ -75,9 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($document_names as $index => $document_name) {
         $copies = $no_ofcopies[$index] ?? 1;
         $request_type = $request_types[$index] ?? '';
-        $documents[] = "$document_name (x$copies)";
+        $documents[] = "$document_name (x$copies) - $request_type"; // Include request type
     }
-
+    $price = $total_price;
     $request = $conn->add_request(
         $first_name,
         $middle_name,
@@ -88,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email_address,
         $control_no,
         implode("<br>", $documents),
-        $total_price,
+        $price,
         implode("<br>", $request_types),
         $registrar_status,
         $custodian_status,

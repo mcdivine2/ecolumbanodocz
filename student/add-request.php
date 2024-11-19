@@ -764,39 +764,68 @@
         </script>
 
         <script>
-            // Make AJAX request
-            $.ajax({
-                url: '../init/controllers/add_request.php', // Update this to your server-side script
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                cache: false,
-                async: false,
-                beforeSend: function() {
-                    // Show a loading message while the request is processing
-                    $('#message').html('<div class="alert alert-info">Submitting your request, please wait...</div>');
-                    window.scrollTo(0, 0);
-                },
-                success: function(response) {
-                    // Check for a "success" keyword in the response
-                    if (response.includes('success')) {
-                        $('#message').html('<div class="alert alert-success">Your request has been successfully submitted! Redirecting to the dashboard...</div>');
-                        window.scrollTo(0, 0);
-                        setTimeout(function() {
-                            window.location.href = 'index.php'; // Redirect after a short delay
-                        }, 3000); // 3-second delay before redirect
-                    } else {
-                        // Handle other responses (e.g., validation errors)
-                        $('#message').html('<div class="alert alert-warning">There was an issue with your submission: ' + response + '</div>');
-                        window.scrollTo(0, 0);
+            $(document).on('click', '#submitForm', function(e) {
+                e.preventDefault();
+
+                let formData = new FormData();
+                formData.append('first_name', $('input[name="first_name"]').val());
+                formData.append('middle_name', $('input[name="middle_name"]').val());
+                formData.append('last_name', $('input[name="last_name"]').val());
+                formData.append('complete_address', $('input[name="complete_address"]').val());
+                formData.append('birthdate', $('input[name="birthdate"]').val());
+                formData.append('course', $('select[name="course"]').val());
+                formData.append('email_address', $('input[name="email_address"]').val());
+                formData.append('control_no', $('input[name="control_no"]').val());
+                formData.append('student_id', $('input[name="student_id"]').val());
+                formData.append('total_price', $('#totalPrice').val());
+
+                // Collect documents
+                $('.request-row').each(function() {
+                    const documentName = $(this).find('select[name="document_name[]"]').val();
+                    const requestType = $(this).find('input[type="radio"]:checked').val();
+                    const copies = $(this).find('input[name="copies[]"]').val();
+
+                    if (documentName && requestType && copies) {
+                        formData.append('document_name[]', documentName);
+                        formData.append('request_type[]', requestType);
+                        formData.append('copies[]', copies);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX request failed: ' + status + ', ' + error);
-                    $('#message').html('<div class="alert alert-danger">An unexpected error occurred. Please try again later.</div>');
-                    window.scrollTo(0, 0);
-                }
+                });
+
+                // Collect purposes
+                $('input[name="purpose[]"]:checked').each(function() {
+                    formData.append('purpose[]', $(this).val());
+                });
+
+                // Handle file uploads
+                $('input[name="photo_attachment[]"]').each(function() {
+                    if ($(this)[0].files[0]) {
+                        formData.append('photo_attachment[]', $(this)[0].files[0]);
+                    }
+                });
+
+                $.ajax({
+                    url: '../init/controllers/add_request.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Required for FormData
+                    contentType: false, // Required for FormData
+                    success: function(response) {
+                        const res = JSON.parse(response);
+                        if (res.status === 'success') {
+                            $('#message').html('<div class="alert alert-success">' + res.message + '</div>');
+                            window.scrollTo(0, 0)
+                            setTimeout(() => window.location.reload(), 4000);
+                        } else {
+                            window.scrollTo(0, 0)
+                            $('#message').html('<div class="alert alert-danger">' + (res.errors ? res.errors.join('<br>') : 'An error occurred.') + '</div>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        $('#message').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
+                    },
+                });
             });
         </script>
         </body>
