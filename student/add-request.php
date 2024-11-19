@@ -315,7 +315,13 @@
                 const totalPriceField = $('#totalPrice');
                 const deliveryFee = 50; // Example delivery fee
 
-
+                // Function to reset the default row
+                function resetDefaultRow(parentRow) {
+                    parentRow.find('.document-select').val(''); // Reset document selection
+                    parentRow.find('.copies-input').val(1).prop('disabled', true); // Reset and disable copies input
+                    parentRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true); // Reset request type options
+                    parentRow.find('.additional-inputs').remove(); // Remove any additional dynamic inputs
+                }
 
                 // Toggle "Other (specify)" input field for Certification Type
                 $('input[name="certification_type"]').on('change', function() {
@@ -759,63 +765,38 @@
 
         <script>
             // Make AJAX request
-            $(document).on('click', '#submitForm', function(e) {
-                e.preventDefault(); // Prevent default form submission
-
-
-                // Collect form data
-                const formData = new FormData($('#validationform')[0]);
-
-                // Append civil_status if it's missing
-                if (!formData.has('civil_status')) {
-                    const civilStatus = $('select[name="civil_status"]').val();
-                    if (!civilStatus) {
-                        alert("Please select your civil status.");
-                        return; // Stop submission if not selected
-                    }
-                    formData.append('civil_status', civilStatus);
-                }
-
-                // Debugging: Log formData entries
-                for (let [key, value] of formData.entries()) {
-                    console.log(key, value); // Ensure civil_status is logged
-                }
-
-                $.ajax({
-                    url: '../init/controllers/add_request.php', // Server-side script
-                    type: 'POST',
-                    data: formData,
-                    processData: false, // Required for FormData
-                    contentType: false, // Required for FormData
-                    cache: false,
-                    beforeSend: function() {
-                        // Display a loading message while processing
-                        $('#message').html('<div class="alert alert-info">Submitting your request, please wait...</div>');
-                        window.scrollTo(0, 0); // Scroll to top for user feedback
-                    },
-                    success: function(response) {
-                        // Handle successful responses
-                        console.log(response); // Debugging: Log the response for troubleshooting
-                        if (response.includes('success')) {
-                            $('#message').html('<div class="alert alert-success">Your request has been successfully submitted! Redirecting to the dashboard...</div>');
-                            window.scrollTo(0, 0);
-                            setTimeout(function() {
-                                window.location.href = 'index.php'; // Redirect to dashboard
-                            }, 3000); // 3-second delay before redirect
-                        } else {
-                            // Display server-side validation errors or other issues
-                            $('#message').html('<div class="alert alert-warning">There was an issue with your submission: ' + response + '</div>');
-                            window.scrollTo(0, 0);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle AJAX errors
-                        console.error('AJAX request failed: ' + status + ', ' + error);
-                        console.error(xhr.responseText); // Debugging: Log server error details
-                        $('#message').html('<div class="alert alert-danger">An unexpected error occurred. Please try again later.</div>');
+            $.ajax({
+                url: '../init/controllers/add_request.php', // Update this to your server-side script
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                async: false,
+                beforeSend: function() {
+                    // Show a loading message while the request is processing
+                    $('#message').html('<div class="alert alert-info">Submitting your request, please wait...</div>');
+                    window.scrollTo(0, 0);
+                },
+                success: function(response) {
+                    // Check for a "success" keyword in the response
+                    if (response.includes('success')) {
+                        $('#message').html('<div class="alert alert-success">Your request has been successfully submitted! Redirecting to the dashboard...</div>');
+                        window.scrollTo(0, 0);
+                        setTimeout(function() {
+                            window.location.href = 'index.php'; // Redirect after a short delay
+                        }, 3000); // 3-second delay before redirect
+                    } else {
+                        // Handle other responses (e.g., validation errors)
+                        $('#message').html('<div class="alert alert-warning">There was an issue with your submission: ' + response + '</div>');
                         window.scrollTo(0, 0);
                     }
-                });
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX request failed: ' + status + ', ' + error);
+                    $('#message').html('<div class="alert alert-danger">An unexpected error occurred. Please try again later.</div>');
+                    window.scrollTo(0, 0);
+                }
             });
         </script>
         </body>
