@@ -77,7 +77,7 @@
                         <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
 
                             <!-- Applicant's Information Section -->
-                            <div class="form-group">
+                            <div class="form-group" style="border-top: 1px solid #ddd; padding-top: 15px;">
                                 <h4 class="section-title">Applicant's Information</h4>
                                 <div class="row">
                                     <div class="col-md-4">
@@ -112,7 +112,8 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Course</label>
-                                        <select name="course" data-parsley-type="alphanum" id="course" required class="form-control">
+                                        <input type="text" id="courseSearch" class="form-control" placeholder="Search or select a course...">
+                                        <select name="course" id="courseDropdown" class="form-control mt-2" size="5" required>
                                             <option value="">&larr; Select Course &rarr;</option>
                                             <?php
                                             $conn = new class_model();
@@ -128,24 +129,58 @@
                                         <input type="email" name="email_address" value="<?= $getstudno['email_address']; ?>" class="form-control">
                                     </div>
                                 </div>
+                                <script>
+                                    document.getElementById('courseSearch').addEventListener('input', function() {
+                                        const searchValue = this.value.toLowerCase();
+                                        const courseDropdown = document.getElementById('courseDropdown');
+                                        const options = courseDropdown.getElementsByTagName('option');
 
-                                <!-- Control Number Section -->
-                                <?php
-                                function createRandomcnumber()
-                                {
-                                    $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                                    $control = '';
-                                    for ($i = 0; $i < 4; $i++) {
-                                        $control .= $chars[rand(0, strlen($chars) - 1)];
-                                    }
-                                    return $control;
-                                }
-                                $cNumber = 'CTRL-' . createRandomcnumber();
-                                ?>
+                                        for (let i = 0; i < options.length; i++) {
+                                            const optionText = options[i].textContent.toLowerCase();
+                                            if (optionText.includes(searchValue) || options[i].value === "") {
+                                                options[i].style.display = "";
+                                            } else {
+                                                options[i].style.display = "none";
+                                            }
+                                        }
+                                    });
+
+                                    // Automatically select the option when clicked or when the user types and presses Enter
+                                    document.getElementById('courseDropdown').addEventListener('change', function() {
+                                        const selectedOption = this.options[this.selectedIndex].text;
+                                        document.getElementById('courseSearch').value = selectedOption;
+                                    });
+                                </script>
+
                                 <div class="row mt-2">
-                                    <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" readonly>
+                                    <div class="col-md-6">
+                                        <label>Civil Status</label>
+                                        <select name="civil_status" class="form-control" required>
+                                            <option value="" disabled selected>&larr; Select Civil Status &rarr;</option>
+                                            <option value="Single">Single</option>
+                                            <option value="Married">Married</option>
+                                            <option value="Widow">Widow</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Control Number</label>
+                                        <?php
+                                        function createRandomcnumber()
+                                        {
+                                            $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                                            $control = '';
+                                            for ($i = 0; $i < 4; $i++) {
+                                                $control .= $chars[rand(0, strlen($chars) - 1)];
+                                            }
+                                            return $control;
+                                        }
+                                        $cNumber = 'CTRL-' . createRandomcnumber();
+                                        ?>
+                                        <input type="text" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" class="form-control" readonly>
+                                    </div>
                                 </div>
                             </div>
+
 
                             <!-- Request For Section -->
                             <div class="form-group mt-4">
@@ -153,6 +188,7 @@
                                 <div id="requestContainer">
                                     <!-- First Row (Default) -->
                                     <div class="row request-row" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                                        <!-- Document Selection -->
                                         <div class="col-md-4" style="margin-bottom: 10px;">
                                             <label style="font-weight: bold;">Select Document:</label>
                                             <select name="document_name[]" class="form-control document-select" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px;">
@@ -170,24 +206,8 @@
                                                 ?>
                                             </select>
                                         </div>
-                                        <div class="col-md-2" style="margin-bottom: 10px;">
-                                            <label style="font-weight: bold;">Copies:</label>
-                                            <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required disabled style="border: 2px solid #007bff; border-radius: 5px; padding: 5px;">
-                                        </div>
-                                        <div class="col-md-4" style="margin-bottom: 10px;">
-                                            <label style="font-weight: bold;">Request Type:</label>
-                                            <div class="request-type-options d-flex" style="display: none; gap: 15px;">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="request_type_0" value="1st request" disabled>
-                                                    <label class="form-check-label" style="font-size: 14px;">1st Request</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="request_type_0" value="re-issuance" disabled>
-                                                    <label class="form-check-label" style="font-size: 14px;">Re-Issuance</label>
-                                                </div>
-                                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="margin-left: 15px;">Cancel</button>
-                                            </div>
-                                        </div>
+
+
                                     </div>
                                 </div>
 
@@ -199,7 +219,6 @@
                                     </div>
                                 </div>
 
-
                                 <!-- Add New Row Button -->
                                 <div class="text-right" style="margin-top: 10px;">
                                     <button type="button" id="addRowBtn" class="btn btn-success" style="background-color: #28a745; border-color: #28a745; border-radius: 5px; padding: 10px 20px; font-size: 16px;"
@@ -208,6 +227,7 @@
                                     </button>
                                 </div>
                             </div>
+
 
                             <!-- Purpose Section -->
                             <div class="form-group mt-4">
@@ -294,8 +314,7 @@
                 const requestContainer = $('#requestContainer');
                 const addRowBtn = $('#addRowBtn');
                 const totalPriceField = $('#totalPrice');
-
-                const deliveryFee = 50; // Adjust if needed
+                const deliveryFee = 50;
 
                 // Function to calculate the total amount dynamically
                 function updateTotalPrice() {
@@ -311,7 +330,6 @@
                         }
                     });
 
-                    // Add delivery fee if delivery mode is selected
                     if ($('#mode_request').val() === 'Delivery') {
                         total += deliveryFee;
                     }
@@ -319,213 +337,295 @@
                     totalPriceField.val(`₱${total.toFixed(2)}`);
                 }
 
-                // Function to get selected document names
-                function getSelectedDocuments() {
-                    const selected = [];
-                    requestContainer.find('.document-select').each(function() {
-                        if ($(this).val()) {
-                            selected.push($(this).val());
-                        }
-                    });
-                    return selected;
-                }
+                // Function to handle dynamic inputs for specific documents
+                function handleDynamicInputs(documentName, parentRow) {
+                    // Remove any existing dynamic inputs
+                    parentRow.find('.additional-inputs').remove();
 
-                // Function to update dropdown options and check if Add Row button should be enabled
-                function updateDropdownOptionsAndButton() {
-                    const selectedDocuments = getSelectedDocuments();
-                    let availableOptions = 0;
+                    let additionalInputs = '';
 
-                    requestContainer.find('.document-select').each(function() {
-                        const currentSelect = $(this);
-                        const currentValue = currentSelect.val();
+                    // Handle "Special Order" or "Diploma"
+                    if (documentName === 'Special Order' || documentName === 'Diploma') {
+                        additionalInputs = `
+    <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-                        currentSelect.find('option').each(function() {
-                            const optionValue = $(this).val();
-                            if (selectedDocuments.includes(optionValue) && optionValue !== currentValue) {
-                                $(this).hide();
-                            } else {
-                                $(this).show();
-                            }
+            <!-- Document Name -->
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                <p style="font-size: 14px; margin: 0;">${documentName}</p>
+            </div>
+
+            <!-- Copies -->
+            <div style="flex: 1; min-width: 120px;">
+                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+            </div>
+
+            <!-- Request Type -->
+            <div style="flex: 2; min-width: 250px;">
+                <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="request_type[]" value="1st request" required>
+                        <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="request_type[]" value="re-issuance" required>
+                        <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancel Row Button -->
+            <div style="flex: 0; min-width: 100px; text-align: center;">
+                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    `;
+                    }
+
+
+                    // Handle "Transcript of Records"
+                    else if (documentName === 'Transcript of Records') {
+                        additionalInputs = `
+    <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+            
+            <!-- Document Name -->
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                <p style="font-size: 14px; margin: 0;">${documentName}</p>
+            </div>
+
+            <!-- Copies -->
+            <div style="flex: 1; min-width: 120px;">
+                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+            </div>
+
+            <!-- Request Type -->
+            <div style="flex: 2; min-width: 200px;">
+                <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="request_type[]" value="1st request" required>
+                        <label class="form-check-label" style="font-size: 13px;">1st Request</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="request_type[]" value="re-issuance" required>
+                        <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purpose -->
+            <div style="flex: 3; min-width: 300px;">
+                <label style="font-weight: bold; font-size: 14px;">Purpose:</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="purpose[]" value="Evaluation">
+                        <label class="form-check-label" style="font-size: 13px;">Evaluation</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="purpose[]" value="Employment">
+                        <label class="form-check-label" style="font-size: 13px;">Employment</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="purpose[]" value="CBE BOARD EXAM">
+                        <label class="form-check-label" style="font-size: 13px;">CBE BOARD EXAM</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="otherPurposeCheckbox">
+                        <label class="form-check-label" style="font-size: 13px;">Other (specify)</label>
+                    </div>
+                </div>
+                <input type="text" id="otherPurposeInput" name="purpose[]" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                <label style="font-weight: bold; font-size: 14px; margin-top: 10px;">Attach 2x2 Picture:</label>
+                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" required style="margin-top: 10px;">
+            </div>
+
+            <!-- Cancel Row Button -->
+            <div style="flex: 0; min-width: 100px; text-align: center;">
+                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    `;
+
+                        // Toggle "Other" input visibility
+                        parentRow.on('change', '#otherPurposeCheckbox', function() {
+                            parentRow.find('#otherPurposeInput').toggle($(this).is(':checked'));
                         });
+                    }
 
-                        // Count remaining available options
-                        availableOptions += currentSelect.find('option:visible').not('[value=""]').length;
-                    });
+                    // Handle "Certification"
+                    else if (documentName === 'Certification') {
+                        additionalInputs = `
+    <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
 
-                    // Disable Add Row button if no more options are available
-                    const allFieldsComplete = checkLastRowCompleteness();
-                    addRowBtn.prop('disabled', availableOptions === selectedDocuments.length || !allFieldsComplete);
+            <!-- Document Name -->
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                <p style="font-size: 14px; margin: 0;">${documentName}</p>
+            </div>
+
+            <!-- Copies -->
+            <div style="flex: 1; min-width: 120px;">
+                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+            </div>
+
+            <!-- Certification Type -->
+            <div style="flex: 2; min-width: 250px;">
+                <label style="font-weight: bold; font-size: 14px;">Certification Type:</label>
+                <div style="display: flex; gap: 15px; margin-top: 8px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="certification_type[]" value="Unit Earned" required>
+                        <label class="form-check-label" style="font-size: 13px;">Unit Earned</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="certification_type[]" value="As Graduate" required>
+                        <label class="form-check-label" style="font-size: 13px;">As Graduate</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancel Row Button -->
+            <div style="flex: 0; min-width: 100px; text-align: center;">
+                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    `;
+                    } else if (documentName === 'Honorable Dismissal') {
+                        additionalInputs = `
+    <div class="additional-inputs" ">
+        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+
+            <!-- Document Name -->
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                <p style="font-size: 14px; margin: 0;">${documentName}</p>
+            </div>
+
+            <!-- Copies -->
+            <div style="flex: 1; min-width: 120px;">
+                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
+                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
+            </div>
+
+            <!-- Cancel Row Button -->
+            <div style="flex: 0; min-width: 100px; text-align: center;">
+                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    `;
+                    }
+
+
+                    // Append the additional inputs to the parent row
+                    if (additionalInputs) {
+                        parentRow.append(additionalInputs);
+                    }
                 }
 
-                // Function to check if all fields in the last row are filled
-                function checkLastRowCompleteness() {
-                    const lastRow = requestContainer.find('.request-row:last');
-                    const documentSelect = lastRow.find('.document-select');
-                    const copiesInput = lastRow.find('.copies-input');
-                    const requestTypeRadios = lastRow.find('input[name^="request_type"]:checked');
-
-                    return documentSelect.val() && copiesInput.val() && requestTypeRadios.length > 0;
-                }
-
-                // Event listener for document selection
                 requestContainer.on('change', '.document-select', function() {
                     const parentRow = $(this).closest('.request-row');
                     const copiesInput = parentRow.find('.copies-input');
                     const requestTypeOptions = parentRow.find('.request-type-options');
 
-                    if ($(this).val()) {
+                    const selectedValue = $(this).val();
+
+                    if (selectedValue) {
+                        // Enable copies input
                         copiesInput.prop('disabled', false);
+
+                        // Show and enable request type options
                         requestTypeOptions.show();
                         requestTypeOptions.find('input').prop('disabled', false);
+
+                        // Handle dynamic inputs for specific documents
+                        handleDynamicInputs(selectedValue, parentRow);
                     } else {
+                        // Disable and reset fields if no document is selected
                         copiesInput.prop('disabled', true).val(1);
                         requestTypeOptions.hide();
-                        requestTypeOptions.find('input').prop('checked', false);
+                        requestTypeOptions.find('input').prop('checked', false).prop('disabled', true);
+
+                        // Remove dynamic inputs if any
+                        parentRow.find('.additional-inputs').remove();
                     }
 
                     updateTotalPrice();
                     updateDropdownOptionsAndButton();
                 });
-
-                // Event listener for copies input
-                requestContainer.on('input', '.copies-input', function() {
-                    updateTotalPrice();
-                    updateDropdownOptionsAndButton();
-                });
-
-                // Event listener for request type selection
-                requestContainer.on('change', 'input[name^="request_type"]', function() {
-                    updateDropdownOptionsAndButton();
-                });
-
                 // Event listener for cancel button
                 requestContainer.on('click', '.cancel-row-btn', function() {
                     const parentRow = $(this).closest('.request-row');
                     parentRow.remove(); // Remove the row
-                    updateTotalPrice();
-                    updateDropdownOptionsAndButton();
+                    updateTotalPrice(); // Update the total price after removing the row
+                    updateDropdownOptionsAndButton(); // Refresh dropdown and button states
                 });
+
+
 
                 // Event listener for "Add Another Document" button
                 addRowBtn.on('click', function() {
                     const newRow = $('.request-row:first').clone();
-                    const newIndex = requestContainer.children().length;
-
                     newRow.find('.document-select').val('');
                     newRow.find('.copies-input').val(1).prop('disabled', true);
                     newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
-
-                    // Update radio button names for the new row
-                    newRow.find('input[name^="request_type"]').each(function() {
-                        const name = `request_type_${newIndex}`;
-                        $(this).attr('name', name);
-                    });
-
+                    newRow.find('.additional-inputs').remove();
                     requestContainer.append(newRow);
-                    updateDropdownOptionsAndButton();
-                });
-
-                // Event listener for mode of request
-                $('#mode_request').on('change', function() {
-                    $('#deliveryFeeSection').toggle($(this).val() === 'Delivery');
-                    updateTotalPrice();
                 });
 
                 // Initial setup
                 updateTotalPrice();
-                updateDropdownOptionsAndButton();
-
-                $(document).ready(function() {
-                    $('#submitForm').on('click', function(e) {
-                        e.preventDefault(); // Prevent default form submission
-
-                        // Collect form data
-                        const formData = new FormData($('#validationform')[0]);
-                        const course = $('select[name="course"]').val();
-
-                        if (!course) {
-                            $('#message').html('<div class="alert alert-danger">Please select a course!</div>');
-                            window.scrollTo(0, 0);
-                            return;
-                        }
-
-                        // Validate required fields
-                        const controlNo = $('input[name="control_no"]').val();
-                        const totalAmount = $('input[name="total_price"]').val();
-                        const studentId = $('input[name="student_id"]').val();
-                        const birthdate = $('input[name="birthdate"]').val();
-                        const email = $('input[name="email_address"]').val();
-
-                        // Collect document names and validate
-                        const documentNames = [];
-                        $('.document-select').each(function() {
-                            const selectedValue = $(this).val();
-                            if (selectedValue) {
-                                documentNames.push(selectedValue);
-                            }
-                        });
-
-                        if (
-                            !controlNo ||
-                            !totalAmount ||
-                            !studentId ||
-                            !birthdate ||
-                            !email ||
-                            documentNames.length === 0
-                        ) {
-                            $('#message').html('<div class="alert alert-danger">All fields are required, including at least one document!</div>');
-                            window.scrollTo(0, 0);
-                            return;
-                        }
-
-                        // Make AJAX request
-                        // Make AJAX request
-                        $.ajax({
-                            url: '../init/controllers/add_request.php', // Update this to your server-side script
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            cache: false,
-                            async: false,
-                            beforeSend: function() {
-                                // Show a loading message while the request is processing
-                                $('#message').html('<div class="alert alert-info">Submitting your request, please wait...</div>');
-                                window.scrollTo(0, 0);
-                            },
-                            success: function(response) {
-                                // Check for a "success" keyword in the response
-                                if (response.includes('success')) {
-                                    $('#message').html('<div class="alert alert-success">Your request has been successfully submitted! Redirecting to the dashboard...</div>');
-                                    window.scrollTo(0, 0);
-                                    setTimeout(function() {
-                                        window.location.href = 'index.php'; // Redirect after a short delay
-                                    }, 3000); // 3-second delay before redirect
-                                } else {
-                                    // Handle other responses (e.g., validation errors)
-                                    $('#message').html('<div class="alert alert-warning">There was an issue with your submission: ' + response + '</div>');
-                                    window.scrollTo(0, 0);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('AJAX request failed: ' + status + ', ' + error);
-                                $('#message').html('<div class="alert alert-danger">An unexpected error occurred. Please try again later.</div>');
-                                window.scrollTo(0, 0);
-                            }
-                        });
-
-                    });
-                });
-
-
             });
-
-            function showSpecifyInput(index) {
-                // Toggle visibility of the "Other" input when "Other (please specify)" radio button is selected
-                const specifyInput = $(`#other_specify${index}`);
-                specifyInput.toggle(); // Show or hide the input
-            }
         </script>
+
+        <script>
+            // Make AJAX request
+            $.ajax({
+                url: '../init/controllers/add_request.php', // Update this to your server-side script
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                async: false,
+                beforeSend: function() {
+                    // Show a loading message while the request is processing
+                    $('#message').html('<div class="alert alert-info">Submitting your request, please wait...</div>');
+                    window.scrollTo(0, 0);
+                },
+                success: function(response) {
+                    // Check for a "success" keyword in the response
+                    if (response.includes('success')) {
+                        $('#message').html('<div class="alert alert-success">Your request has been successfully submitted! Redirecting to the dashboard...</div>');
+                        window.scrollTo(0, 0);
+                        setTimeout(function() {
+                            window.location.href = 'index.php'; // Redirect after a short delay
+                        }, 3000); // 3-second delay before redirect
+                    } else {
+                        // Handle other responses (e.g., validation errors)
+                        $('#message').html('<div class="alert alert-warning">There was an issue with your submission: ' + response + '</div>');
+                        window.scrollTo(0, 0);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX request failed: ' + status + ', ' + error);
+                    $('#message').html('<div class="alert alert-danger">An unexpected error occurred. Please try again later.</div>');
+                    window.scrollTo(0, 0);
+                }
+            });
+        </script>
+
+
 
 
         </body>
