@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $complete_address = sanitize($_POST['complete_address']);
     $birthdate = sanitize($_POST['birthdate']);
     $course = sanitize($_POST['course']);
-    $civil_status = sanitize($_POST['civil_status']);
     $email_address = sanitize($_POST['email_address']);
     $control_no = sanitize($_POST['control_no']);
     $student_id = sanitize($_POST['student_id']);
@@ -37,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required.';
-    if (empty($civil_status)) $errors[] = 'Civil status is required.';
     if (empty($purposes)) $errors[] = 'Purpose is required.';
     if (empty($birthdate)) $errors[] = 'Birthdate is required.';
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address.';
@@ -87,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $complete_address,
         $birthdate,
         $course,
-        $civil_status,
         $email_address,
         $control_no,
         implode("<br>", $documents),
