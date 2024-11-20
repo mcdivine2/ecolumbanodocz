@@ -4,7 +4,7 @@ require_once "../model/class_model.php";
 if (isset($_POST)) {
 	$conn = new class_model();
 
-	$student_id = trim($_POST['student_id']);
+	$studentID_no = trim($_POST['studentID_no']);
 	$first_name = trim($_POST['first_name']);
 	$middle_name = trim($_POST['middle_name']);
 	$last_name = trim($_POST['last_name']);
@@ -19,7 +19,7 @@ if (isset($_POST)) {
 	$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 	$course = $conn->add_student(
-		$student_id,
+		$studentID_no,
 		$first_name,
 		$middle_name,
 		$last_name,

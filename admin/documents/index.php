@@ -196,6 +196,67 @@
                     </div>
                 </div>
 
+                <?php
+$conn = new class_model();
+
+// Weekly Data: Grouped by Monday-Sunday of the current week
+$weeklyData = [];
+$weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+$startOfWeek = strtotime('monday this week'); // Start of the current week (Monday)
+
+for ($day = 0; $day < 7; $day++) {
+    $currentDate = strtotime("+$day day", $startOfWeek);
+    $dayNum = date('d', $currentDate);
+    $monthNum = date('m', $currentDate);
+    $yearNum = date('Y', $currentDate);
+    $weeklyData[$weekdays[$day]] = count($conn->fetchAll_documentrequest($dayNum, $monthNum, $yearNum));
+}
+
+
+
+// Monthly Data (grouped by month for the current year)
+$monthlyData = [];
+for ($i = 1; $i <= 12; $i++) {
+    $monthlyData[$i] = count($conn->fetchAll_documentrequest(null, $i, date('Y')));
+}
+
+// Yearly Data (last 5 years as an example)
+$yearlyData = [];
+$currentYear = date('Y');
+for ($i = $currentYear - 4; $i <= $currentYear; $i++) {
+    $yearlyData[$i] = count($conn->fetchAll_documentrequest(null, null, $i));
+}
+
+// Encode the data for JavaScript
+$weeklyDataJSON = json_encode($weeklyData);
+$monthlyDataJSON = json_encode($monthlyData);
+$yearlyDataJSON = json_encode($yearlyData);
+?>
+
+        
+        <div class="dashboard">
+    <div class="cards" style="border-top: 5px solid #4a90e2;">
+        <div class="card-header">
+            <h3>Weekly Record</h3>
+        </div>
+        <canvas id="weeklyChart"></canvas>
+    </div>
+
+    <div class="cards" style="border-top: 5px solid #d9534f;">
+        <div class="card-header">
+            <h3>Monthly Record</h3>
+        </div>
+        <canvas id="monthlyChart"></canvas>
+    </div>
+
+    <div class="cards" style="border-top: 5px solid #8e44ad;">
+        <div class="card-header">
+            <h3>Yearly Record</h3>
+        </div>
+        <canvas id="yearlyChart"></canvas>
+    </div>
+</div>
+
                 <!-- Dropdown for Report Type -->
                 <div class="row">
                     <div class="col-12">
@@ -270,6 +331,87 @@
     <script type="text/javascript" src="../assets/js/loader.js"></script>
 
     <script>
+    // Weekly Chart
+const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+const weeklyData = <?= json_encode($weeklyData) ?>; // Convert PHP array to JSON
+new Chart(weeklyCtx, {
+    type: 'bar',
+    data: {
+        labels: Object.keys(weeklyData), // Directly use 'Monday', 'Tuesday', etc.
+        datasets: [{
+            label: 'Weekly Document Requests',
+            data: Object.values(weeklyData),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Optional: Bar background color
+            borderColor: 'rgba(75, 192, 192, 1)',      // Optional: Bar border color
+            borderWidth: 1                             // Optional: Bar border width
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Days of the Week'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
+        }
+    }
+});
+
+
+    // Monthly Chart
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    const monthlyData = <?= $monthlyDataJSON ?>;
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            datasets: [{
+                label: 'Monthly Document Requests (Current Year)',
+                data: [
+                    monthlyData[1] || 0,
+                    monthlyData[2] || 0,
+                    monthlyData[3] || 0,
+                    monthlyData[4] || 0,
+                    monthlyData[5] || 0,
+                    monthlyData[6] || 0,
+                    monthlyData[7] || 0,
+                    monthlyData[8] || 0,
+                    monthlyData[9] || 0,
+                    monthlyData[10] || 0,
+                    monthlyData[11] || 0,
+                    monthlyData[12] || 0
+                ],
+            }]
+        }
+    });
+
+    // Yearly Chart
+    const yearlyCtx = document.getElementById('yearlyChart').getContext('2d');
+    const yearlyData = <?= $yearlyDataJSON ?>;
+    new Chart(yearlyCtx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(yearlyData),
+            datasets: [{
+                label: 'Yearly Document Requests',
+                data: Object.values(yearlyData),
+            }]
+        }
+    });
         $(document).ready(function() {
             // Display initials in profile image
             let initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);

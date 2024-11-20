@@ -62,9 +62,9 @@
                                            </div>
                                        </div>
                                        <div class="form-group row">
-                                           <label class="col-12 col-sm-3 col-form-label text-sm-right">Student ID</label>
+                                           <label class="col-12 col-sm-3 col-form-label text-sm-right">Student EDP</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
-                                               <input type="text" value="<?= $row['student_id']; ?>" name="student_id" class="form-control" readonly>
+                                               <input type="text" value="<?= $row['studentID_no']; ?>" name="studentID_no" class="form-control" readonly>
                                            </div>
                                        </div>
                                        <div class="form-group row">
@@ -108,13 +108,6 @@
                                                    <input type="date" value="<?= $row['date_releasing']; ?>" name="date_releasing" class="form-control">
                                                </div>
                                            <?php endif; ?>
-                                       </div>
-
-                                       <div class="form-group row">
-                                           <label class="col-12 col-sm-3 col-form-label text-sm-right">Processing Officer</label>
-                                           <div class="col-12 col-sm-8 col-lg-6">
-                                               <input type="text" value="<?= $user['complete_name']; ?>" name="processing_officer" class="form-control" readonly>
-                                           </div>
                                        </div>
 
                                        <!-- Status Section -->
@@ -231,7 +224,7 @@
                btn.addEventListener('click', () => {
 
                    const control_no = document.querySelector('input[name=control_no]').value;
-                   const student_id = document.querySelector('input[name=student_id]').value;
+                   const student_id = document.querySelector('input[name=studentID_no]').value;
                    const document_name = document.querySelector('input[name=document_name]').value;
                    const date_request = document.querySelector('input[name=date_request]').value;
                    const date_releasing = document.querySelector('input[name=date_releasing]').value;
@@ -242,16 +235,15 @@
                    var data = new FormData(this.form);
 
                    data.append('control_no', control_no);
-                   data.append('student_id', student_id);
+                   data.append('studentID_no', studentID_no);
                    data.append('document_name', document_name);
                    data.append('date_request', date_request);
                    data.append('date_releasing', date_releasing);
-                   data.append('processing_officer', processing_officer);
                    data.append('status', status);
                    data.append('request_id', request_id);
 
 
-                   if (control_no === '' && student_id === '' && document_name === '' && date_request === '' && date_releasing === '' && processing_officer === '') {
+                   if (control_no === '' && studentID_no === '' && document_name === '' && date_request === '' && date_releasing === '' && processing_officer === '') {
                        $('#message').html('<div class="alert alert-danger"> Required All Fields!</div>');
                    } else {
                        $.ajax({

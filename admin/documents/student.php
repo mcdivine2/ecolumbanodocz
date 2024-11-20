@@ -47,7 +47,7 @@
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">ID No.</th>
+                                                    <th scope="col">EDP No.</th>
                                                     <th scope="col">Complete Name</th>
                                                     <th scope="col">Contact</th>
                                                     <th scope="col">Email</th>
@@ -62,7 +62,7 @@
                                                ?>
                                                <?php foreach ($student as $row) { ?>
                                                 <tr>
-                                                    <td><?= $row['student_id']; ?></td>
+                                                    <td><?= $row['studentID_no'] ?? 'N/A'; ?></td>
                                                     <td><?= $row['first_name'] .' '. $row['middle_name'].' '.$row['last_name']; ?></td>
                                                     <td><?= $row['mobile_number']; ?></td>
                                                     <td><?= $row['email_address']; ?></td>

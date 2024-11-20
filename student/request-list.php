@@ -160,6 +160,7 @@
                                                <th scope="col">Student ID</th>
                                                <th scope="col">Student Name</th>
                                                <th scope="col">Document Name</th>
+                                               <th scope="col">Request Type</th>
                                                <th scope="col">Date Request</th>
                                                <th scope="col">Date Releasing</th>
                                                <th scope="col">Status</th>
@@ -175,9 +176,10 @@
                                            <?php foreach ($docrequest as $row) { ?>
                                                <tr>
                                                    <td><?= $row['control_no']; ?></td>
-                                                   <td><?= $row['student_id']; ?></td>
+                                                   <td><?= $row['studentID_no']; ?></td>
                                                    <td><?= $row['first_name'] . ' ' . $row['last_name']; ?></td>
                                                    <td><?= $row['document_name']; ?></td>
+                                                   <td><?= $row['request_type']; ?></td>
                                                    <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                                    <td>
                                                        <?php
@@ -266,6 +268,10 @@
                                        <div class="form-group">
                                            <label for="documents">Documents</label>
                                            <input type="text" class="form-control" id="document_name" name="document_name" readonly>
+                                       </div>
+                                       <div class="form-group">
+                                           <label for="documents">Type of Request</label>
+                                           <input type="text" class="form-control" id="document_name" name="request_type" readonly>
                                        </div>
 
                                        <div class="form-group">
