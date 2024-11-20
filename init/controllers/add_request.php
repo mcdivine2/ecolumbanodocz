@@ -8,19 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     {
         return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
     }
-
+    $studentID_no = sanitize($_POST['studentID_no']);
     $first_name = sanitize($_POST['first_name']);
     $middle_name = sanitize($_POST['middle_name']);
     $last_name = sanitize($_POST['last_name']);
     $complete_address = sanitize($_POST['complete_address']);
-    $birthdate = sanitize($_POST['birthdate']);
     $course = sanitize($_POST['course']);
     $civil_status = sanitize($_POST['civil_status']);
     $email_address = sanitize($_POST['email_address']);
     $control_no = sanitize($_POST['control_no']);
     $student_id = sanitize($_POST['student_id']);
     $total_price = filter_var(str_replace('₱', '', $_POST['total_price']), FILTER_VALIDATE_FLOAT);
-
     $document_names = $_POST['document_name'] ?? [];
     $no_ofcopies = $_POST['copies'] ?? [];
     $purposes = $_POST['purpose'] ?? [];
@@ -37,33 +35,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required.';
     if (empty($purposes)) $errors[] = 'Purpose is required.';
-    if (empty($birthdate)) $errors[] = 'Birthdate is required.';
+    if (empty($civil_status)) $errors[] = 'Civil Status is required.';
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address.';
     if (!is_numeric($total_price)) $errors[] = 'Invalid total price.';
 
     $recent_image = "Not Required";
 
-    if (in_array("Honorable Dismissal w/ TOR for evaluation", $document_names)) {
-        if (isset($_FILES["upload_recent"]) && $_FILES["upload_recent"]["error"] === UPLOAD_ERR_OK) {
-            $target_dir = __DIR__ . "/../../student/student_uploads/";
-            $file_name = uniqid() . '-' . basename($_FILES["upload_recent"]["name"]);
-            $target_file = $target_dir . $file_name;
-            $allowed_types = ['image/jpeg', 'image/png', 'application/pdf'];
-
-            if (in_array(mime_content_type($_FILES["upload_recent"]["tmp_name"]), $allowed_types)) {
-                if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
-                if (move_uploaded_file($_FILES["upload_recent"]["tmp_name"], $target_file)) {
-                    $recent_image = "student/student_uploads/" . $file_name;
+    if (!empty($_FILES['photo_attachment']['name'])) {
+        foreach ($_FILES['photo_attachment']['name'] as $index => $fileName) {
+            if ($_FILES['photo_attachment']['error'][$index] === UPLOAD_ERR_OK) {
+                $target_dir = __DIR__ . "/../../student/student_uploads/";
+                $file_name = uniqid() . '-' . basename($fileName);
+                $target_file = $target_dir . $file_name;
+                $allowed_types = ['image/jpeg', 'image/png', 'application/pdf'];
+    
+                if (in_array(mime_content_type($_FILES['photo_attachment']['tmp_name'][$index]), $allowed_types)) {
+                    if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
+                    if (move_uploaded_file($_FILES['photo_attachment']['tmp_name'][$index], $target_file)) {
+                        $recent_image = "student/student_uploads/" . $file_name;
+                    } else {
+                        $errors[] = "Failed to upload file: $fileName.";
+                    }
                 } else {
-                    $errors[] = 'Failed to upload file.';
+                    $errors[] = "Invalid file type for $fileName. Only JPG, PNG, and PDF are allowed.";
                 }
-            } else {
-                $errors[] = 'Invalid file type. Only JPG, PNG, and PDF are allowed.';
             }
-        } else {
-            $errors[] = 'Recent image is required for "Honorable Dismissal w/ TOR for evaluation".';
+        }
+    } else {
+        if (in_array("Transcript of Records", $document_names)) {
+            $errors[] = 'Recent image is required for "Transcript of Records".';
         }
     }
+    
 
     if (!empty($errors)) {
         echo json_encode(['status' => 'error', 'errors' => $errors]);
@@ -79,11 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $price = $total_price;
     $request = $conn->add_request(
+        $studentID_no,
         $first_name,
         $middle_name,
         $last_name,
         $complete_address,
-        $birthdate,
         $course,
         $civil_status,
         $email_address,

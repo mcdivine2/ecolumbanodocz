@@ -176,7 +176,7 @@
                                            <?php foreach ($docrequest as $row) { ?>
                                                <tr>
                                                    <td><?= $row['control_no']; ?></td>
-                                                   <td><?= $row['student_id']; ?></td>
+                                                   <td><?= $row['studentID_no']; ?></td>
                                                    <td><?= $row['first_name'] . ' ' . $row['last_name']; ?></td>
                                                    <td><?= $row['document_name']; ?></td>
                                                    <td><?= $row['request_type']; ?></td>

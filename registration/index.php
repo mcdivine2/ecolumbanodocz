@@ -1,3 +1,4 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <?php include('documents/main_header/header.php'); ?>
 <!-- ============================================================== -->
 <!-- end navbar -->
@@ -45,66 +46,8 @@
             justify-content: flex-start;
             align-items: flex-start;
             padding-bottom: 40px;
-
-
         }
 
-        /* Modal Content with Soft Background */
-        .modal-content {
-            background-color: #F8F9F9;
-            border: 2px solid #1E5631;
-            backdrop-filter: blur(5px);
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Header and Footer Colors */
-        .modal-header {
-            background-color: #1E5631;
-            color: #fff;
-            /* Pure white text */
-            font-weight: bold;
-            /* Bold for readability */
-        }
-
-        .modal-footer {
-            background-color: #1E5631;
-        }
-
-        /* Button Styles */
-        .btn-success {
-            background-color: #2ECC71;
-            border-color: #2ECC71;
-            color: #fff;
-        }
-
-        .btn-secondary {
-            background-color: #D5DBDB;
-            border-color: #D5DBDB;
-            color: #212529;
-        }
-
-        /* Modal Body Text */
-        .modal-body {
-            background-color: #F8F9F9;
-            color: #212529;
-            padding: 20px;
-        }
-
-        .modal-body p,
-        .modal-body ul {
-            color: #4E5D6C;
-        }
-
-        /* Heading Spacing */
-        .modal-body h6 {
-            margin-top: 20px;
-        }
-
-        /* List Style */
-        .modal-body ul {
-            padding-left: 20px;
-            list-style-type: disc;
-        }
     </style>
     <!-- ============================================================== -->
     <!-- end pageheader -->
@@ -204,6 +147,24 @@
             </div>
         </div>
 
+<!-- Modal Structure (Success Message) -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <!-- Success Icon -->
+                <div class="success-icon" style="font-size: 50px; color: green;">
+                    <i class="bi bi-check-circle-fill"></i> <!-- Bootstrap check-circle icon -->
+                </div>
+                <!-- Success Message -->
+                <h4>Registration completed successfully</h4>
+                <p>Please check your registered email and wait for us to verify</p>
+                <!-- Ok Button -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 
         <!-- Terms and Conditions Modal -->
         <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
@@ -298,125 +259,124 @@
         <script src="../asset/libs/js/main-js.js"></script>
 
         <script type="text/javascript">
-            // Restricts input for the given textbox to the given inputFilter.
-            function setInputFilter(textbox, inputFilter) {
-                ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
-                    textbox.addEventListener(event, function() {
-                        if (inputFilter(this.value)) {
-                            this.oldValue = this.value;
-                            this.oldSelectionStart = this.selectionStart;
-                            this.oldSelectionEnd = this.selectionEnd;
-                        } else if (this.hasOwnProperty("oldValue")) {
-                            this.value = this.oldValue;
-                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-                        } else {
-                            this.value = "";
-                        }
-                    });
-                });
+    // Restrict input for the given textbox to the given inputFilter.
+    function setInputFilter(textbox, inputFilter) {
+        [
+            "input", "keydown", "keyup", "mousedown", "mouseup",
+            "select", "contextmenu", "drop"
+        ].forEach(function(event) {
+            textbox.addEventListener(event, function() {
+                if (inputFilter(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty("oldValue")) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                } else {
+                    this.value = "";
+                }
+            });
+        });
+    }
+
+    // Install input filters.
+    const inputs = [
+        { id: "intTextBox", filter: value => /^-?\d*$/.test(value) },
+        { id: "latinTextBox", filter: value => /^[a-z]*$/i.test(value) },
+        { id: "latinTextBox1", filter: value => /^[a-z]*$/i.test(value) },
+        { id: "latinTextBox2", filter: value => /^[a-z]*$/i.test(value) },
+    ];
+    inputs.forEach(input => {
+        const element = document.getElementById(input.id);
+        if (element) setInputFilter(element, input.filter);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Parsley for form validation
+        $('form[name="student_form"]').parsley();
+
+        // Form submission handler
+        $('form[name="student_form"]').on('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            // Grab all form field values
+            const formData = new FormData(this);
+
+            // Custom validation for required fields
+            const missingFields = [];
+            ['first_name', 'last_name', 'complete_address', 'email_address', 'mobile_number', 'id_upload'].forEach(field => {
+                if (!formData.get(field)) {
+                    missingFields.push(field);
+                }
+            });
+
+            // Show error if any field is missing
+            if (missingFields.length > 0) {
+                $('#messageModalBody').html(
+                    `<div class="alert alert-danger">
+                        Please fill in the required fields: ${missingFields.join(', ').replace(/_/g, ' ')}.
+                     </div>`
+                );
+                $('#messageModal').modal('show'); // Show modal
+                return;
             }
 
-
-            // Install input filters.
-            setInputFilter(document.getElementById("intTextBox"), function(value) {
-                return /^-?\d*$/.test(value);
+            // AJAX Request
+            $.ajax({
+                url: 'init/controllers/add_student.php', // Your server-side script
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Display success message in modal
+                    $('#messageModalBody').html(
+                        `<div class="success-icon" style="font-size: 50px; color: green;">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <h4>Registration completed successfully</h4>
+                        <p>Please check your registered email for email verification</p>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>`
+                    );
+                    $('#messageModal').modal('show'); // Show modal
+                    $('form[name="student_form"]')[0].reset(); // Reset form
+                },
+                error: function() {
+                    // Display error message in modal
+                    $('#messageModalBody').html(
+                        `<div class="alert alert-danger">An error occurred. Please try again.</div>`
+                    );
+                    $('#messageModal').modal('show'); // Show modal
+                }
             });
-            setInputFilter(document.getElementById("latinTextBox"), function(value) {
-                return /^[a-z]*$/i.test(value);
-            });
-            setInputFilter(document.getElementById("latinTextBox1"), function(value) {
-                return /^[a-z]*$/i.test(value);
-            });
-            setInputFilter(document.getElementById("latinTextBox2"), function(value) {
-                return /^[a-z]*$/i.test(value);
-            });
-        </script>
+        });
+    });
+</script>
 
-
-
-
-        <script>
-            $('#form').parsley();
-        </script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                var firstName = $('#firstName').text();
-                var lastName = $('#lastName').text();
-                var intials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
-                var profileImage = $('#profileImage').text(intials);
-            });
-        </script>
-        <script>
-            // Example starter JavaScript for disabling form submissions if there are invalid fields
-            (function() {
-                'use strict';
-                window.addEventListener('load', function() {
-                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                    var forms = document.getElementsByClassName('needs-validation');
-                    // Loop over them and prevent submission
-                    var validation = Array.prototype.filter.call(forms, function(form) {
-                        form.addEventListener('submit', function(event) {
-                            if (form.checkValidity() === false) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                            form.classList.add('was-validated');
-                        }, false);
-                    });
-                }, false);
-            })();
-        </script>
-        <script>
-            $(document).ready(function() {
-                $('form[name="student_form"]').on('submit', function(e) {
-                    e.preventDefault(); // Prevent form from submitting traditionally
-
-                    // Capture form field values
-                    var studentID_no = $(this).find('input[name="studentID_no"]').val();
-                    var first_name = $(this).find('input[name="first_name"]').val();
-                    var middle_name = $(this).find('input[name="middle_name"]').val();
-                    var last_name = $(this).find('input[name="last_name"]').val();
-                    var complete_address = $(this).find('textarea[name="complete_address"]').val();
-                    var email_address = $(this).find('input[name="email_address"]').val();
-                    var mobile_number = $(this).find('input[name="mobile_number"]').val();
-                    var id_upload = $(this).find('input[name="id_upload"]')[0].files[0]; // Grab file input
-
-                    // Create FormData object and append form data
-                    var formData = new FormData(this);
-                    formData.append('studentID_no', studentID_no);
-                    formData.append('first_name', first_name);
-                    formData.append('middle_name', middle_name);
-                    formData.append('last_name', last_name);
-                    formData.append('complete_address', complete_address);
-                    formData.append('email_address', email_address);
-                    formData.append('mobile_number', mobile_number);
-                    formData.append('id_upload', id_upload); // Append file
-
-                    // Check for required fields
-                    if (first_name === '' || last_name === '' || complete_address === '' || email_address === '' || mobile_number === '' || !id_upload) {
-                        $('#message').html('<div class="alert alert-danger"> All Required Fields Must Be Filled!</div>');
-                    } else {
-                        // AJAX Request
-                        $.ajax({
-                            url: 'init/controllers/add_student.php', // Your server-side script
-                            method: 'POST',
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            success: function(response) {
-                                // Handle success response
-                                $("#message").html(response);
-                                window.scrollTo(0, 0); // Scroll to top after form submission
-                            },
-                            error: function(response) {
-                                // Handle error response
-                                console.log("Form submission failed.");
-                            }
-                        });
+<script>
+    // Bootstrap validation logic
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            // Fetch all the forms to apply validation
+            const forms = document.getElementsByClassName('needs-validation');
+            Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
                     }
-                });
+                    form.classList.add('was-validated');
+                }, false);
             });
-        </script>
+        }, false);
+    })();
+</script>
+
+
 
         </body>
 

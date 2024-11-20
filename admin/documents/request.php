@@ -96,7 +96,7 @@
                                     <tr>
                                         <th>Date Requested</th>
                                         <th>Control No.</th>
-                                        <th>Student ID</th>
+                                        <th>Student EDP</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
                                         <th>Mode Request</th>
@@ -110,7 +110,7 @@
                                 <tbody>
                                     <?php
                                     $conn = new class_model();
-
+                                    
                                     // Fetch filter values
                                     $day = isset($_GET['day']) ? $_GET['day'] : '';
                                     $month = isset($_GET['month']) ? $_GET['month'] : '';
@@ -121,7 +121,7 @@
                                     foreach ($docrequest as $row) {
                                         // Determine clearance button properties
                                         $all_verified = ($row['library_status'] === 'Verified' &&
-                                            $row['dean_status'] === 'Verified' &&
+                                            $row['dean_status'] === 'Verified' or 'Not Included' && 
                                             $row['custodian_status'] === 'Verified' &&
                                             $row['accounting_status'] === 'Verified');
                                         $clearance_text = $row['registrar_status'] === 'Declined' ? 'Cancel' : ($all_verified ? 'Complete' : 'Incomplete');
@@ -137,11 +137,13 @@
                                         ];
                                         $status_text = $row['registrar_status'];
                                         $badge_class = $status_badges[$status_text] ?? 'secondary';
+
                                     ?>
+                                    
                                         <tr>
                                             <td><?= $row['date_request']; ?></td>
                                             <td><?= $row['control_no']; ?></td>
-                                            <td><?= $row['student_id']; ?></td>
+                                            <td><?= $row['studentID_no'] ?? 'N/A'; ?></td>
                                             <td><?= htmlspecialchars($row['first_name'] . " " . $row['last_name']); ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= htmlspecialchars($row['mode_request']); ?></td>

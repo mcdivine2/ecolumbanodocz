@@ -122,8 +122,9 @@ class class_model
 			$result = $stmt->get_result();
 			$fetch = $result->fetch_array();
 			return array(
+
 				'student_id' => $fetch['student_id'],
-				// 'student_id' => $fetch['student_id'],
+				'studentID_no' => $fetch['studentID_no'],
 				'first_name' => $fetch['first_name'],
 				'middle_name' => $fetch['middle_name'],
 				'last_name' => $fetch['last_name'],
@@ -621,11 +622,11 @@ class class_model
 	}
 
 	public function add_request(
+		$studentID_no,
 		$first_name,
 		$middle_name,
 		$last_name,
 		$complete_address,
-		$birthdate,
 		$course,
 		$civil_status,
 		$email_address,
@@ -659,7 +660,7 @@ class class_model
 		// Prepare the SQL statement
 		$stmt = $this->conn->prepare(
 			"INSERT INTO tbl_documentrequest 
-			(first_name, middle_name, last_name, complete_address, birthdate, course, civil_status,
+			(studentID_no, first_name, middle_name, last_name, complete_address, course, civil_status,
 			 email_address, control_no, document_name, price, request_type,
 			 registrar_status, custodian_status, dean_status, library_status, 
 			 accounting_status, purpose, student_id, recent_image, date_request) 
@@ -674,11 +675,11 @@ class class_model
 		// Correct bind parameter type string
 		$stmt->bind_param(
 			"sssssssssssssssssssss", // Updated type definition string (all are strings)
+			$studentID_no,
 			$first_name,          // 1
 			$middle_name,         // 2
 			$last_name,           // 3
 			$complete_address,    // 4
-			$birthdate,           // 5
 			$course,              // 6
 			$civil_status,              // 6
 			$email_address,       // 7

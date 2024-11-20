@@ -77,7 +77,7 @@
                         <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
 
                             <!-- Applicant's Information Section -->
-                            <div class="form-group" style="border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="form-group">
                                 <h4 class="section-title">Applicant's Information</h4>
                                 <div class="row">
                                     <div class="col-md-4">
@@ -86,6 +86,7 @@
                                         $getstudno = $conn->student_profile($student_id);
                                         ?>
                                         <label>Firstname</label>
+                                        <input type="hidden" name="studentID_no" value="<?= $getstudno['studentID_no']; ?>" class="form-control">
                                         <input type="text" name="first_name" value="<?= $getstudno['first_name']; ?>" class="form-control" readonly>
                                     </div>
                                     <div class="col-md-4">
@@ -104,17 +105,22 @@
                                         <input type="text" name="complete_address" value="<?= $getstudno['complete_address']; ?>" class="form-control" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Birthdate</label>
-                                        <input type="date" name="birthdate" class="form-control" placeholder="dd/mm/yyyy">
+                                        <label>Civil Status</label>
+                                        <select name="civil_status" class="form-control" required>
+                                            <option value="" disabled selected>&larr; Select Civil Status &rarr;</option>
+                                            <option value="Single">Single</option>
+                                            <option value="Married">Married</option>
+                                            <option value="Widow">Widow</option>
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Course</label>
-                                        <input type="text" id="courseSearch" class="form-control" placeholder="Search or select a course...">
-                                        <select name="course" id="courseDropdown" class="form-control mt-2" size="5" required>
-                                            <option value="">&larr; Select Course &rarr;</option>
+                                        
+                                        <select name="course" id="course" class="form-control"  required>
+                                            <option value="" disabled selected>&larr; Select Course &rarr;</option>
                                             <?php
                                             $conn = new class_model();
                                             $course = $conn->fetchAll_course();
@@ -153,17 +159,8 @@
                                 </script>
 
                                 <div class="row mt-2">
+                                    
                                     <div class="col-md-6">
-                                        <label>Civil Status</label>
-                                        <select name="civil_status" class="form-control" required>
-                                            <option value="" disabled selected>&larr; Select Civil Status &rarr;</option>
-                                            <option value="Single">Single</option>
-                                            <option value="Married">Married</option>
-                                            <option value="Widow">Widow</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Control Number</label>
                                         <?php
                                         function createRandomcnumber()
                                         {
@@ -176,7 +173,7 @@
                                         }
                                         $cNumber = 'CTRL-' . createRandomcnumber();
                                         ?>
-                                        <input type="text" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" class="form-control" readonly>
+                                        <input type="hidden" name="control_no" value="<?= $cNumber . $_SESSION['student_id']; ?>" class="form-control" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -248,6 +245,7 @@
                             <!-- Submission Section -->
                             <div class="form-group mt-4 text-right">
                                 <input type="hidden" name="student_id" value="<?= $_SESSION['student_id']; ?>" class="form-control">
+                                
                                 <button type="button" id="submitForm" class="btn btn-primary btn-block">Submit</button>
                             </div>
                         </form>
@@ -425,269 +423,97 @@
                     // Remove any existing dynamic inputs
                     parentRow.find('.additional-inputs').remove();
 
+                    const createInputField = (label, name, type, value = '', options = []) => {
+                        let inputHTML = `
+                            <label style="font-weight: bold; font-size: 14px;">${label}:</label>
+                            ${type === 'radio' ? options.map(option => `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="${name}" value="${option}" required>
+                                    <label class="form-check-label" style="font-size: 13px;">${option}</label>
+                                </div>
+                            `).join('') : `<input type="${type}" name="${name}" class="form-control" value="${value}" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">`}
+                        `;
+                        return inputHTML;
+                    };
+
                     let additionalInputs = '';
+                    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification'].includes(documentName)) {
+                        const copiesField = createInputField('Copies', 'copies[]', 'number', 1);
+                        const cancelButton = `<button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>`;
+                        const docNameField = `<p style="font-size: 14px; margin: 0;">${documentName}</p>`;
+                        let requestTypeField = '';
+                        let extraFields = '';
 
-                    // Handle "Special Order" or "Diploma"
-                    if (documentName === 'Special Order') {
+                        if (documentName === 'Special Order' || documentName === 'Diploma') {
+                            requestTypeField = createInputField('Request Type', `${documentName[0]}request_type`, 'radio', '', ['1st request', 'Re-Issuance']);
+                        } else if (documentName === 'Transcript of Records') {
+                            requestTypeField = createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request', 'Re-Issuance']);
+                            extraFields = `
+                                ${createInputField('Purpose', 'TORpurpose', 'radio', '', ['Evaluation', 'Employment', 'CBE BOARD EXAM', 'Other'])}
+                                <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">
+                            `;
+                        } else if (documentName === 'Certification') {
+                            requestTypeField = createInputField('Certification Type', 'certification_type', 'radio', '', ['Unit Earned', 'As Graduate', 'Other']);
+                            extraFields = `<input type="text" id="certOtherInput" name="certification_type_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">`;
+                        }
+
                         additionalInputs = `
-                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-
-                                <!-- Document Name -->
-                                <div style="flex: 1; min-width: 150px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
-                                </div>
-
-                                <!-- Copies -->
-                                <div style="flex: 1; min-width: 120px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-                                </div>
-
-                                <!-- Request Type -->
-                                <div style="flex: 2; min-width: 250px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
-                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="SOrequest_type" value="1st request" required>
-                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="SOrequest_type" value="re-issuance" required>
-                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
-                                        </div>
+                            <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                                <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                                    <div style="flex: 1; min-width: 150px;">
+                                        <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                                        ${docNameField}
                                     </div>
-                                </div>
-
-                            <!-- Cancel Row Button -->
-                            <div style="flex: 0; min-width: 100px; text-align: center;">
-                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                    } else if (documentName === 'Diploma') {
-                        additionalInputs = `
-                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-
-                                <!-- Document Name -->
-                                <div style="flex: 1; min-width: 150px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
-                                </div>
-
-                                <!-- Copies -->
-                                <div style="flex: 1; min-width: 120px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-                                </div>
-
-                                <!-- Request Type -->
-                                <div style="flex: 2; min-width: 250px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
-                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="Drequest_type" value="1st request" required>
-                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="Drequest_type" value="re-issuance" required>
-                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
-                                        </div>
+                                    <div style="flex: 1; min-width: 120px;">
+                                        ${copiesField}
                                     </div>
+                                    <div style="flex: 2; min-width: 250px;">
+                                        ${requestTypeField}
+                                    </div>
+                                    <div style="flex: 0; min-width: 100px; text-align: center;">
+                                        ${cancelButton}
+                                    </div>
+                                    ${extraFields}
                                 </div>
-
-                            <!-- Cancel Row Button -->
-                            <div style="flex: 0; min-width: 100px; text-align: center;">
-                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
                             </div>
-                        </div>
-                    </div>
-                    `;
+                        `;
                     }
 
+                    parentRow.append(additionalInputs);
 
-                    // Handle "Transcript of Records"
-                    else if (documentName === 'Transcript of Records') {
-                        additionalInputs = `
-                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-                                
-                                <!-- Document Name -->
-                                <div style="flex: 1; min-width: 150px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
-                                </div>
-
-                                <!-- Copies -->
-                                <div style="flex: 1; min-width: 120px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-                                </div>
-
-                                <!-- Request Type -->
-                                <div style="flex: 2; min-width: 200px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Request Type:</label>
-                                    <div style="display: flex; gap: 10px; margin-top: 8px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="TOR_request_type" value="1st request" required>
-                                            <label class="form-check-label" style="font-size: 13px;">1st Request</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="TOR_request_type" value="re-issuance" required>
-                                            <label class="form-check-label" style="font-size: 13px;">Re-Issuance</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Purpose -->
-                                <div style="flex: 3; min-width: 300px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Purpose:</label>
-                                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Evaluation">
-                                            <label class="form-check-label" style="font-size: 13px;">Evaluation</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Employment">
-                                            <label class="form-check-label" style="font-size: 13px;">Employment</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="TORpurpose" value="CBE BOARD EXAM">
-                                            <label class="form-check-label" style="font-size: 13px;">CBE BOARD EXAM</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="TORpurpose" value="Other" id="otherPurposeCheckbox">
-                                            <label class="form-check-label" style="font-size: 13px;">Other (specify)</label>
-                                        </div>
-                                    </div>
-                                    <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
-                                    <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">
-
-                                </div>
-
-                                <!-- Cancel Row Button -->
-                                <div style="flex: 0; min-width: 100px; text-align: center;">
-                                    <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                        `;
-                        parentRow.on('change', 'input[name="TORpurpose"]', function() {
+                    // Event listeners for dynamic input changes
+                    if (documentName === 'Transcript of Records') {
+                        parentRow.on('change', 'input[name="TORpurpose"]', function () {
                             const otherPurposeInput = parentRow.find('#otherPurposeInput');
                             const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+                            const value = $(this).val();
 
-                            if ($(this).val() === 'Other') {
-                                // Show the "Other (Specify)" input and make it required
+                            // Show/hide and set required attribute for "Other Purpose" input
+                            if (value === 'Other') {
                                 otherPurposeInput.show().prop('required', true);
                             } else {
-                                // Hide the "Other (Specify)" input, clear its value, and make it not required
                                 otherPurposeInput.hide().val('').prop('required', false);
                             }
 
-                            if ($(this).val() === 'CBE BOARD EXAM') {
-                                // Show the "Attach 2x2 Picture" input and make it required
+                            // Show/hide and set required attribute for "CBE BOARD EXAM" photo attachment
+                            if (value === 'CBE BOARD EXAM') {
                                 photoAttachmentInput.show().prop('required', true);
                             } else {
-                                // Hide the "Attach 2x2 Picture" input and make it not required
-                                photoAttachmentInput.hide().prop('required', false);
+                                photoAttachmentInput.hide().val('').prop('required', false);
                             }
                         });
-
-                    }
-
-                    // Handle "Certification"
-                    else if (documentName === 'Certification') {
-                        additionalInputs = `
-                        <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                            <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-
-                                <!-- Document Name -->
-                                <div style="flex: 1; min-width: 150px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                                    <p style="font-size: 14px; margin: 0;">${documentName}</p>
-                                </div>
-
-                                <!-- Copies -->
-                                <div style="flex: 1; min-width: 120px;">
-                                    <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                                    <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-                                </div>
-
-                            <!-- Certification Type -->
-                    <div style="flex: 2; min-width: 250px;">
-                        <label style="font-weight: bold; font-size: 14px;">Certification Type:</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 8px;">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="certification_type" value="Unit Earned" required>
-                                <label class="form-check-label" style="font-size: 13px;">Unit Earned</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="certification_type" value="As Graduate" required>
-                                <label class="form-check-label" style="font-size: 13px;">As Graduate</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="certification_type" value="Other" id="certOtherOption">
-                                <label class="form-check-label" style="font-size: 13px;">Other (Specify)</label>
-                            </div>
-                        </div>
-                        <!-- Hidden input for "Other (Specify)" -->
-                        <input type="text" id="certOtherInput" name="certification_type_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">
-                    </div>
-
-                                <!-- Cancel Row Button -->
-                                <div style="flex: 0; min-width: 100px; text-align: center;">
-                                    <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                            
-                                            
-                        `;
-                        parentRow.on('change', 'input[name="certification_type"]', function() {
-                            if ($(this).val() === 'Other') {
-                                // Show the "Other (Specify)" input and make it required
-                                parentRow.find('#certOtherInput').show().prop('required', true);
-                            } else {
-                                // Hide the "Other (Specify)" input, clear its value, and make it not required
-                                parentRow.find('#certOtherInput').hide().val('').prop('required', false);
-                            }
-                        });
-
-                    } else if (documentName === 'Honorable Dismissal') {
-                        additionalInputs = `
-                    <div class="additional-inputs" ">
-                        <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-
-                            <!-- Document Name -->
-                            <div style="flex: 1; min-width: 150px;">
-                                <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                                <p style="font-size: 14px; margin: 0;">${documentName}</p>
-                            </div>
-
-                            <!-- Copies -->
-                            <div style="flex: 1; min-width: 120px;">
-                                <label style="font-weight: bold; font-size: 14px;">Copies:</label>
-                                <input type="number" name="copies[]" class="form-control copies-input" min="1" value="1" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">
-                            </div>
-
-                            <!-- Cancel Row Button -->
-                            <div style="flex: 0; min-width: 100px; text-align: center;">
-                                <button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                    `;
                     }
 
 
-                    // Append the additional inputs to the parent row
-                    if (additionalInputs) {
-                        parentRow.append(additionalInputs);
+                    if (documentName === 'Certification') {
+                        parentRow.on('change', 'input[name="certification_type"]', function () {
+                            const certOtherInput = parentRow.find('#certOtherInput');
+                            certOtherInput.toggle($(this).val() === 'Other').prop('required', $(this).val() === 'Other');
+                        });
                     }
                 }
+
                 $('input[name="certification_type"]').on('change', function() {
                     if ($(this).val() === 'Other') {
                         $('#certOtherInput').show().prop('required', true); // Show the input field and make it required
@@ -758,9 +584,7 @@
                 // Initial setup
                 updateTotalPrice();
             });
-        </script>
-        <script>
-
+            
         </script>
 
         <script>
@@ -768,11 +592,11 @@
                 e.preventDefault();
 
                 let formData = new FormData();
+                formData.append('studentID_no', $('input[name="studentID_no"]').val());
                 formData.append('first_name', $('input[name="first_name"]').val());
                 formData.append('middle_name', $('input[name="middle_name"]').val());
                 formData.append('last_name', $('input[name="last_name"]').val());
                 formData.append('complete_address', $('input[name="complete_address"]').val());
-                formData.append('birthdate', $('input[name="birthdate"]').val());
                 formData.append('course', $('select[name="course"]').val());
                 formData.append('civil_status', $('select[name="civil_status"]').val());
                 formData.append('email_address', $('input[name="email_address"]').val());

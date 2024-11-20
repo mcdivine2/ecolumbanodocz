@@ -80,7 +80,7 @@
                     $result = $stmt->get_result();
                     while ($row = $result->fetch_assoc()) {
                     
-                     $student_id = $row['student_id'];
+                     $studentID_no = $row['studentID_no'];
                      $first_name = $row['first_name'];
                      $middle_name = $row['middle_name'];
                      $last_name = $row['last_name'];
@@ -105,7 +105,7 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label class="form-label font-weight-bold">EDP Number</label>
-                                <input type="text" name="student_id" value="<?= $student_id; ?>" readonly class="form-control shadow-sm border-0">
+                                <input type="text" name="studentID_no" value="<?= $studentID_no; ?>" readonly class="form-control shadow-sm border-0">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label font-weight-bold">First Name</label>

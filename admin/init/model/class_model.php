@@ -134,7 +134,7 @@ class class_model
 
 	public function add_student($IDnumber, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $username, $password, $status)
 	{
-		$stmt = $this->conn->prepare("INSERT INTO `tbl_students` (`student_id`, `first_name`, `middle_name`, `last_name`, `complete_address`, `email_address`, `mobile_number`, `username`, `password`, `account_status`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
+		$stmt = $this->conn->prepare("INSERT INTO `tbl_students` (`studentID_no`, `first_name`, `middle_name`, `last_name`, `complete_address`, `email_address`, `mobile_number`, `username`, `password`, `account_status`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)") or die($this->conn->error);
 		$stmt->bind_param("ssssssssss", $IDnumber, $first_name, $middle_name, $last_name, $complete_address, $email_address, $mobile_number, $username, $password, $status);
 		if ($stmt->execute()) {
 			$stmt->close();
@@ -434,6 +434,7 @@ class class_model
 		}
 		return $data;
 	}
+	
 
 	public function print_documentrequest()
 	{
@@ -521,11 +522,11 @@ class class_model
 	}
 
 
-	public function edit_request($control_no, $student_id, $document_name, $date_request, $date_releasing, $processing_officer, $registrar_status, $request_id)
+	public function edit_request($control_no, $studentID_no, $document_name, $date_request, $date_releasing, $registrar_status, $request_id)
 	{
 		$sql = "UPDATE `tbl_documentrequest` 
-            SET `control_no` = ?, `student_id` = ?, `document_name` = ?, `date_request` = ?, 
-                `date_releasing` = ?, `processing_officer` = ?, `registrar_status` = ? 
+            SET `control_no` = ?, `studentID_no` = ?, `document_name` = ?, `date_request` = ?, 
+                `date_releasing` = ?, `registrar_status` = ? 
             WHERE request_id = ?";
 		$stmt = $this->conn->prepare($sql);
 		if (!$stmt) {
@@ -533,7 +534,7 @@ class class_model
 			die("Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error);
 		}
 
-		$stmt->bind_param("sssssssi", $control_no, $student_id, $document_name, $date_request, $date_releasing, $processing_officer, $registrar_status, $request_id);
+		$stmt->bind_param("ssssssi", $control_no, $studentID_no, $document_name, $date_request, $date_releasing, $registrar_status, $request_id);
 
 		if ($stmt->execute()) {
 			$stmt->close();

@@ -6,23 +6,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	// Retrieve and sanitize input data
 	$control_no = trim($_POST['control_no']);
-	$student_id = trim($_POST['student_id']);
+	$studentID_no = trim($_POST['studentID_no']);
 	$document_name = trim($_POST['document_name']);
 	$date_request = trim($_POST['date_request']);
 	$date_releasing = isset($_POST['date_releasing']) ? $_POST['date_releasing'] : null;
-
-	$processing_officer = trim($_POST['processing_officer']);
 	$status = trim($_POST['status']);
 	$request_id = trim($_POST['request_id']);
 
 	// Execute the update query
 	$requestUpdated = $conn->edit_request(
 		$control_no,
-		$student_id,
+		$studentID_no,
 		$document_name,
 		$date_request,
 		$date_releasing,
-		$processing_officer,
 		$status,
 		$request_id
 	);
