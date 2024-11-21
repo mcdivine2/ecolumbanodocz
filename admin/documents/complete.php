@@ -34,7 +34,6 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
-                                        <th>Mode Request</th>
                                         <th>Date Releasing</th>
                                         <th>Processing Officer</th>
                                         <th>Status</th>
@@ -45,11 +44,11 @@
                                 <tbody>
                                     <?php
                                     $conn = new class_model();
-                                    $docrequest = $conn->fetchAll_released();
+                                    $docrequest = $conn->fetchAll_complete();
                                     foreach ($docrequest as $row) {
                                         // Check if all required statuses are verified
                                         $all_verified = ($row['library_status'] === 'Verified' &&
-                                            $row['dean_status'] === 'Verified' &&
+                                            ($row['dean_status'] === 'Verified' || $row['dean_status'] === 'Not Included') && // Add this condition
                                             $row['custodian_status'] === 'Verified' &&
                                             $row['accounting_status'] === 'Verified');
 

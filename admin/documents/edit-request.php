@@ -243,8 +243,16 @@
                    data.append('request_id', request_id);
 
 
-                   if (control_no === '' && studentID_no === '' && document_name === '' && date_request === '' && date_releasing === '' && processing_officer === '') {
-                       $('#message').html('<div class="alert alert-danger"> Required All Fields!</div>');
+                   // Trimmed input values for accurate validation
+                   if ($.trim(control_no) === '' ||
+                       $.trim(studentID_no) === '' ||
+                       $.trim(document_name) === '' ||
+                       $.trim(date_request) === '' ||
+                       $.trim(date_releasing) === '' ||
+                       $.trim(processing_officer) === '') {
+
+                       $('#message').html('<div class="alert alert-danger">All fields are required!</div>');
+                       window.scrollTo(0, 0); // Ensure the user sees the alert
                    } else {
                        $.ajax({
                            url: '../init/controllers/edit_request.php',
@@ -252,17 +260,27 @@
                            data: data,
                            processData: false,
                            contentType: false,
-                           async: false,
                            cache: false,
                            success: function(response) {
-                               $("#message").html(response);
-                               window.scrollTo(0, 0);
+                               $('#message').html(response);
+                               $('#message').html('<div class="alert alert-success">Edit Successfully.</div>');
+                               window.scrollTo(0, 0); // Scroll to top to display the success message
+
+                               // Add a 3-second delay before taking further action
+                               setTimeout(function() {
+                                   // Redirect or any other desired action after delay
+                                   $('#message').html('Edit Successfuly'); // Clear the message after 3 seconds (optional)
+                               }, 3000); // 3 seconds = 3000ms
                            },
-                           error: function(response) {
-                               console.log("Failed");
+                           error: function(xhr, status, error) {
+                               console.error("Failed:", error);
+                               $('#message').html('<div class="alert alert-danger">An error occurred while processing your request. Please try again later.</div>');
+                               window.scrollTo(0, 0); // Ensure user sees the error message
                            }
+
                        });
                    }
+
 
                });
            });
