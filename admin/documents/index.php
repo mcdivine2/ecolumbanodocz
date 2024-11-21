@@ -77,13 +77,9 @@
         <!-- ============================================================== -->
         <!-- pageheader  -->
         <!-- ============================================================== -->
+
+        <!-- new request and processing -->
         <div class="row">
-            <style>
-                .row {
-                    display: flex;
-                    justify-content: center;
-                }
-            </style>
             <!-- metric -->
             <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="card">
@@ -106,11 +102,6 @@
                     <a href="new-request.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
-            <!-- /. metric -->
-            <!-- metric -->
-
-            <!-- /. metric -->
-            <!-- metric -->
             <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -120,7 +111,7 @@
                         ?>
                         <?php foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Processing</b></h5>
+                                <h5 class="text-muted"><b>Clearance Processing</b></h5>
                                 <h2 class="mb-0"><?= $row['count_verified']; ?></h2>
                             </div>
                             <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
@@ -133,8 +124,54 @@
             </div>
             <!-- /. metric -->
         </div>
+
+        <!-- complete and decline -->
         <div class="row ">
-            <!-- here -->
+            <!-- metric -->
+            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $conn = new class_model();
+                        $cstudent = $conn->count_numberoftotalreceived();
+                        ?>
+                        <?php foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted"><b>Releasing</b></h5>
+                                <h2 class="mb-0"><?= $row['count_received']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-bell fa-fw fa-sm text-info" style="color: white !important"></i>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+                    <a href="releasing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $conn = new class_model();
+                        $cstudent = $conn->count_declined();
+                        ?>
+                        <?php foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted"><b>Declined Request</b></h5>
+                                <h2 class="mb-0"><?= $row['count_declined']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="declined.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -154,222 +191,204 @@
                     </div>
                     <a href="complete.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
-
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <?php
-                        $conn = new class_model();
-                        $cstudent = $conn->count_declined();
-                        ?>
-                        <?php foreach ($cstudent as $row): ?>
-                            <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Declined</b></h5>
-                                <h2 class="mb-0"><?= $row['count_declined']; ?></h2>
-                            </div>
-                            <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <a href="declined.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
-                </div>
-
             </div>
 
-            <div class="container-fluid dashboard-content">
 
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="page-header">
-                            <h2 class="pageheader-title"><i class="fa fa-fw fa-chart-bar"></i> Reports </h2>
-                            <div class="page-breadcrumb">
-                                <nav aria-label="breadcrumb">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
-                                        <li class="breadcrumb-item active" aria-current="page">Reports</li>
-                                    </ol>
-                                </nav>
-                            </div>
+            <!-- /. metric -->
+        </div>
+        <div class="container-fluid dashboard-content">
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-header">
+                        <h2 class="pageheader-title"><i class="fa fa-fw fa-chart-bar"></i> Reports </h2>
+                        <div class="page-breadcrumb">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Reports</li>
+                                </ol>
+                            </nav>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <?php
-$conn = new class_model();
+            <?php
+            $conn = new class_model();
 
-// Weekly Data: Grouped by Monday-Sunday of the current week
-$weeklyData = [];
-$weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-$startOfWeek = strtotime('monday this week'); // Start of the current week (Monday)
+            // Weekly Data: Grouped by Monday-Sunday of the current week
+            $weeklyData = [];
+            $weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $startOfWeek = strtotime('monday this week'); // Start of the current week (Monday)
 
-for ($day = 0; $day < 7; $day++) {
-    $currentDate = strtotime("+$day day", $startOfWeek);
-    $dayNum = date('d', $currentDate);
-    $monthNum = date('m', $currentDate);
-    $yearNum = date('Y', $currentDate);
-    $weeklyData[$weekdays[$day]] = count($conn->fetchAll_documentrequest($dayNum, $monthNum, $yearNum));
-}
+            for ($day = 0; $day < 7; $day++) {
+                $currentDate = strtotime("+$day day", $startOfWeek);
+                $dayNum = date('d', $currentDate);
+                $monthNum = date('m', $currentDate);
+                $yearNum = date('Y', $currentDate);
+                $weeklyData[$weekdays[$day]] = count($conn->fetchAll_documentrequest($dayNum, $monthNum, $yearNum));
+            }
 
 
 
-// Monthly Data (grouped by month for the current year)
-$monthlyData = [];
-for ($i = 1; $i <= 12; $i++) {
-    $monthlyData[$i] = count($conn->fetchAll_documentrequest(null, $i, date('Y')));
-}
+            // Monthly Data (grouped by month for the current year)
+            $monthlyData = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $monthlyData[$i] = count($conn->fetchAll_documentrequest(null, $i, date('Y')));
+            }
 
-// Yearly Data (last 5 years as an example)
-$yearlyData = [];
-$currentYear = date('Y');
-for ($i = $currentYear - 4; $i <= $currentYear; $i++) {
-    $yearlyData[$i] = count($conn->fetchAll_documentrequest(null, null, $i));
-}
+            // Yearly Data (last 5 years as an example)
+            $yearlyData = [];
+            $currentYear = date('Y');
+            for ($i = $currentYear - 4; $i <= $currentYear; $i++) {
+                $yearlyData[$i] = count($conn->fetchAll_documentrequest(null, null, $i));
+            }
 
-// Encode the data for JavaScript
-$weeklyDataJSON = json_encode($weeklyData);
-$monthlyDataJSON = json_encode($monthlyData);
-$yearlyDataJSON = json_encode($yearlyData);
-?>
+            // Encode the data for JavaScript
+            $weeklyDataJSON = json_encode($weeklyData);
+            $monthlyDataJSON = json_encode($monthlyData);
+            $yearlyDataJSON = json_encode($yearlyData);
+            ?>
 
-        
-        <div class="dashboard">
-    <div class="cards" style="border-top: 5px solid #4a90e2;">
-        <div class="card-header">
-            <h3>Weekly Record</h3>
-        </div>
-        <canvas id="weeklyChart"></canvas>
-    </div>
 
-    <div class="cards" style="border-top: 5px solid #d9534f;">
-        <div class="card-header">
-            <h3>Monthly Record</h3>
-        </div>
-        <canvas id="monthlyChart"></canvas>
-    </div>
-
-    <div class="cards" style="border-top: 5px solid #8e44ad;">
-        <div class="card-header">
-            <h3>Yearly Record</h3>
-        </div>
-        <canvas id="yearlyChart"></canvas>
-    </div>
-</div>
-
-                <!-- Dropdown for Report Type -->
-                <div class="row">
-                    <div class="col-12">
-                        <select id="filterType" class="form-control" style="width: 200px; margin-bottom: 20px;">
-                            <option value="weekly" selected>Weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="yearly">Yearly</option>
-                        </select>
+            <div class="dashboard">
+                <div class="cards" style="border-top: 5px solid #4a90e2;">
+                    <div class="card-header">
+                        <h3>Weekly Record</h3>
                     </div>
+                    <canvas id="weeklyChart"></canvas>
                 </div>
 
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="card">
-                            <h5 class="card-header">Document Request Statistic</h5>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12 col-md-4 col-lg-4 col-xl-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="chart-title">
-                                                    <h4>Document Request Report</h4>
-                                                </div>
-                                                <table class="table table-bordered mytable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name of Documents</th>
-                                                            <th>Number of Requests</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="courseRequestTable">
-                                                        <!-- AJAX-loaded data will populate here -->
-                                                    </tbody>
-                                                </table>
+                <div class="cards" style="border-top: 5px solid #d9534f;">
+                    <div class="card-header">
+                        <h3>Monthly Record</h3>
+                    </div>
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+
+                <div class="cards" style="border-top: 5px solid #8e44ad;">
+                    <div class="card-header">
+                        <h3>Yearly Record</h3>
+                    </div>
+                    <canvas id="yearlyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Dropdown for Report Type -->
+            <div class="row">
+                <div class="col-12">
+                    <select id="filterType" class="form-control" style="width: 200px; margin-bottom: 20px;">
+                        <option value="weekly" selected>Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header">Document Request Statistic</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-lg-4 col-xl-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="chart-title">
+                                                <h4>Document Request Report</h4>
+                                            </div>
+                                            <table class="table table-bordered mytable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name of Documents</th>
+                                                        <th>Number of Requests</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="courseRequestTable">
+                                                    <!-- AJAX-loaded data will populate here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-8 col-lg-8 col-xl-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="chart-title">
+                                                <h4>Number of Requests</h4><br>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-md-8 col-lg-8 col-xl-8">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="chart-title">
-                                                    <h4>Number of Requests</h4><br>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card">
-                                            <div id="piechart" style="width: 100%; height: 500px;"></div>
-                                        </div>
+                                    <div class="card">
+                                        <div id="piechart" style="width: 100%; height: 500px;"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>
+
     </div>
 
+</div>
 
 
 
-    <!-- Optional JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="../assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
-    <script src="../assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-    <script src="../assets/libs/js/main-js.js"></script>
-    <script type="text/javascript" src="../assets/js/loader.js"></script>
 
-    <script>
+<!-- Optional JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="../assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
+<script src="../assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+<script src="../assets/libs/js/main-js.js"></script>
+<script type="text/javascript" src="../assets/js/loader.js"></script>
+
+<script>
     // Weekly Chart
-const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-const weeklyData = <?= json_encode($weeklyData) ?>; // Convert PHP array to JSON
-new Chart(weeklyCtx, {
-    type: 'bar',
-    data: {
-        labels: Object.keys(weeklyData), // Directly use 'Monday', 'Tuesday', etc.
-        datasets: [{
-            label: 'Weekly Document Requests',
-            data: Object.values(weeklyData),
-            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Optional: Bar background color
-            borderColor: 'rgba(75, 192, 192, 1)',      // Optional: Bar border color
-            borderWidth: 1                             // Optional: Bar border width
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    
+    const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+    const weeklyData = <?= json_encode($weeklyData) ?>; // Convert PHP array to JSON
+    new Chart(weeklyCtx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(weeklyData), // Directly use 'Monday', 'Tuesday', etc.
+            datasets: [{
+                label: 'Weekly Document Requests',
+                data: Object.values(weeklyData),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Optional: Bar background color
+                borderColor: 'rgba(75, 192, 192, 1)', // Optional: Bar border color
+                borderWidth: 1 // Optional: Bar border width
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Days of the Week'
+                    }
                 }
             },
-            x: {
-                title: {
+            plugins: {
+                legend: {
                     display: true,
-                    text: 'Days of the Week'
+                    position: 'top'
                 }
             }
-        },
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top'
-            }
         }
-    }
-});
+    });
 
 
     // Monthly Chart
@@ -412,85 +431,85 @@ new Chart(weeklyCtx, {
             }]
         }
     });
-        $(document).ready(function() {
-            // Display initials in profile image
-            let initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
-            $('#profileImage').text(initials);
+    $(document).ready(function() {
+        // Display initials in profile image
+        let initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
+        $('#profileImage').text(initials);
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Event listener for filter change
+        $('#filterType').on('change', function() {
+            const filterType = $(this).val();
+            loadCourseRequests(filterType);
         });
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Event listener for filter change
-            $('#filterType').on('change', function() {
-                const filterType = $(this).val();
-                loadCourseRequests(filterType);
+
+        function loadCourseRequests(filterType = 'weekly') {
+            $.ajax({
+                url: "../init/controllers/fetch.php", // Fetch data from the PHP backend
+                method: "GET",
+                data: {
+                    filterType
+                }, // Send the filter type (weekly, monthly, yearly)
+                dataType: "json",
+                success: function(data) {
+                    if (data.length > 0) {
+                        var tableBody = '';
+                        var formattedData = [
+                            ['Document Name', 'Number of Requests']
+                        ]; // Google Chart data format
+
+                        $.each(data, function(index, row) {
+                            tableBody += '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td></tr>';
+                            formattedData.push([row[0], parseInt(row[1])]);
+                        });
+
+                        $('#courseRequestTable').html(tableBody); // Populate the table
+
+                        // Draw the pie chart with fetched data
+                        drawChart(formattedData);
+                    } else {
+                        $('#courseRequestTable').html('<tr><td colspan="2">No data available for this period.</td></tr>');
+                        drawChart([
+                            ['Document Name', 'Number of Requests']
+                        ]);
+                    }
+                },
+                error: function(error) {
+                    console.error('AJAX Error:', error);
+                    alert('Failed to fetch data.');
+                },
             });
+        }
 
-            function loadCourseRequests(filterType = 'weekly') {
-                $.ajax({
-                    url: "../init/controllers/fetch.php", // Fetch data from the PHP backend
-                    method: "GET",
-                    data: {
-                        filterType
-                    }, // Send the filter type (weekly, monthly, yearly)
-                    dataType: "json",
-                    success: function(data) {
-                        if (data.length > 0) {
-                            var tableBody = '';
-                            var formattedData = [
-                                ['Document Name', 'Number of Requests']
-                            ]; // Google Chart data format
+        function drawChart(data) {
+            var chartData = google.visualization.arrayToDataTable(data);
+            var options = {
+                title: 'Document Request Statistics',
+                is3D: true,
+                pieSliceText: 'value',
+                legend: {
+                    position: 'bottom'
+                },
+            };
 
-                            $.each(data, function(index, row) {
-                                tableBody += '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td></tr>';
-                                formattedData.push([row[0], parseInt(row[1])]);
-                            });
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(chartData, options);
+        }
 
-                            $('#courseRequestTable').html(tableBody); // Populate the table
-
-                            // Draw the pie chart with fetched data
-                            drawChart(formattedData);
-                        } else {
-                            $('#courseRequestTable').html('<tr><td colspan="2">No data available for this period.</td></tr>');
-                            drawChart([
-                                ['Document Name', 'Number of Requests']
-                            ]);
-                        }
-                    },
-                    error: function(error) {
-                        console.error('AJAX Error:', error);
-                        alert('Failed to fetch data.');
-                    },
-                });
-            }
-
-            function drawChart(data) {
-                var chartData = google.visualization.arrayToDataTable(data);
-                var options = {
-                    title: 'Document Request Statistics',
-                    is3D: true,
-                    pieSliceText: 'value',
-                    legend: {
-                        position: 'bottom'
-                    },
-                };
-
-                var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-                chart.draw(chartData, options);
-            }
-
-            // Load Google Charts library
-            google.charts.load('current', {
-                packages: ['corechart']
-            });
-
-            // Load default (weekly) data on page load
-            google.charts.setOnLoadCallback(function() {
-                loadCourseRequests('weekly');
-            });
+        // Load Google Charts library
+        google.charts.load('current', {
+            packages: ['corechart']
         });
-    </script>
 
-    </body>
+        // Load default (weekly) data on page load
+        google.charts.setOnLoadCallback(function() {
+            loadCourseRequests('weekly');
+        });
+    });
+</script>
 
-    </html>
+</body>
+
+</html>

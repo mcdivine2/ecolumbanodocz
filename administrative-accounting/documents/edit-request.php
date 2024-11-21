@@ -177,7 +177,7 @@ include('left_sidebar/sidebar.php');
             data.append('control_no', $('input[name=control_no]').val());
             data.append('student_id', $('input[name=student_id]').val());
             data.append('document_name', $('input[name=document_name]').val());
-            data.append('date_request', $('input[name=date_request]').val() || '<?= date('Y-m-d'); ?>'); // Set default date if missing
+            data.append('date_request', $('input[name=date_request]').val() || '<?= date('Y-m-d'); ?>');
             data.append('processing_officer', $('input[name=processing_officer]').val());
             data.append('accounting_status', $('#accounting_status').val());
             data.append('request_id', $('input[name=request_id]').val());
@@ -189,20 +189,37 @@ include('left_sidebar/sidebar.php');
             }
 
             $.ajax({
-                url: $('#accounting_status').val() === 'Declined' ? '../init/controllers/edit_request_with_email.php' : '../init/controllers/edit_request.php',
+                url: $('#accounting_status').val() === 'Declined' ?
+                    '../init/controllers/edit_request_with_email.php' : '../init/controllers/edit_request.php',
                 type: "POST",
                 data: data,
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    $("#message").html(response);
+                    console.log('Response received:', response);
+                    // Show a visible success alert
+                    $("#message").html(`
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ${response}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `);
                     window.scrollTo(0, 0);
                 },
-                error: function() {
-                    console.log("Failed");
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    // Show a visible error alert
+                    $("#message").html(`
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    An error occurred: ${error}. Please try again.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `);
+                    window.scrollTo(0, 0);
                 }
             });
         });
+
     });
 </script>
 

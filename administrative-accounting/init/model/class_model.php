@@ -487,6 +487,61 @@ class class_model
 		$result = $stmt->get_result();
 		return $result->fetch_assoc();
 	}
+	public function get_max_days_to_process($student_id, $request_id)
+	{
+		try {
+			$sql = "SELECT MAX(daysto_process) AS max_days 
+                FROM tbl_document 
+                WHERE document_name IN (
+                    SELECT document_name 
+                    FROM tbl_documentrequest 
+                    WHERE student_id = ? AND request_id = ?
+                )";
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bind_param("si", $student_id, $request_id);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
+
+			return isset($row['max_days']) ? (int)$row['max_days'] : 0; // Default to 0 if no record
+		} catch (Exception $e) {
+			error_log("Error in get_max_days_to_process: " . $e->getMessage());
+			return 0;
+		}
+	}
+	public function update_release_date($request_id, $date_of_releasing)
+	{
+		try {
+			$sql = "UPDATE tbl_documentrequest 
+                SET date_releasing = ? 
+                WHERE request_id = ?";
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bind_param("si", $date_of_releasing, $request_id);
+			return $stmt->execute();
+		} catch (Exception $e) {
+			error_log("Error in update_release_date: " . $e->getMessage());
+			return false;
+		}
+	}
+
+	public function update_registrar_status($request_id, $status_message)
+	{
+		try {
+			$sql = "UPDATE tbl_documentrequest 
+                SET registrar_status = ? 
+                WHERE request_id = ?";
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bind_param("si", $status_message, $request_id);
+			return $stmt->execute();
+		} catch (Exception $e) {
+			error_log("Error in update_registrar_status: " . $e->getMessage());
+			return false;
+		}
+	}
+
+
+
+
 
 	// Update accounting_status
 	public function update_accounting_status($request_id, $new_status)
