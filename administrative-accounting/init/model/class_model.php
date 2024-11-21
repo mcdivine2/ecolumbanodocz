@@ -490,39 +490,72 @@ class class_model
 	public function get_max_days_to_process($student_id, $request_id)
 	{
 		try {
-			$sql = "SELECT MAX(daysto_process) AS max_days 
-                FROM tbl_document 
-                WHERE document_name IN (
-                    SELECT document_name 
-                    FROM tbl_documentrequest 
-                    WHERE student_id = ? AND request_id = ?
-                )";
+			// SQL to get the max `daysto_process` value among all requested documents
+			$sql = "SELECT MAX(d.daysto_process) AS max_days
+                FROM tbl_document d
+                INNER JOIN tbl_documentrequest dr
+                ON dr.document_name LIKE CONCAT(d.document_name, '%')
+                WHERE dr.student_id = ? AND dr.request_id = ?";
 			$stmt = $this->conn->prepare($sql);
 			$stmt->bind_param("si", $student_id, $request_id);
 			$stmt->execute();
 			$result = $stmt->get_result();
 			$row = $result->fetch_assoc();
 
-			return isset($row['max_days']) ? (int)$row['max_days'] : 0; // Default to 0 if no record
+			$max_days = isset($row['max_days']) ? (int)$row['max_days'] : 0;
+
+			if ($max_days > 0) {
+				$current_date = date('Y-m-d'); // Start from today
+				$days_added = 0;
+
+				while ($days_added < $max_days) {
+					$current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+					$day_of_week = date('N', strtotime($current_date)); // 1 (Mon) to 7 (Sun)
+
+					if ($day_of_week < 6) { // Skip Saturdays (6) and Sundays (7)
+						$days_added++;
+					}
+				}
+
+				return $current_date; // Return the calculated end date
+			}
+
+			return date('Y-m-d'); // Return today's date if no processing days
 		} catch (Exception $e) {
 			error_log("Error in get_max_days_to_process: " . $e->getMessage());
-			return 0;
+			return date('Y-m-d'); // Return today's date on error
 		}
 	}
+
 	public function update_release_date($request_id, $date_of_releasing)
 	{
 		try {
-			$sql = "UPDATE tbl_documentrequest 
-                SET date_releasing = ? 
-                WHERE request_id = ?";
-			$stmt = $this->conn->prepare($sql);
-			$stmt->bind_param("si", $date_of_releasing, $request_id);
-			return $stmt->execute();
+			// Get the current queue number for the date_of_releasing
+			$sql_get_queue = "SELECT COUNT(*) AS queue_count 
+                          FROM tbl_documentrequest 
+                          WHERE date_releasing = ?";
+			$stmt_get_queue = $this->conn->prepare($sql_get_queue);
+			$stmt_get_queue->bind_param("s", $date_of_releasing);
+			$stmt_get_queue->execute();
+			$result = $stmt_get_queue->get_result();
+			$row = $result->fetch_assoc();
+
+			// Calculate the next queue number
+			$next_queue_number = isset($row['queue_count']) ? (int)$row['queue_count'] + 1 : 1;
+
+			// Update the release date and assign the queue number
+			$sql_update = "UPDATE tbl_documentrequest 
+                       SET date_releasing = ?, queue_number = ? 
+                       WHERE request_id = ?";
+			$stmt_update = $this->conn->prepare($sql_update);
+			$stmt_update->bind_param("sii", $date_of_releasing, $next_queue_number, $request_id);
+			return $stmt_update->execute();
 		} catch (Exception $e) {
 			error_log("Error in update_release_date: " . $e->getMessage());
 			return false;
 		}
 	}
+
 
 	public function update_registrar_status($request_id, $status_message)
 	{

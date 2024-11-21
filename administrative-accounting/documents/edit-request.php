@@ -112,7 +112,7 @@ include('left_sidebar/sidebar.php');
                                         <div class="col-sm-8 col-lg-6">
                                             <select id="accounting_status" required class="form-control">
                                                 <option value="<?= $row['accounting_status']; ?>" hidden><?= $row['accounting_status']; ?></option>
-                                                <option value="Pending">Pending</option>
+                                                <option value="Waiting for Payment">Waiting for Payment</option>
                                                 <option value="Declined">Declined</option>
                                                 <option value="Verified">Verified</option>
                                             </select>
@@ -199,25 +199,31 @@ include('left_sidebar/sidebar.php');
                     console.log('Response received:', response);
                     // Show a visible success alert
                     $("#message").html(`
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    ${response}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `);
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                ${response}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `);
                     window.scrollTo(0, 0);
+
+                    // Redirect to the previous index page after a short delay
+                    setTimeout(() => {
+                        window.location.href = "index.php"; // Adjust the path to your index page if necessary
+                    }, 2000); // Delay of 2 seconds to allow the user to see the success message
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', error);
                     // Show a visible error alert
                     $("#message").html(`
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    An error occurred: ${error}. Please try again.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `);
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                An error occurred: ${error}. Please try again.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `);
                     window.scrollTo(0, 0);
                 }
             });
+
         });
 
     });
