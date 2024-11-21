@@ -451,7 +451,7 @@
                             extraFields = `
                                 ${createInputField('Purpose', 'TORpurpose', 'radio', '', ['Evaluation', 'Employment', 'CBE BOARD EXAM', 'Other'])}
                                 <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
-                                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">
+                                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 15px;">
                             `;
                         } else if (documentName === 'Certification') {
                             requestTypeField = createInputField('Certification Type', 'certification_type', 'radio', '', ['Unit Earned', 'As Graduate', 'Other']);
@@ -483,27 +483,28 @@
                     parentRow.append(additionalInputs);
 
                     // Event listeners for dynamic input changes
-                    if (documentName === 'Transcript of Records') {
-                        parentRow.on('change', 'input[name="TORpurpose"]', function () {
-                            const otherPurposeInput = parentRow.find('#otherPurposeInput');
-                            const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-                            const value = $(this).val();
+if (documentName === 'Transcript of Records') {
+    parentRow.on('change', 'input[name="TORpurpose"]', function () {
+        const otherPurposeInput = parentRow.find('#otherPurposeInput');
+        const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+        const value = $(this).val();
 
-                            // Show/hide and set required attribute for "Other Purpose" input
-                            if (value === 'Other') {
-                                otherPurposeInput.show().prop('required', true);
-                            } else {
-                                otherPurposeInput.hide().val('').prop('required', false);
-                            }
+        // Show/hide and set required attribute for "Other Purpose" input
+        if (value === 'Other') {
+            otherPurposeInput.show().prop('required', true);
+        } else {
+            otherPurposeInput.hide().val('').prop('required', false);
+        }
+    });
 
-                            // Show/hide and set required attribute for "CBE BOARD EXAM" photo attachment
-                            if (value === 'CBE BOARD EXAM') {
-                                photoAttachmentInput.show().prop('required', true);
-                            } else {
-                                photoAttachmentInput.hide().val('').prop('required', false);
-                            }
-                        });
-                    }
+    // Ensure the photo attachment input is visible and required for "Transcript of Records"
+    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+    photoAttachmentInput.show().prop('required', true);
+} else {
+    // Hide and clear photo attachment if the document is not "Transcript of Records"
+    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+    photoAttachmentInput.hide().val('').prop('required', false);
+}
 
 
                     if (documentName === 'Certification') {
@@ -587,86 +588,125 @@
             
         </script>
 
-        <script>
-            $(document).on('click', '#submitForm', function(e) {
-                e.preventDefault();
+<script>
+    $(document).on('click', '#submitForm', function(e) {
+        e.preventDefault();
 
-                let formData = new FormData();
-                formData.append('studentID_no', $('input[name="studentID_no"]').val());
-                formData.append('first_name', $('input[name="first_name"]').val());
-                formData.append('middle_name', $('input[name="middle_name"]').val());
-                formData.append('last_name', $('input[name="last_name"]').val());
-                formData.append('complete_address', $('input[name="complete_address"]').val());
-                formData.append('course', $('select[name="course"]').val());
-                formData.append('civil_status', $('select[name="civil_status"]').val());
-                formData.append('email_address', $('input[name="email_address"]').val());
-                formData.append('control_no', $('input[name="control_no"]').val());
-                formData.append('student_id', $('input[name="student_id"]').val());
-                formData.append('total_price', $('#totalPrice').val());
+        let formData = new FormData();
+        const appendField = (name, selector) => formData.append(name, $(selector).val());
+        const appendFile = (name, selector) => $(selector).each(function() {
+            if (this.files[0]) formData.append(name, this.files[0]);
+        });
 
-                // Collect documents
-                $('.request-row').each(function() {
-                    const documentName = $(this).find('select[name="document_name[]"]').val();
-                    const requestType = $(this).find('input[type="radio"]:checked').val();
-                    const copies = $(this).find('input[name="copies[]"]').val();
+        // Required fields
+        const requiredFields = {
+            email_address: 'Email address is required.',
+            course: 'Course is required.',
+            civil_status: 'Civil status is required.',
+        };
 
-                    if (documentName && requestType && copies) {
-                        formData.append('document_name[]', documentName);
-                        formData.append('request_type[]', requestType);
-                        formData.append('copies[]', copies);
-                    }
-                });
+        let errors = [];
 
+        // Validate required fields
+        for (const field in requiredFields) {
+            const value = field === 'civil_status' || field === 'course' 
+                ? $(`select[name="${field}"]`).val()
+                : $(`input[name="${field}"]`).val();
 
-                if (!formData.has('civil_status')) {
-                    const civilStatus = $('select[name="civil_status"]').val();
-                    if (!civilStatus) {
-                        alert("Please select your civil status.");
-                        return; // Stop submission if not selected
-                    }
-                    formData.append('civil_status', civilStatus);
+            if (!value) {
+                errors.push(requiredFields[field]);
+            }
+        }
+
+        // Validate document name and request type
+        let documentError = false;
+        $('.request-row').each(function() {
+            const docName = $(this).find('select[name="document_name[]"]').val();
+            const reqType = $(this).find('input[type="radio"]:checked').val();
+            if (!docName || !reqType) {
+                documentError = true;
+            }
+        });
+
+        if (documentError) {
+            errors.push('Document name and request type are required for each request.');
+        }
+
+        if (errors.length) {
+            $('#message').html(`<div class="alert alert-danger">${errors.join('<br>')}</div>`);
+            window.scrollTo(0, 0);
+            return;
+        }
+
+        // Append other form data
+        ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address', 'control_no', 'student_id']
+            .forEach(field => appendField(field, `input[name="${field}"]`));
+        ['course', 'civil_status'].forEach(field => appendField(field, `select[name="${field}"]`));
+        formData.append('total_price', $('#totalPrice').val());
+
+        $('.request-row').each(function() {
+            const docName = $(this).find('select[name="document_name[]"]').val();
+            const reqType = $(this).find('input[type="radio"]:checked').val();
+            const copies = $(this).find('input[name="copies[]"]').val();
+            if (docName && reqType && copies) {
+                formData.append('document_name[]', docName);
+                formData.append('request_type[]', reqType);
+                formData.append('copies[]', copies);
+            }
+        });
+
+        $('input[name="purpose[]"]:checked').each(function() {
+            formData.append('purpose[]', $(this).val());
+        });
+        appendFile('photo_attachment[]', 'input[name="photo_attachment[]"]');
+
+        // AJAX submission
+        $.ajax({
+            url: '../init/controllers/add_request.php',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                const res = JSON.parse(response);
+                if (res.status === 'success') {
+                    // Display success pop-up
+                    showSuccessPopup('Thank You!', 'Your details have been successfully submitted. Thanks!');
+                    setTimeout(() => window.location.reload(), 4000);
+                } else {
+                    $('#message').html(`<div class="alert alert-danger">${res.message || (res.errors || ['An error occurred.']).join('<br>')}</div>`);
+                    window.scrollTo(0, 0);
                 }
+            },
+            error: () => {
+                $('#message').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
+            },
+        });
+    });
 
-                // Debugging output
-                for (let [key, value] of formData.entries()) {
-                    console.log(key, value);
-                }
-                // Collect purposes
-                $('input[name="purpose[]"]:checked').each(function() {
-                    formData.append('purpose[]', $(this).val());
-                });
+    function showSuccessPopup(title, message) {
+        // Create and show the success popup
+        const popupHTML = `
+            <div class="popup-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); text-align: center; z-index: 9999;">
+                <div style="font-size: 40px; color: green; margin-bottom: 15px;">✔</div>
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button onclick="closePopup()" style="padding: 10px 20px; background-color: green; color: white; border: none; border-radius: 5px;">OK</button>
+            </div>
+        `;
+        $('body').append(popupHTML);
+    }
 
-                // Handle file uploads
-                $('input[name="photo_attachment[]"]').each(function() {
-                    if ($(this)[0].files[0]) {
-                        formData.append('photo_attachment[]', $(this)[0].files[0]);
-                    }
-                });
+    function closePopup() {
+        $('.popup-container').remove();
+    }
+</script>
 
-                $.ajax({
-                    url: '../init/controllers/add_request.php',
-                    type: 'POST',
-                    data: formData,
-                    processData: false, // Required for FormData
-                    contentType: false, // Required for FormData
-                    success: function(response) {
-                        const res = JSON.parse(response);
-                        if (res.status === 'success') {
-                            $('#message').html('<div class="alert alert-success">' + res.message + '</div>');
-                            window.scrollTo(0, 0)
-                            setTimeout(() => window.location.reload(), 4000);
-                        } else {
-                            window.scrollTo(0, 0)
-                            $('#message').html('<div class="alert alert-danger">' + (res.errors ? res.errors.join('<br>') : 'An error occurred.') + '</div>');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', error);
-                        $('#message').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
-                    },
-                });
-            });
-        </script>
+
+
+
+
+
         </body>
 
         </html>
