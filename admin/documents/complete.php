@@ -61,7 +61,6 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            <td><?= $row['mode_request']; ?></td>
                                             <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td>
                                             <td><?= $row['processing_officer']; ?></td>
                                             <td>
@@ -87,12 +86,10 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <!-- <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
-                                                    <i class="fa fa-edit"></i>
-                                                </a> | -->
-                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Send email">
-                                                    <i class="fa fa-envelope"></i>
-                                                </a>
+                                                <button onclick="window.location.href='email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>'"
+                                                    class="btn btn-sm btn-success text-xs" data-toggle="tooltip" title="Send email">
+                                                    <i class="fa fa-envelope"></i> Send Email
+                                                </button>
                                             </td>
                                         </tr>
                                     <?php } ?>
