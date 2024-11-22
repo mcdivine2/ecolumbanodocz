@@ -106,8 +106,8 @@
                                         <th scope="col">Trace No.</th>
                                         <th scope="col">Reference No.</th>
                                         <th scope="col">Total Amount</th>
+                                        <th scope="col">Mode of Payment</th>
                                         <th scope="col">Date of Payment</th>
-                                        <th scope="col">Proof of Payment</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Clearance</th>
                                         <th scope="col">View Information</th>
@@ -145,6 +145,7 @@
                                             <td><?= $row['ref_no']; ?></td>
                                             <td><?php $tamount = $row['total_amount'];
                                                 echo 'Php' . ' ' . formatMoney($tamount, true); ?></td>
+                                            <td>Mode of payment</td>
                                             <td>
                                                 <?php
                                                 if ($row['date_ofpayment'] === "") {
@@ -154,8 +155,6 @@
                                                 }
                                                 ?>
                                             </td>
-
-                                            <td><?= $row['proof_ofpayment']; ?></td>
                                             <td>
                                                 <?php
                                                 if ($row['status'] === "Declined") {
@@ -183,13 +182,18 @@
                                                     <i class="fa fa-eye"></i> View
                                                 </button>
                                             </td>
-
                                             <td class="align-right">
-                                                <a href="edit-request.php?request=<?= $row['control_no']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit request">
-                                                    <i class="fa fa-edit"></i>
+                                                <a href="edit-request.php?request=<?= $row['control_no']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm btn-outline-primary text-xs mr-2"
+                                                    data-toggle="tooltip"
+                                                    data-original-title="Edit Request">
+                                                    <i class="fa fa-edit"></i> Edit
                                                 </a>
-                                                <a href="email-form-r.php?request=<?= $row['control_no']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Send email">
-                                                    <i class="fa fa-envelope"></i>
+                                                <a href="email-form-r.php?request=<?= $row['control_no']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm btn-outline-success text-xs"
+                                                    data-toggle="tooltip"
+                                                    data-original-title="Send Email">
+                                                    <i class="fa fa-envelope"></i> Email
                                                 </a>
                                             </td>
                                         </tr>

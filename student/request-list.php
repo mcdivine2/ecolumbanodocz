@@ -197,9 +197,9 @@
                                                         } elseif ($row['registrar_status'] === "Waiting for Payment") {
                                                             echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
                                                         } elseif ($row['registrar_status'] === "Releasing") {
-                                                            echo '<span class="badge bg-success text-white">Processing</span>';
-                                                        } elseif ($row['registrar_status'] === "Received") {
-                                                            echo '<span class="badge bg-warning text-white">Pending Request</span>';
+                                                            echo '<span class="badge bg-success text-white">Releasing</span>';
+                                                        } elseif ($row['registrar_status'] === "Pending") {
+                                                            echo '<span class="badge bg-warning text-white">Pending</span>';
                                                         } elseif ($row['registrar_status'] === "Declined") {
                                                             echo '<span class="badge bg-danger text-white">Declined</span>';
                                                         } elseif ($row['registrar_status'] === "Verified") {

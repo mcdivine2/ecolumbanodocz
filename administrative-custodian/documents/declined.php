@@ -52,7 +52,6 @@
                     <th scope="col">Student ID</th>
                     <th scope="col">Student Name</th>
                     <th scope="col">Document Name</th>
-                    <th scope="col">Processing Officer</th>
                     <th scope="col">Status</th>
                     <th scope="col">Clearance</th>
                     <th scope="col">Action</th>
@@ -73,13 +72,10 @@
                       <td><?= $row['student_id']; ?></td>
                       <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                       <td><?= $row['document_name']; ?></td>
-                      <td><?= $row['processing_officer']; ?></td>
                       <td>
                         <?php
                         if ($row['custodian_status'] === "Pending") {
                           echo '<span class="badge bg-info text-white">Pending</span>';
-                        } else if ($row['custodian_status'] === "Received") {
-                          echo '<span class="badge bg-warning text-white">Received</span>';
                         } else if ($row['custodian_status'] === "Declined") {
                           echo '<span class="badge bg-danger text-white">Declined</span>';
                         } else if ($row['custodian_status'] === "Verified") {
@@ -97,16 +93,16 @@
                         </div>
                       </td>
                       <td class="align-right">
-                        <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          <i class="fa fa-edit"></i>
-                        </a> |
-                        <!-- <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                                          <i class="fa fa-eye"></i>
-                                                        </a> | -->
-                        <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                          <i class="fa fa-envelope"></i>
-                        </a> |
-
+                        <div class="btn-group" role="group">
+                          <button onclick="window.location.href='edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>'"
+                            class="btn btn-sm btn-primary text-xs mr-2" data-toggle="tooltip" title="Edit Request">
+                            <i class="fa fa-edit"></i> Edit
+                          </button>
+                          <button onclick="window.location.href='email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>'"
+                            class="btn btn-sm btn-success text-xs" data-toggle="tooltip" title="Send Email">
+                            <i class="fa fa-envelope"></i> Send Email
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   <?php } ?>
