@@ -34,8 +34,6 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
-                                        <th>Mode Request</th>
-                                        <!-- <th>Date Releasing</th> -->
                                         <th>Processing Officer</th>
                                         <th>Status</th>
                                         <th>Clearance</th>
@@ -62,8 +60,6 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            <td><?= $row['mode_request']; ?></td>
-                                            <!-- <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td> -->
                                             <td><?= $row['processing_officer']; ?></td>
                                             <td>
                                                 <?php
@@ -87,12 +83,18 @@
                                                     <?= $clearance_text; ?>
                                                 </a>
                                             </td>
-                                            <td>
-                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
-                                                    <i class="fa fa-edit"></i>
-                                                </a> |
-                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Send email">
-                                                    <i class="fa fa-envelope"></i>
+                                            <td class="align-right">
+                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm btn-outline-primary text-xs mr-2"
+                                                    data-toggle="tooltip"
+                                                    title="Edit Request">
+                                                    <i class="fa fa-edit"></i> Edit
+                                                </a>
+                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm btn-outline-success text-xs"
+                                                    data-toggle="tooltip"
+                                                    title="Send Email">
+                                                    <i class="fa fa-envelope"></i> Send Email
                                                 </a>
                                             </td>
                                         </tr>
