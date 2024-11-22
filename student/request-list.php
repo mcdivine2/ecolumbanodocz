@@ -157,7 +157,7 @@
                                        <thead>
                                            <tr>
                                                <th scope="col">Control No.</th>
-                                               <th scope="col">Student ID</th>
+                                               <th scope="col">Student EDP</th>
                                                <th scope="col">Student Name</th>
                                                <th scope="col">Document Name</th>
                                                <th scope="col">Request Type</th>
