@@ -434,7 +434,7 @@ class class_model
 		}
 		return $data;
 	}
-	
+
 
 	public function print_documentrequest()
 	{
@@ -483,7 +483,19 @@ class class_model
 		return $data;
 	}
 
-	public function fetchAll_released()
+	public function fetchAll_releasing()
+	{
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'Releasing' ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function fetchAll_complete()
 	{
 		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'Released' ";
 		$stmt = $this->conn->prepare($sql);
