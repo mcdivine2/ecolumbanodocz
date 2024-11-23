@@ -42,6 +42,7 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
+                                        <th>Request Type</th>
                                         <th>Date Request</th>
                                         <th>Status</th>
                                         <th>Clearance</th>
@@ -60,6 +61,7 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name'] . ' ' . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
+                                            <td><?= $row['request_type']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td>
                                                 <?php
