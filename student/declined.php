@@ -52,13 +52,12 @@
                                         <th scope="col">Document Name</th>
                                         <th scope="col">Date Request</th>
                                         <th scope="col">Date Declined</th>
-                                        <th scope="col">Processing Officer</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     $student_id = $_SESSION['student_id'];
                                     $conn = new class_model();
                                     $docrequest = $conn->fetchAll_declined($student_id);
@@ -69,25 +68,24 @@
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= !empty($row['date_releasing']) ? date("M d, Y", strtotime($row['date_releasing'])) : ""; ?></td>
-                                            <td><?= $row['processing_officer']; ?></td>
                                             <td>
-                                                <?php 
+                                                <?php
                                                 $statusClasses = [
                                                     "Pending Request" => "bg-info",
                                                     "Processing" => "bg-danger",
                                                     "Releasing" => "bg-success",
                                                     "Received" => "bg-warning"
                                                 ];
-                                                echo '<span class="badge ' . ($statusClasses[$row['registrar_status']] ?? 'bg-secondary') . ' text-white">' . $row['registrar_status'] . '</span>'; 
-                                                ?> 
+                                                echo '<span class="badge ' . ($statusClasses[$row['registrar_status']] ?? 'bg-secondary') . ' text-white">' . $row['registrar_status'] . '</span>';
+                                                ?>
                                             </td>
                                             <td class="align-right">
                                                 <div class="box">
                                                     <div class="four">
-                                                    <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
-                                                        Clearance
-                                                    </a>
-                                                    </div> 
+                                                        <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="btn btn-sm btn-primary text-xs" data-toggle="tooltip" data-original-title="Clearance">
+                                                            Clearance
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -116,7 +114,7 @@
 <script src="../asset/vendor/datatables/js/data-table.js"></script>
 <script src="../asset/libs/js/main-js.js"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         var firstName = $('#firstName').text();
         var lastName = $('#lastName').text();
         var initials = firstName.charAt(0) + lastName.charAt(0);
@@ -127,7 +125,9 @@
             $.ajax({
                 url: "../init/controllers/fetch.php",
                 method: "POST",
-                data: {view: view},
+                data: {
+                    view: view
+                },
                 dataType: "json",
                 success: function(data) {
                     $('.dropdown-menu_1').html(data.notification);
@@ -140,7 +140,7 @@
 
         load_unseen_notification();
 
-        $(document).on('click', '.dropdown-toggle', function(){
+        $(document).on('click', '.dropdown-toggle', function() {
             $('.count').html('');
             load_unseen_notification('yes');
         });
@@ -154,7 +154,9 @@
                 $.ajax({
                     url: "../init/controllers/delete_request.php",
                     method: "POST",
-                    data: {request_id: request_id},
+                    data: {
+                        request_id: request_id
+                    },
                     success: function(response) {
                         $("#message").html(response);
                     },
@@ -167,4 +169,5 @@
     });
 </script>
 </body>
+
 </html>
