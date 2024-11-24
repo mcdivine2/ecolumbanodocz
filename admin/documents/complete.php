@@ -34,7 +34,8 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
-                                        <th>Date Releasing</th>
+                                        <th>Request Type</th>
+                                        <th>Date Released</th>
                                         <th>Processing Officer</th>
                                         <th>Status</th>
                                         <th>Clearance</th>
@@ -61,6 +62,7 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
+                                            <td><?= $row['request_type']; ?></td>
                                             <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td>
                                             <td><?= $row['processing_officer']; ?></td>
                                             <td>

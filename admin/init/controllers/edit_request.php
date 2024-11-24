@@ -12,41 +12,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$date_releasing = isset($_POST['date_releasing']) ? $_POST['date_releasing'] : null;
 	$status = trim($_POST['status']);
 	$request_id = trim($_POST['request_id']);
+	$request_type = isset($_POST['request_type']) ? trim($_POST['request_type']) : '';
+	$email = trim($_POST['email_address']);
+	$subject = "Request Update for $document_name";
 
-	// Execute the update query
+	// Determine the dean_status based on the request_type
+	$dean_status = (preg_match("/CBE BOARD EXAM/i", $request_type)) ? "Pending" : "Not Included";
+
+	// Initialize default statuses
+	$custodian_status = null;
+	$library_status = null;
+	$accounting_status = null;
+
+	// If the status is "Released", set specific statuses and prepare email body
+	if ($status === "Released") {
+		$registrar_status = "Released";
+		$custodian_status = "Verified";
+		$library_status = "Verified";
+		$dean_status = "Verified";
+		$accounting_status = "Completed";
+		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been marked as <b>Released</b>.<br>";
+		$body .= "Please collect it on or after <b>$date_releasing</b>. Reference number: <b>$control_no</b>.<br><br>Thank you.";
+	} elseif ($status === "Verified") {
+		$registrar_status = "Verified";
+		$custodian_status = "Pending";
+		$library_status = "Pending";
+		$dean_status = $dean_status;
+		$accounting_status = "Pending";
+		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been <b>Verified</b>.<br>";
+		$body .= "You will receive further updates regarding its processing. Reference number: <b>$control_no</b>.<br><br>Thank you.";
+	} else {
+		$registrar_status = $status;
+		$body = "Hello,<br><br>The status of your request for <b>$document_name</b> has been updated to <b>$status</b>.<br>";
+		$body .= "Reference number: <b>$control_no</b>.<br><br>Thank you.";
+	}
+
+	// Call the edit_request function with the required parameters
 	$requestUpdated = $conn->edit_request(
 		$control_no,
 		$studentID_no,
 		$document_name,
 		$date_request,
 		$date_releasing,
-		$status,
+		$registrar_status,
+		$custodian_status,
+		$library_status,
+		$dean_status,
+		$accounting_status,
 		$request_id
 	);
 
+	// Check if the request was updated successfully
 	if ($requestUpdated) {
-		// Check statuses and update accounting_status if necessary
-		$statuses = $conn->get_statuses($request_id);
-
-		if (
-			$statuses['registrar_status'] === "Verified" &&
-			$statuses['dean_status'] === "Verified" &&
-			$statuses['library_status'] === "Verified" &&
-			$statuses['custodian_status'] === "Verified"
-		) {
-			// Update accounting_status to "Waiting for Payment"
-			$conn->update_accounting_status($request_id, "Waiting for Payment");
-		}
-
-		// Prepare and send the email
-		$email = trim($_POST['email_address']);
-		$subject = trim($_POST['subject']);
-		$body = trim($_POST['body']);
-
-		// Google Apps Script URL for email sending
+		// Send the email using Google Apps Script
 		$url = "https://script.google.com/macros/s/AKfycbxeZj2u3vOe0nPCfRb4gNAtCdUcgh8eCWMRagQ3DRsvQRq5hn_rGnWQjSKsdLoIy62XXA/exec";
 		$emailSent = send_email($url, $email, $subject, $body);
 
+		// Display appropriate messages based on email sending status
 		if ($emailSent) {
 			echo '<div class="alert alert-success" style="text-align: center; margin-top: 100px; font-size: 20px;"><b>Request updated and email sent successfully!</b></div>';
 			echo '<script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';

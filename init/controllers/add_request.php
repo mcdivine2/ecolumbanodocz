@@ -26,11 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_types = $_POST['request_type'] ?? []; // This comes as a flat array
 
     $registrar_status = "Pending";
-    $custodian_status = "Pending";
-    $library_status = "Pending";
-    $accounting_status = "Pending";
+    $custodian_status = "TBA";
+    $library_status = "TBA";
+    $accounting_status = "TBA";
 
-    $dean_status = "Not Included"; // Default value
+    $dean_status = "TBA"; // Default value
     $date_request = date("Y-m-d H:i:s");
 
     $errors = [];
@@ -105,21 +105,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date_request
     );
 
-    if ($request) {
-        // After inserting the request, update dean_status if request_types contain "CBE BOARD EXAM"
-        foreach ($request_types as $request_type) {
-            // Normalize request_type by replacing <br> with spaces
-            $normalized_request_type = str_replace("<br>", " ", $request_type);
+    // if ($request) {
+    //     // After inserting the request, update dean_status if request_types contain "CBE BOARD EXAM"
+    //     foreach ($request_types as $request_type) {
+    //         // Normalize request_type by replacing <br> with spaces
+    //         $normalized_request_type = str_replace("<br>", " ", $request_type);
 
-            if (stripos($normalized_request_type, "CBE BOARD EXAM") !== false) {
-                $update_sql = "UPDATE tbl_documentrequest SET dean_status = 'Pending' WHERE control_no = ?";
-                $stmt = $conn->conn->prepare($update_sql);
-                $stmt->bind_param("s", $control_no);
-                $stmt->execute();
-                break; // No need to check further once condition is met
-            }
-        }
-    }
+    //         if (stripos($normalized_request_type, "CBE BOARD EXAM") !== false) {
+    //             $update_sql = "UPDATE tbl_documentrequest SET dean_status = 'Pending' WHERE control_no = ?";
+    //             $stmt = $conn->conn->prepare($update_sql);
+    //             $stmt->bind_param("s", $control_no);
+    //             $stmt->execute();
+    //             break; // No need to check further once condition is met
+    //         }
+    //     }
+    // }
 
     echo json_encode([
         'status' => $request ? 'success' : 'error',

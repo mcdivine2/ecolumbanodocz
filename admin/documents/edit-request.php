@@ -67,6 +67,7 @@
                                                <input type="text" value="<?= $row['studentID_no']; ?>" name="studentID_no" class="form-control" readonly>
                                            </div>
                                        </div>
+                                       <input type="text" name="request_type" value="<?= $row['request_type']; ?>" hidden>
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Student Name</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
