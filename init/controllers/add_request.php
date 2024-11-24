@@ -65,6 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array("Transcript of Records", $document_names)) {
             $errors[] = 'Recent image is required for "Transcript of Records".';
         }
+        if (in_array("Honorable Dismissal", $document_names)) {
+            $errors[] = 'Recent image is required for "Honorable Dismissal".';
+        }
     }
     
 
@@ -78,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($document_names as $index => $document_name) {
         $copies = $no_ofcopies[$index] ?? 1;
         $request_type = $request_types[$index] ?? '';
-        $documents[] = "$document_name (x$copies) - $request_type"; // Include request type
+        $documents[] = "$document_name (x$copies)"; // Include request type
     }
     $price = $total_price;
     $request = $conn->add_request(
