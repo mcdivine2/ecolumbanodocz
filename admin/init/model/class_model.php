@@ -848,6 +848,18 @@ class class_model
 		}
 		return $data;
 	}
+	public function count_numberoftotalreleasing()
+	{
+		$sql = "SELECT COUNT(request_id) as count_releasing FROM tbl_documentrequest WHERE registrar_status = 'Releasing'";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
 
 	public function count_numberofverified()
 	{

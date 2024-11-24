@@ -133,12 +133,12 @@
                     <div class="card-body">
                         <?php
                         $conn = new class_model();
-                        $cstudent = $conn->count_numberoftotalreceived();
+                        $cstudent = $conn->count_numberoftotalreleasing();
                         ?>
                         <?php foreach ($cstudent as $row): ?>
                             <div class="d-inline-block">
                                 <h5 class="text-muted"><b>Releasing</b></h5>
-                                <h2 class="mb-0"><?= $row['count_received']; ?></h2>
+                                <h2 class="mb-0"><?= $row['count_releasing']; ?></h2>
                             </div>
                             <div class="float-right icon-circle-medium  icon-box-lg  mt-1" style="background-color:#1269AF">
                                 <i class="fa fa-bell fa-fw fa-sm text-info" style="color: white !important"></i>

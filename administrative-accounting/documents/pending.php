@@ -52,8 +52,6 @@
                                         <th scope="col">Student ID</th>
                                         <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
-                                        <!-- <th scope="col">Date Releasing</th> -->
-                                        <th scope="col">Processing Officer</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Clearance</th>
                                         <th scope="col">Action</th>
@@ -73,26 +71,10 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            <!-- <td>
-                               <?php
-                                        if ($row['date_releasing'] === "") {
-                                            echo "";
-                                        } else if ($row['date_releasing'] === $row['date_releasing']) {
-                                            echo date("M d, Y", strtotime($row['date_releasing']));
-                                        }
-                                ?>
-                             </td> -->
-                                            <td><?= $row['processing_officer']; ?></td>
                                             <td>
                                                 <?php
                                                 if ($row['library_status'] === "Pending") {
-                                                    echo '<span class="badge bg-info text-white">Pending</span>';
-                                                } else if ($row['library_status'] === "Received") {
-                                                    echo '<span class="badge bg-warning text-white">Received</span>';
-                                                } else if ($row['library_status'] === "Waiting for Payment") {
-                                                    echo '<span class="badge bg-danger text-white">Waiting for Payment</span>';
-                                                } else if ($row['library_status'] === "Verified") {
-                                                    echo '<span class="badge bg-success text-white">Verified</span>';
+                                                    echo '<span class="badge bg-warning text-white">Pending</span>';
                                                 }
                                                 ?>
                                             </td>
@@ -103,16 +85,12 @@
                                             </td>
 
                                             <td class="align-right">
-                                                <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                                    <i class="fa fa-edit"></i>
-                                                </a> |
-                                                <!-- <a href="Track-document.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                                          <i class="fa fa-eye"></i>
-                                                        </a> | -->
-                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?php echo $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                                    <i class="fa fa-envelope"></i>
-                                                </a> |
-
+                                                <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>"
+                                                    class="btn btn-sm btn-outline-success text-xs"
+                                                    data-toggle="tooltip"
+                                                    data-original-title="Send Email">
+                                                    <i class="fa fa-envelope"></i> Email
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php } ?>

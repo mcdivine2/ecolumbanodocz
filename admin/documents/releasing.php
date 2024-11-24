@@ -67,13 +67,13 @@
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <<td><?= date("M d, Y", strtotime($row['date_releasing'])); ?></td>
-                                                <td><?= $row['mode_request']; ?></td>
+                                                <td><?= $row['queue_number']; ?></td>
                                                 <td><?= $row['processing_officer']; ?></td>
                                                 <td>
                                                     <?php
                                                     $status_badges = [
                                                         "Processing" => "primary",
-                                                        "Releasing" => "info",
+                                                        "Releasing" => "success",
                                                         "Pending" => "warning",
                                                         "Verified" => "success",
                                                         "Declined" => "danger"
@@ -92,12 +92,16 @@
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Edit request">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a> |
-                                                    <a href="email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="Send email">
-                                                        <i class="fa fa-envelope"></i>
-                                                    </a>
+                                                    <div class="btn-group" role="group">
+                                                        <button onclick="window.location.href='edit-request.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>'"
+                                                            class="btn btn-sm btn-primary text-xs mr-2" data-toggle="tooltip" title="Edit request">
+                                                            <i class="fa fa-edit"></i> Edit
+                                                        </button>
+                                                        <button onclick="window.location.href='email-form-r.php?request=<?= $row['request_id']; ?>&student-number=<?= $row['student_id']; ?>'"
+                                                            class="btn btn-sm btn-success text-xs" data-toggle="tooltip" title="Send email">
+                                                            <i class="fa fa-envelope"></i> Send Email
+                                                        </button>
+                                                    </div>
                                                 </td>
                                         </tr>
                                     <?php } ?>
