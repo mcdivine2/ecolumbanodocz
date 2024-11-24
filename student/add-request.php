@@ -227,7 +227,7 @@
 
 
                             <!-- Purpose Section -->
-                            <div class="form-group mt-4">
+                          <!--  <div class="form-group mt-4">
                                 <h4 class="section-title">Purpose</h4>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -240,7 +240,7 @@
                                 <div class="col-lg-5">
                                     <input type="text" id="docsPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- Submission Section -->
                             <div class="form-group mt-4 text-right">
@@ -437,14 +437,14 @@
                     };
 
                     let additionalInputs = '';
-                    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification'].includes(documentName)) {
+                    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification', 'Honorable Dismissal'].includes(documentName)) {
                         const copiesField = createInputField('Copies', 'copies[]', 'number', 1);
                         const cancelButton = `<button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>`;
                         const docNameField = `<p style="font-size: 14px; margin: 0;">${documentName}</p>`;
                         let requestTypeField = '';
                         let extraFields = '';
 
-                        if (documentName === 'Special Order' || documentName === 'Diploma') {
+                        if (documentName === 'Special Order' || documentName === 'Diploma' ) {
                             requestTypeField = createInputField('Request Type', `${documentName[0]}request_type`, 'radio', '', ['1st request', 'Re-Issuance']);
                         } else if (documentName === 'Transcript of Records') {
                             requestTypeField = createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request', 'Re-Issuance']);
@@ -456,6 +456,11 @@
                         } else if (documentName === 'Certification') {
                             requestTypeField = createInputField('Certification Type', 'certification_type', 'radio', '', ['Unit Earned', 'As Graduate', 'Other']);
                             extraFields = `<input type="text" id="certOtherInput" name="certification_type_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">`;
+                        } else if (documentName === 'Honorable Dismissal') {
+                            extraFields = `
+                                ${createInputField('Purpose', 'HDpurpose', 'radio', '', ['Student Transferring','Other'])}
+                                <input type="text" id="otherPurposeInput" name="HDpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">`;
                         }
 
                         additionalInputs = `
@@ -483,28 +488,44 @@
                     parentRow.append(additionalInputs);
 
                     // Event listeners for dynamic input changes
-if (documentName === 'Transcript of Records') {
-    parentRow.on('change', 'input[name="TORpurpose"]', function () {
-        const otherPurposeInput = parentRow.find('#otherPurposeInput');
-        const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-        const value = $(this).val();
+                if (documentName === 'Transcript of Records') {
+                    parentRow.on('change', 'input[name="TORpurpose"]', function () {
+                        const otherPurposeInput = parentRow.find('#otherPurposeInput');
+                        
+                        const value = $(this).val();
 
-        // Show/hide and set required attribute for "Other Purpose" input
-        if (value === 'Other') {
-            otherPurposeInput.show().prop('required', true);
-        } else {
-            otherPurposeInput.hide().val('').prop('required', false);
-        }
-    });
+                        // Show/hide and set required attribute for "Other Purpose" input
+                        if (value === 'Other') {
+                            otherPurposeInput.show().prop('required', true);
+                        } else {
+                            otherPurposeInput.hide().val('').prop('required', false);
+                        }
+                    });
 
-    // Ensure the photo attachment input is visible and required for "Transcript of Records"
-    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-    photoAttachmentInput.show().prop('required', true);
-} else {
-    // Hide and clear photo attachment if the document is not "Transcript of Records"
-    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-    photoAttachmentInput.hide().val('').prop('required', false);
-}
+                } 
+
+                if (documentName === 'Honorable Dismissal') {
+                    parentRow.on('change', 'input[name="HDpurpose"]', function () {
+                        const otherPurposeInput = parentRow.find('#otherPurposeInput');
+                        const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+                        const value = $(this).val();
+
+                        // Show/hide and set required attribute for "Other Purpose" input
+                        if (value === 'Other') {
+                            otherPurposeInput.show().prop('required', true);
+                        } else {
+                            otherPurposeInput.hide().val('').prop('required', false);
+                        }
+                    });
+
+                    // Ensure the photo attachment input is visible and required for "Transcript of Records"
+                    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+                    photoAttachmentInput.show().prop('required', true);
+                } else {
+                    // Hide and clear photo attachment if the document is not "Transcript of Records"
+                    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+                    photoAttachmentInput.hide().val('').prop('required', false);
+                }
 
 
                     if (documentName === 'Certification') {
@@ -701,11 +722,6 @@ if (documentName === 'Transcript of Records') {
         $('.popup-container').remove();
     }
 </script>
-
-
-
-
-
 
         </body>
 
