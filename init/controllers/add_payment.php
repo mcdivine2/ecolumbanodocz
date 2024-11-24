@@ -7,12 +7,22 @@ $conn = new class_model(); // Initialize your model class with the database conn
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get data from POST request and sanitize inputs
     $control_no = isset($_POST['control_no']) ? trim($_POST['control_no']) : '';
-    $trace_no = isset($_POST['trace_no']) ? trim($_POST['trace_no']) : '';
-    $ref_no = isset($_POST['ref_no']) ? trim($_POST['ref_no']) : '';
+    $modeof_payment = isset($_POST['mode_of_payment']) ? trim($_POST['mode_of_payment']) : '';
+    $or_no = isset($_POST['or_no']) ? trim($_POST['or_no']) : 'Not Included'; // Default value
+    $trace_no = isset($_POST['trace_no']) ? trim($_POST['trace_no']) : 'Not Included'; // Default value
+    $ref_no = isset($_POST['ref_no']) ? trim($_POST['ref_no']) : 'Not Included'; // Default value
     $document_name = isset($_POST['document_name']) ? trim($_POST['document_name']) : '';
     $date_ofpayment = isset($_POST['date_ofpayment']) ? trim($_POST['date_ofpayment']) : ''; // Ensure date_ofpayment is captured
     $total_amount = isset($_POST['total_amount']) ? trim($_POST['total_amount']) : '';
     $student_id = trim($_POST['student_id']);
+
+    // Adjust logic based on mode of payment
+    if ($modeof_payment === "PalawanPay") {
+        $or_no = 'Not Included'; // Set OR # as Not Included
+    } elseif ($modeof_payment === "Onsite Pay") {
+        $trace_no = 'Not Included'; // Set Trace No. and Ref. No. as Not Included
+        $ref_no = 'Not Included';
+    }
 
     // Initialize accounting status
     $accounting_status = "Paid";
@@ -34,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $proof_ofpayment = "student_uploads/" . $file_name;
 
                 // Call the add_payment method
-                if (method_exists($conn, 'add_payment') && $conn->add_payment($trace_no, $ref_no, $control_no, $document_name, $date_ofpayment, $total_amount, $proof_ofpayment, $student_id, $accounting_status)) {
+                if (method_exists($conn, 'add_payment') && $conn->add_payment($modeof_payment, $or_no, $trace_no, $ref_no, $control_no, $document_name, $date_ofpayment, $total_amount, $proof_ofpayment, $student_id, $accounting_status)) {
                     echo '<div class="alert alert-success">Payment recorded successfully!</div>';
                     echo '<script>setTimeout(function() { window.history.go(-1); }, 1000);</script>';
                 } else {
