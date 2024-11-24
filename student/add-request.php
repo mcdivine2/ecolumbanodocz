@@ -447,23 +447,20 @@
                         if (documentName === 'Special Order' || documentName === 'Diploma') {
                             requestTypeField = createInputField('Request Type', `${documentName[0]}request_type`, 'radio', '', ['1st request', 'Re-Issuance']);
                         } else if (documentName === 'Transcript of Records') {
-                            // requestTypeField = createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request - CBE BOARD EXAM', 'Re-Issuance - Others (Specify)']);
                             requestTypeField = `
-                ${createInputField('Purpose', 'TOR_request_type', 'radio', '', ['1st request - CBE BOARD EXAM', '1st request - Others (Specify)', 'Re-Issuance - Others (Specify)'])}
+                ${createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request - CBE BOARD EXAM', '1st request - Others (Specify)', 'Re-Issuance - Others (Specify)'])}
                 <input type="text" id="TOR_1st_request_input" name="TOR_request_type" placeholder="1st request Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
                 <input type="text" id="TOR_reissuance_input" name="TOR_request_type" placeholder="Re-Issuance Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
-
             `;
                         } else if (documentName === 'Certification') {
-                            extraFields = `${createInputField('Purpose', 'certification_purpose', 'radio', '', ['Unit Earned', 'As Graduate', 'Other'])}
+                            requestTypeField = `${createInputField('Request Type', 'certification_request_type', 'radio', '', ['Unit Earned', 'As Graduate', 'Other'])}
                 <input type="text" id="certOtherInput" name="certification_purpose_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">`;
                         } else if (documentName === 'Honorable Dismissal') {
-                            extraFields = `
-                ${createInputField('Purpose', 'HDpurpose', 'radio', '', ['Student Transferring','Other'])}
-                <input type="text" id="otherPurposeInput" name="HDpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                            requestTypeField = `
+                ${createInputField('Request Type', 'HDpurpose_request_type', 'radio', '', ['Student Transferring','Other'])}
+                <input type="text" id="otherPurposeInput" name="HDpurpose_request_type" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
                 <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">`;
                         }
-
                         additionalInputs = `
             <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
                 <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
@@ -522,7 +519,7 @@
                     }
 
                     if (documentName === 'Honorable Dismissal') {
-                        parentRow.on('change', 'input[name="HDpurpose"]', function() {
+                        parentRow.on('change', 'input[name="HDpurpose_request_type"]', function() {
                             const otherPurposeInput = parentRow.find('#otherPurposeInput');
                             const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
                             const value = $(this).val();
@@ -545,14 +542,14 @@
                     }
 
                     if (documentName === 'Certification') {
-                        parentRow.on('change', 'input[name="certification_purpose"]', function() {
+                        parentRow.on('change', 'input[name="certification_request_type"]', function() {
                             const certOtherInput = parentRow.find('#certOtherInput');
                             certOtherInput.toggle($(this).val() === 'Other').prop('required', $(this).val() === 'Other');
                         });
                     }
                 }
 
-                $('input[name="certification_purpose"]').on('change', function() {
+                $('input[name="certification_request_type"]').on('change', function() {
                     if ($(this).val() === 'Other') {
                         $('#certOtherInput').show().prop('required', true); // Show the input field and make it required
                     } else {
@@ -661,7 +658,7 @@
                 $('.request-row').each(function() {
                     const docName = $(this).find('select[name="document_name[]"]').val();
                     const reqType = $(this).find('input[type="radio"]:checked').val();
-                    const purpose = $(this).find('input[name="HDpurpose"]:checked').val();
+                    const purpose = $(this).find('input[name="HDpurpose_request_type"]:checked').val();
                     if (!docName || (!reqType && docName !== 'Honorable Dismissal') || (docName === 'Honorable Dismissal' && !purpose)) {
                         documentError = true;
                     }
