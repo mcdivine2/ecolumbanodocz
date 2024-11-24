@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     {
         return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
     }
+
     $studentID_no = sanitize($_POST['studentID_no']);
     $first_name = sanitize($_POST['first_name']);
     $middle_name = sanitize($_POST['middle_name']);
@@ -26,15 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $registrar_status = "Pending";
     $custodian_status = "Pending";
-    $dean_status = "Pending";
     $library_status = "Pending";
     $accounting_status = "Pending";
 
+    $dean_status = "Not Included"; // Default value
     $date_request = date("Y-m-d H:i:s");
 
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required.';
-
     if (empty($civil_status)) $errors[] = 'Civil Status is required.';
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address.';
     if (!is_numeric($total_price)) $errors[] = 'Invalid total price.';
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $file_name = uniqid() . '-' . basename($fileName);
                 $target_file = $target_dir . $file_name;
                 $allowed_types = ['image/jpeg', 'image/png', 'application/pdf'];
-    
+
                 if (in_array(mime_content_type($_FILES['photo_attachment']['tmp_name'][$index]), $allowed_types)) {
                     if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
                     if (move_uploaded_file($_FILES['photo_attachment']['tmp_name'][$index], $target_file)) {
@@ -66,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Recent image is required for "Honorable Dismissal".';
         }
     }
-    
 
     if (!empty($errors)) {
         echo json_encode(['status' => 'error', 'errors' => $errors]);
@@ -78,8 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($document_names as $index => $document_name) {
         $copies = $no_ofcopies[$index] ?? 1;
         $request_type = $request_types[$index] ?? '';
-        $documents[] = "$document_name (x$copies)"; // Include request type
+        $documents[] = "$document_name (x$copies)";
     }
+
     $price = $total_price;
     $request = $conn->add_request(
         $studentID_no,
@@ -104,6 +104,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $recent_image,
         $date_request
     );
+
+    if ($request) {
+        // After inserting the request, update dean_status if request_types contain "CBE BOARD EXAM"
+        foreach ($request_types as $request_type) {
+            // Normalize request_type by replacing <br> with spaces
+            $normalized_request_type = str_replace("<br>", " ", $request_type);
+
+            if (stripos($normalized_request_type, "CBE BOARD EXAM") !== false) {
+                $update_sql = "UPDATE tbl_documentrequest SET dean_status = 'Pending' WHERE control_no = ?";
+                $stmt = $conn->conn->prepare($update_sql);
+                $stmt->bind_param("s", $control_no);
+                $stmt->execute();
+                break; // No need to check further once condition is met
+            }
+        }
+    }
 
     echo json_encode([
         'status' => $request ? 'success' : 'error',
