@@ -33,7 +33,7 @@
                         echo "<p>Document Requested: " . htmlspecialchars($document['document_name']) . "</p>";
 
                         // Check if document matches the criteria and display recent image
-                        if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
+                        if (preg_match("/Honorable Dismissal/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
                             echo '<div class="form-group">';
                             echo '<label for="recent_image_preview">Recent Image:</label>';
                             echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
@@ -66,9 +66,11 @@
                                 'accounting' => 'ACCOUNTING',
                                 'registrar' => 'REGISTRAR'
                             ];
-                            if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+
+                            if (preg_match("/CBE BOARD EXAM/i", $document['request_type'])) {
                                 $departments['dean'] = 'DEAN';
                             }
+
 
                             foreach ($departments as $key => $label) {
                                 echo '<div class="form-group row">';

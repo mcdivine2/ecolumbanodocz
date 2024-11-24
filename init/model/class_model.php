@@ -386,16 +386,26 @@ class class_model
 	}
 	public function fetchAll_verified($student_id)
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Verified' ";
+		$sql = "SELECT * FROM tbl_documentrequest WHERE `student_id` = ? AND (registrar_status = 'Verified' OR registrar_status = 'Releasing')";
 		$stmt = $this->conn->prepare($sql);
+
+		if (!$stmt) {
+			die("SQL Error: " . $this->conn->error);
+		}
+
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
+
 		$result = $stmt->get_result();
 		$data = array();
+
 		while ($row = $result->fetch_assoc()) {
 			$data[] = $row;
 		}
-		return $data;
+
+		$stmt->close(); // Release resources
+
+		return empty($data) ? null : $data; // Return null if no results found
 	}
 
 	public function fetchAll_payments($student_id)
@@ -534,7 +544,7 @@ class class_model
 
 	public function count_verified($student_id)
 	{
-		$sql = "SELECT COUNT(request_id) as count_verified FROM tbl_documentrequest WHERE student_id = ? AND registrar_status = 'Verified'";
+		$sql = "SELECT COUNT(request_id) as count_verified FROM tbl_documentrequest WHERE student_id = ? AND (registrar_status = 'Verified' OR registrar_status = 'Releasing')";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
