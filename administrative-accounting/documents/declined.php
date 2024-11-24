@@ -103,10 +103,11 @@
                                         <th scope="col">Student Name</th>
                                         <th scope="col">Control No.</th>
                                         <th scope="col">Document Name</th>
+                                        <th scope="col">Mode of Payment</th>
+                                        <th scope="col">OR No.</th>
                                         <th scope="col">Trace No.</th>
                                         <th scope="col">Reference No.</th>
                                         <th scope="col">Total Amount</th>
-                                        <th scope="col">Mode of Payment</th>
                                         <th scope="col">Date of Payment</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Clearance</th>
@@ -141,11 +142,12 @@
                                             <td><?= ucwords($row['student_name']); ?></td>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
+                                            <td><?= $row['modeof_payment']; ?></td>
+                                            <td><?= $row['or_no']; ?></td>
                                             <td><?= $row['trace_no']; ?></td>
                                             <td><?= $row['ref_no']; ?></td>
                                             <td><?php $tamount = $row['total_amount'];
                                                 echo 'Php' . ' ' . formatMoney($tamount, true); ?></td>
-                                            <td>Mode of payment</td>
                                             <td>
                                                 <?php
                                                 if ($row['date_ofpayment'] === "") {

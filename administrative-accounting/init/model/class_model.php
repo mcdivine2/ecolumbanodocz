@@ -298,17 +298,24 @@ class class_model
 
 	public function fetchAll_verified()
 	{
-		// Modify the SQL query to only fetch rows where the status is 'Paid'
-		$sql = "SELECT *, CONCAT(tbl_students.first_name, ', ' ,tbl_students.middle_name, ' ' ,tbl_students.last_name) as student_name 
-            FROM tbl_payment 
-            INNER JOIN tbl_students ON tbl_students.student_id = tbl_payment.student_id 
-            WHERE tbl_payment.status = 'Verified' 
+		// SQL query to fetch all verified payments with modeof_payment and or_no
+		$sql = "SELECT tbl_payment.*, 
+                   tbl_payment.modeof_payment, 
+                   tbl_payment.or_no,
+                   tbl_payment.trace_no, 
+                   tbl_payment.ref_no,
+                   tbl_payment.total_amount,
+                   tbl_payment.date_ofpayment,
+                   tbl_payment.status,
+                   CONCAT(tbl_students.first_name, ', ', tbl_students.middle_name, ' ', tbl_students.last_name) AS student_name
+            FROM tbl_payment
+            INNER JOIN tbl_students ON tbl_students.student_id = tbl_payment.student_id
+            WHERE tbl_payment.status = 'Verified'
             ORDER BY tbl_payment.student_id DESC";
 
 		// Prepare the SQL statement
 		$stmt = $this->conn->prepare($sql);
 
-		// Check if the statement was prepared successfully
 		if ($stmt) {
 			// Execute the statement
 			$stmt->execute();
@@ -332,6 +339,7 @@ class class_model
 			return array();
 		}
 	}
+
 
 	public function fetchAll_released()
 	{
