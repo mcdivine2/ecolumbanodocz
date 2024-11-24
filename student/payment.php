@@ -17,6 +17,46 @@
                <!-- ============================================================== -->
                <!-- pageheader -->
                <!-- ============================================================== -->
+
+               <style>
+    .modal-body .row {
+        align-items: flex-start; /* Align text and image at the top */
+    }
+
+    .img-fluid {
+        max-height: 300px; /* Limit the height of the image */
+        object-fit: contain; /* Ensure the image fits within the allocated space */
+    }
+
+    .col-md-6 {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Ensure alignment starts at the top */
+    }
+
+    .pr-3 {
+        padding-right: 1rem; /* Add padding to separate text from image */
+    }
+
+    .modal-lg {
+        max-width: 45%; /* Widen modal for better layout */
+    }
+
+    .modal-xl {
+        max-width: 80%; /* Make the modal occupy almost the full width of the screen */
+    }
+
+    .modal-body img {
+        max-height: 80vh; /* Limit the image height to 90% of the viewport height */
+        width: auto; /* Maintain aspect ratio */
+    }
+
+    .modal-body {
+        padding: 0; /* Remove padding for a full-sized image display */
+    }
+</style>
+
+               
                <div class="row">
                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                        <div class="page-header">
@@ -47,7 +87,7 @@
                                        <thead>
                                            <tr>
                                                <th scope="col">Control No.</th>
-                                               <th scope="col">Studemt ID</th>
+                                               <th scope="col">Studemt EDP</th>
                                                <th scope="col">Student Name</th>
                                                <th scope="col">Document Name</th>
                                                <th scope="col">Trace No.</th>
@@ -84,7 +124,7 @@
                                            <?php foreach ($payment as $row) { ?>
                                                <tr>
                                                    <td><?= $row['control_no']; ?></td>
-                                                   <td><?= $row['student_id']; ?></td>
+                                                   <td><?= $row['studentID_no']; ?></td>
                                                    <td><?= ucwords($row['student_name']); ?></td>
                                                    <td><?= $row['document_name']; ?></td>
                                                    <td><?= $row['trace_no']; ?></td>
@@ -125,7 +165,7 @@
 
                                                    <td>
                                                        <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#paymentModal"
-                                                           data-student-id="<?= $row['student_id']; ?>"
+                                                           data-student-id="<?= $row['studentID_no']; ?>"
                                                            data-student-name="<?= $row['student_name']; ?>"
                                                            data-control-no="<?= $row['control_no']; ?>"
                                                            data-document-name="<?= $row['document_name']; ?>"
@@ -214,46 +254,52 @@
        </script>
 
        <!-- Payment Information Modal -->
-       <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog">
-           <div class="modal-dialog" role="document">
-               <div class="modal-content">
-                   <div class="modal-header">
-                       <h5 class="modal-title">Payment Information</h5>
-                       <button type="button" class="close" data-dismiss="modal">&times;</button>
-                   </div>
-                   <div class="modal-body d-flex align-items-start"> <!-- Use align-items-start for top alignment -->
-                       <div class="mr-2"> <!-- Text container -->
-                           <p><strong>Student ID:</strong> <span id="modal-student-id"></span></p>
-                           <p><strong>Student Name:</strong> <span id="modal-student-name"></span></p>
-                           <p><strong>Control No:</strong> <span id="modal-control-no"></span></p>
-                           <p><strong>Document Name:</strong> <span id="modal-document-name"></span></p>
-                           <p><strong>Total Amount:</strong> <span id="modal-total-amount"></span></p>
-                           <p><strong>Date of Payment:</strong> <span id="modal-date-payment"></span></p>
-                           <p><strong>Status:</strong> <span id="modal-status"></span></p>
-                           <p><strong>Proof of Payment:</strong></p>
-                       </div>
-                       <div class="image-container">
-                           <img id="modal-proof-of-payment" class="img-fluid" src="" alt="Proof of Payment" data-toggle="modal" data-target="#largeImageModal">
-                       </div>
-                   </div>
-               </div>
-           </div>
-       </div>
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Payment Information</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row no-gutters"> <!-- No extra spacing between text and image -->
+                    <!-- Text Container -->
+                    <div class="col-md-6 mb-3 pr-3"> <!-- Added padding-right -->
+                        <p><strong>Student EDP:</strong> <span id="modal-student-id"></span></p>
+                        <p><strong>Student Name:</strong> <span id="modal-student-name"></span></p>
+                        <p><strong>Control No:</strong> <span id="modal-control-no"></span></p>
+                        <p><strong>Document Name:</strong> <span id="modal-document-name"></span></p>
+                        <p><strong>Total Amount:</strong> <span id="modal-total-amount"></span></p>
+                        <p><strong>Date of Payment:</strong> <span id="modal-date-payment"></span></p>
+                        <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                        <p><strong>Proof of Payment:</strong></p>
+                    </div>
 
-       <!-- Large Image Modal -->
-       <div class="modal fade" id="largeImageModal" tabindex="-1" role="dialog">
-           <div class="modal-dialog modal-fullscreen" role="document"> <!-- Added modal-fullscreen class for larger view -->
-               <div class="modal-content">
-                   <div class="modal-header">
-                       <h5 class="modal-title">Proof of Payment</h5>
-                       <button type="button" class="close" data-dismiss="modal">&times;</button>
-                   </div>
-                   <div class="modal-body">
-                       <img id="large-proof-of-payment" src="" alt="Proof of Payment" class="img-fluid" style="width: 100%; height: auto;">
-                   </div>
-               </div>
-           </div>
-       </div>
+                    <!-- Image Container -->
+                    <div class="col-md-6 text-center"> <!-- Adjusted width -->
+                        <img id="modal-proof-of-payment" class="img-fluid rounded border" src="" alt="Proof of Payment" data-toggle="modal" data-target="#largeImageModal">
+                        <p class="mt-2 text-muted">Click to view full-size image.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Large Image Modal -->
+<div class="modal fade" id="largeImageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document"> <!-- Use modal-xl for extra-large modal -->
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Proof of Payment</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="large-proof-of-payment" src="" alt="Proof of Payment" class="img-fluid rounded" style="width: 100%; height: auto; max-height: 90vh;">
+            </div>
+        </div>
+    </div>
+</div>
        </body>
 
        </html>
