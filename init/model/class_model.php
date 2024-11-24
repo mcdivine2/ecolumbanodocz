@@ -153,7 +153,7 @@ class class_model
 	}
 
 
-	public function add_payment($trace_no, $ref_no, $control_no, $document_name, $date_ofpayment, $total_amount, $payment_proof, $student_id, $accounting_status)
+	public function add_payment($modeof_payment, $or_no, $trace_no, $ref_no, $control_no, $document_name, $date_ofpayment, $total_amount, $payment_proof, $student_id, $accounting_status)
 	{
 		// Start a transaction
 		$this->conn->begin_transaction();
@@ -161,15 +161,15 @@ class class_model
 		try {
 			// Insert into tbl_payment
 			$stmt = $this->conn->prepare(
-				"INSERT INTO `tbl_payment` (`trace_no`, `ref_no`, `control_no`, `document_name`, `date_ofpayment`, `total_amount`, `proof_ofpayment`, `student_id`, `status`) 
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, 'Paid')"
+				"INSERT INTO `tbl_payment` (`modeof_payment`, `or_no`, `trace_no`, `ref_no`, `control_no`, `document_name`, `date_ofpayment`, `total_amount`, `proof_ofpayment`, `student_id`, `status`) 
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Paid')"
 			);
 
 			if (!$stmt) {
 				throw new Exception("Failed to prepare statement: " . $this->conn->error);
 			}
 
-			$stmt->bind_param("sssssssi", $trace_no, $ref_no, $control_no, $document_name, $date_ofpayment, $total_amount, $payment_proof, $student_id);
+			$stmt->bind_param("sssssssssi", $modeof_payment, $or_no, $trace_no, $ref_no, $control_no, $document_name, $date_ofpayment, $total_amount, $payment_proof, $student_id);
 
 			if (!$stmt->execute()) {
 				throw new Exception("Failed to execute insert statement: " . $stmt->error);
@@ -208,6 +208,7 @@ class class_model
 			return false;
 		}
 	}
+
 
 
 
