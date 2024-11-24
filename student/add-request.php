@@ -227,7 +227,7 @@
 
 
                             <!-- Purpose Section -->
-                            <div class="form-group mt-4">
+                           <!--<div class="form-group mt-4">
                                 <h4 class="section-title">Purpose</h4>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -240,7 +240,7 @@
                                 <div class="col-lg-5">
                                     <input type="text" id="docsPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
                                 </div>
-                            </div>
+                            </div>-->
 
                             <!-- Submission Section -->
                             <div class="form-group mt-4 text-right">
@@ -419,291 +419,296 @@
                 updateTotalPrice();
 
                 // Function to handle dynamic inputs for specific documents
-                function handleDynamicInputs(documentName, parentRow) {
-                    // Remove any existing dynamic inputs
-                    parentRow.find('.additional-inputs').remove();
+function handleDynamicInputs(documentName, parentRow) {
+    // Remove any existing dynamic inputs
+    parentRow.find('.additional-inputs').remove();
 
-                    const createInputField = (label, name, type, value = '', options = []) => {
-                        let inputHTML = `
-                            <label style="font-weight: bold; font-size: 14px;">${label}:</label>
-                            ${type === 'radio' ? options.map(option => `
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="${name}" value="${option}" required>
-                                    <label class="form-check-label" style="font-size: 13px;">${option}</label>
-                                </div>
-                            `).join('') : `<input type="${type}" name="${name}" class="form-control" value="${value}" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">`}
-                        `;
-                        return inputHTML;
-                    };
+    const createInputField = (label, name, type, value = '', options = []) => {
+        let inputHTML = `
+            <label style="font-weight: bold; font-size: 14px;">${label}:</label>
+            ${type === 'radio' ? options.map(option => `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="${name}" value="${option}" required>
+                    <label class="form-check-label" style="font-size: 13px;">${option}</label>
+                </div>
+            `).join('') : `<input type="${type}" name="${name}" class="form-control" value="${value}" required style="border: 2px solid #007bff; border-radius: 5px; padding: 5px; width: 100%;">`}
+        `;
+        return inputHTML;
+    };
 
-                    let additionalInputs = '';
-                    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification', 'Honorable Dismissal'].includes(documentName)) {
-                        const copiesField = createInputField('Copies', 'copies[]', 'number', 1);
-                        const cancelButton = `<button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>`;
-                        const docNameField = `<p style="font-size: 14px; margin: 0;">${documentName}</p>`;
-                        let requestTypeField = '';
-                        let extraFields = '';
+    let additionalInputs = '';
+    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification', 'Honorable Dismissal'].includes(documentName)) {
+        const copiesField = createInputField('Copies', 'copies[]', 'number', 1);
+        const cancelButton = `<button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>`;
+        const docNameField = `<p style="font-size: 14px; margin: 0;">${documentName}</p>`;
+        let requestTypeField = '';
+        let extraFields = '';
 
-                        if (documentName === 'Special Order' || documentName === 'Diploma' ) {
-                            requestTypeField = createInputField('Request Type', `${documentName[0]}request_type`, 'radio', '', ['1st request', 'Re-Issuance']);
-                        } else if (documentName === 'Transcript of Records') {
-                            requestTypeField = createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request', 'Re-Issuance']);
-                            extraFields = `
-                                ${createInputField('Purpose', 'TORpurpose', 'radio', '', ['Evaluation', 'Employment', 'CBE BOARD EXAM', 'Other'])}
-                                <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
-                                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 15px;">
-                            `;
-                        } else if (documentName === 'Certification') {
-                            requestTypeField = createInputField('Certification Type', 'certification_type', 'radio', '', ['Unit Earned', 'As Graduate', 'Other']);
-                            extraFields = `<input type="text" id="certOtherInput" name="certification_type_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">`;
-                        } else if (documentName === 'Honorable Dismissal') {
-                            extraFields = `
-                                ${createInputField('Purpose', 'HDpurpose', 'radio', '', ['Student Transferring','Other'])}
-                                <input type="text" id="otherPurposeInput" name="HDpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
-                                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">`;
-                        }
+        if (documentName === 'Special Order' || documentName === 'Diploma') {
+            requestTypeField = createInputField('Request Type', `${documentName[0]}request_type`, 'radio', '', ['1st request', 'Re-Issuance']);
+        } else if (documentName === 'Transcript of Records') {
+            requestTypeField = createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request', 'Re-Issuance']);
+            extraFields = `
+                ${createInputField('Purpose', 'TORpurpose', 'radio', '', ['Evaluation', 'Employment', 'CBE BOARD EXAM', 'Other'])}
+                <input type="text" id="otherPurposeInput" name="TORpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 15px;">
+            `;
+        } else if (documentName === 'Certification') {
+            extraFields = `${createInputField('Purpose', 'certification_purpose', 'radio', '', ['Unit Earned', 'As Graduate', 'Other'])}
+                <input type="text" id="certOtherInput" name="certification_purpose_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">`;
+        } else if (documentName === 'Honorable Dismissal') {
+            extraFields = `
+                ${createInputField('Purpose', 'HDpurpose', 'radio', '', ['Student Transferring','Other'])}
+                <input type="text" id="otherPurposeInput" name="HDpurpose" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">`;
+        }
 
-                        additionalInputs = `
-                            <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                                <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
-                                    <div style="flex: 1; min-width: 150px;">
-                                        <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
-                                        ${docNameField}
-                                    </div>
-                                    <div style="flex: 1; min-width: 120px;">
-                                        ${copiesField}
-                                    </div>
-                                    <div style="flex: 2; min-width: 250px;">
-                                        ${requestTypeField}
-                                    </div>
-                                    <div style="flex: 0; min-width: 100px; text-align: center;">
-                                        ${cancelButton}
-                                    </div>
-                                    ${extraFields}
-                                </div>
-                            </div>
-                        `;
-                    }
+        additionalInputs = `
+            <div class="additional-inputs" style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                <div class="responsive-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-weight: bold; font-size: 14px;">Document Name:</label>
+                        ${docNameField}
+                    </div>
+                    <div style="flex: 1; min-width: 120px;">
+                        ${copiesField}
+                    </div>
+                    <div style="flex: 2; min-width: 250px;">
+                        ${requestTypeField}
+                    </div>
+                    <div style="flex: 0; min-width: 100px; text-align: center;">
+                        ${cancelButton}
+                    </div>
+                    ${extraFields}
+                </div>
+            </div>
+        `;
+    }
 
-                    parentRow.append(additionalInputs);
+    parentRow.append(additionalInputs);
 
-                    // Event listeners for dynamic input changes
-                if (documentName === 'Transcript of Records') {
-                    parentRow.on('change', 'input[name="TORpurpose"]', function () {
-                        const otherPurposeInput = parentRow.find('#otherPurposeInput');
-                        
-                        const value = $(this).val();
-
-                        // Show/hide and set required attribute for "Other Purpose" input
-                        if (value === 'Other') {
-                            otherPurposeInput.show().prop('required', true);
-                        } else {
-                            otherPurposeInput.hide().val('').prop('required', false);
-                        }
-                    });
-
-                } 
-
-                if (documentName === 'Honorable Dismissal') {
-                    parentRow.on('change', 'input[name="HDpurpose"]', function () {
-                        const otherPurposeInput = parentRow.find('#otherPurposeInput');
-                        const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-                        const value = $(this).val();
-
-                        // Show/hide and set required attribute for "Other Purpose" input
-                        if (value === 'Other') {
-                            otherPurposeInput.show().prop('required', true);
-                        } else {
-                            otherPurposeInput.hide().val('').prop('required', false);
-                        }
-                    });
-
-                    // Ensure the photo attachment input is visible and required for "Transcript of Records"
-                    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-                    photoAttachmentInput.show().prop('required', true);
-                } else {
-                    // Hide and clear photo attachment if the document is not "Transcript of Records"
-                    const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
-                    photoAttachmentInput.hide().val('').prop('required', false);
-                }
-
-
-                    if (documentName === 'Certification') {
-                        parentRow.on('change', 'input[name="certification_type"]', function () {
-                            const certOtherInput = parentRow.find('#certOtherInput');
-                            certOtherInput.toggle($(this).val() === 'Other').prop('required', $(this).val() === 'Other');
-                        });
-                    }
-                }
-
-                $('input[name="certification_type"]').on('change', function() {
-                    if ($(this).val() === 'Other') {
-                        $('#certOtherInput').show().prop('required', true); // Show the input field and make it required
-                    } else {
-                        $('#certOtherInput').hide().val('').prop('required', false); // Hide and reset the input field
-                    }
-                });
-
-                requestContainer.on('change', '.document-select', function() {
-                    const parentRow = $(this).closest('.request-row');
-                    const copiesInput = parentRow.find('.copies-input');
-                    const requestTypeOptions = parentRow.find('.request-type-options');
-
-                    const selectedValue = $(this).val();
-
-                    if (selectedValue) {
-                        // Enable copies input
-                        copiesInput.prop('disabled', false);
-
-                        // Show and enable request type options
-                        requestTypeOptions.show();
-                        requestTypeOptions.find('input').prop('disabled', false);
-
-                        // Handle dynamic inputs for specific documents
-                        handleDynamicInputs(selectedValue, parentRow);
-                    } else {
-                        // Disable and reset fields if no document is selected
-                        copiesInput.prop('disabled', true).val(1);
-                        requestTypeOptions.hide();
-                        requestTypeOptions.find('input').prop('checked', false).prop('disabled', true);
-
-                        // Remove dynamic inputs if any
-                        parentRow.find('.additional-inputs').remove();
-                    }
-
-                    updateTotalPrice();
-                    updateDropdownOptionsAndButton();
-                });
-                // Event listener for cancel button
-                requestContainer.on('click', '.cancel-row-btn', function() {
-                    const parentRow = $(this).closest('.request-row');
-                    parentRow.remove(); // Remove the row
-                    updateTotalPrice(); // Update the total price after removing the row
-                    updateDropdownOptionsAndButton(); // Refresh dropdown and button states
-                });
-                docsPurposeInput
-                // Toggle "Other (specify)" input field
-                $('#otherPurposeCheckbox').on('change', function() {
-                    if ($(this).is(':checked')) {
-                        // Show the "Other (specify)" input and make it required
-                        $('#docsPurposeInput').show().prop('required', true);
-                    } else {
-                        // Hide the "Other (specify)" input, clear its value, and make it not required
-                        $('#docsPurposeInput').hide().val('').prop('required', false);
-                    }
-                });
-
-                // Event listener for "Add Another Document" button
-                addRowBtn.on('click', function() {
-                    const newRow = $('.request-row:first').clone();
-                    newRow.find('.document-select').val('');
-                    newRow.find('.copies-input').val(1).prop('disabled', true);
-                    newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
-                    newRow.find('.additional-inputs').remove();
-                    requestContainer.append(newRow);
-                });
-
-                // Initial setup
-                updateTotalPrice();
-            });
+    // Event listeners for dynamic input changes
+    if (documentName === 'Transcript of Records') {
+        parentRow.on('change', 'input[name="TORpurpose"]', function () {
+            const otherPurposeInput = parentRow.find('#otherPurposeInput');
             
-        </script>
+            const value = $(this).val();
+
+            // Show/hide and set required attribute for "Other Purpose" input
+            if (value === 'Other') {
+                otherPurposeInput.show().prop('required', true);
+            } else {
+                otherPurposeInput.hide().val('').prop('required', false);
+            }
+        });
+    } 
+
+    if (documentName === 'Honorable Dismissal') {
+        parentRow.on('change', 'input[name="HDpurpose"]', function () {
+            const otherPurposeInput = parentRow.find('#otherPurposeInput');
+            const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+            const value = $(this).val();
+
+            // Show/hide and set required attribute for "Other Purpose" input
+            if (value === 'Other') {
+                otherPurposeInput.show().prop('required', true);
+            } else {
+                otherPurposeInput.hide().val('').prop('required', false);
+            }
+        });
+
+        // Ensure the photo attachment input is visible and required for "Honorable Dismissal"
+        const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+        photoAttachmentInput.show().prop('required', true);
+    } else {
+        // Hide and clear photo attachment if the document is not "Honorable Dismissal"
+        const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
+        photoAttachmentInput.hide().val('').prop('required', false);
+    }
+
+    if (documentName === 'Certification') {
+        parentRow.on('change', 'input[name="certification_purpose"]', function () {
+            const certOtherInput = parentRow.find('#certOtherInput');
+            certOtherInput.toggle($(this).val() === 'Other').prop('required', $(this).val() === 'Other');
+        });
+    }
+}
+
+$('input[name="certification_purpose"]').on('change', function() {
+    if ($(this).val() === 'Other') {
+        $('#certOtherInput').show().prop('required', true); // Show the input field and make it required
+    } else {
+        $('#certOtherInput').hide().val('').prop('required', false); // Hide and reset the input field
+    }
+});
+
+requestContainer.on('change', '.document-select', function() {
+    const parentRow = $(this).closest('.request-row');
+    const copiesInput = parentRow.find('.copies-input');
+    const requestTypeOptions = parentRow.find('.request-type-options');
+
+    const selectedValue = $(this).val();
+
+    if (selectedValue) {
+        // Enable copies input
+        copiesInput.prop('disabled', false);
+
+        // Show and enable request type options
+        requestTypeOptions.show();
+        requestTypeOptions.find('input').prop('disabled', false);
+
+        // Handle dynamic inputs for specific documents
+        handleDynamicInputs(selectedValue, parentRow);
+    } else {
+        // Disable and reset fields if no document is selected
+        copiesInput.prop('disabled', true).val(1);
+        requestTypeOptions.hide();
+        requestTypeOptions.find('input').prop('checked', false).prop('disabled', true);
+
+        // Remove dynamic inputs if any
+        parentRow.find('.additional-inputs').remove();
+    }
+
+    updateTotalPrice();
+    updateDropdownOptionsAndButton();
+});
+
+// Event listener for cancel button
+requestContainer.on('click', '.cancel-row-btn', function() {
+    const parentRow = $(this).closest('.request-row');
+    parentRow.remove(); // Remove the row
+    updateTotalPrice(); // Update the total price after removing the row
+    updateDropdownOptionsAndButton(); // Refresh dropdown and button states
+});
+
+docsPurposeInput
+// Toggle "Other (specify)" input field
+$('#otherPurposeCheckbox').on('change', function() {
+    if ($(this).is(':checked')) {
+        // Show the "Other (specify)" input and make it required
+        $('#docsPurposeInput').show().prop('required', true);
+    } else {
+        // Hide the "Other (specify)" input, clear its value, and make it not required
+        $('#docsPurposeInput').hide().val('').prop('required', false);
+    }
+});
+
+// Event listener for "Add Another Document" button
+addRowBtn.on('click', function() {
+    const newRow = $('.request-row:first').clone();
+    newRow.find('.document-select').val('');
+    newRow.find('.copies-input').val(1).prop('disabled', true);
+    newRow.find('.request-type-options').hide().find('input').prop('checked', false).prop('disabled', true);
+    newRow.find('.additional-inputs').remove();
+    requestContainer.append(newRow);
+});
+
+// Initial setup
+updateTotalPrice();
+});
+
+</script>
 
 <script>
-    $(document).on('click', '#submitForm', function(e) {
-        e.preventDefault();
+$(document).on('click', '#submitForm', function(e) {
+    e.preventDefault();
 
-        let formData = new FormData();
-        const appendField = (name, selector) => formData.append(name, $(selector).val());
-        const appendFile = (name, selector) => $(selector).each(function() {
-            if (this.files[0]) formData.append(name, this.files[0]);
-        });
-
-        // Required fields
-        const requiredFields = {
-            email_address: 'Email address is required.',
-            course: 'Course is required.',
-            civil_status: 'Civil status is required.',
-        };
-
-        let errors = [];
-
-        // Validate required fields
-        for (const field in requiredFields) {
-            const value = field === 'civil_status' || field === 'course' 
-                ? $(`select[name="${field}"]`).val()
-                : $(`input[name="${field}"]`).val();
-
-            if (!value) {
-                errors.push(requiredFields[field]);
-            }
-        }
-
-        // Validate document name and request type
-        let documentError = false;
-        $('.request-row').each(function() {
-            const docName = $(this).find('select[name="document_name[]"]').val();
-            const reqType = $(this).find('input[type="radio"]:checked').val();
-            if (!docName || !reqType) {
-                documentError = true;
-            }
-        });
-
-        if (documentError) {
-            errors.push('Document name and request type are required for each request.');
-        }
-
-        if (errors.length) {
-            $('#message').html(`<div class="alert alert-danger">${errors.join('<br>')}</div>`);
-            window.scrollTo(0, 0);
-            return;
-        }
-
-        // Append other form data
-        ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address', 'control_no', 'student_id']
-            .forEach(field => appendField(field, `input[name="${field}"]`));
-        ['course', 'civil_status'].forEach(field => appendField(field, `select[name="${field}"]`));
-        formData.append('total_price', $('#totalPrice').val());
-
-        $('.request-row').each(function() {
-            const docName = $(this).find('select[name="document_name[]"]').val();
-            const reqType = $(this).find('input[type="radio"]:checked').val();
-            const copies = $(this).find('input[name="copies[]"]').val();
-            if (docName && reqType && copies) {
-                formData.append('document_name[]', docName);
-                formData.append('request_type[]', reqType);
-                formData.append('copies[]', copies);
-            }
-        });
-
-        $('input[name="purpose[]"]:checked').each(function() {
-            formData.append('purpose[]', $(this).val());
-        });
-        appendFile('photo_attachment[]', 'input[name="photo_attachment[]"]');
-
-        // AJAX submission
-        $.ajax({
-            url: '../init/controllers/add_request.php',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                const res = JSON.parse(response);
-                if (res.status === 'success') {
-                    // Display success pop-up
-                    showSuccessPopup('Thank You!', 'Your details have been successfully submitted. Thanks!');
-                    setTimeout(() => window.location.reload(), 4000);
-                } else {
-                    $('#message').html(`<div class="alert alert-danger">${res.message || (res.errors || ['An error occurred.']).join('<br>')}</div>`);
-                    window.scrollTo(0, 0);
-                }
-            },
-            error: () => {
-                $('#message').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
-            },
-        });
+    let formData = new FormData();
+    const appendField = (name, selector) => formData.append(name, $(selector).val());
+    const appendFile = (name, selector) => $(selector).each(function() {
+        if (this.files[0]) formData.append(name, this.files[0]);
     });
+
+    // Required fields
+    const requiredFields = {
+        email_address: 'Email address is required.',
+        course: 'Course is required.',
+        civil_status: 'Civil status is required.',
+    };
+
+    let errors = [];
+
+    // Validate required fields
+    for (const field in requiredFields) {
+        const value = field === 'civil_status' || field === 'course' 
+            ? $(`select[name="${field}"]`).val()
+            : $(`input[name="${field}"]`).val();
+
+        if (!value) {
+            errors.push(requiredFields[field]);
+        }
+    }
+
+    // Validate document name, request type, and purpose
+    let documentError = false;
+    $('.request-row').each(function() {
+        const docName = $(this).find('select[name="document_name[]"]').val();
+        const reqType = $(this).find('input[type="radio"]:checked').val();
+        const purpose = $(this).find('input[name="HDpurpose"]:checked').val();
+        if (!docName || (!reqType && docName !== 'Honorable Dismissal') || (docName === 'Honorable Dismissal' && !purpose)) {
+            documentError = true;
+        }
+    });
+
+    if (documentError) {
+        errors.push('Document name, request type, and purpose are required for each request.');
+    }
+
+    if (errors.length) {
+        $('#message').html(`<div class="alert alert-danger">${errors.join('<br>')}</div>`);
+        window.scrollTo(0, 0);
+        return;
+    }
+
+    // Append other form data
+    ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address', 'control_no', 'student_id']
+        .forEach(field => appendField(field, `input[name="${field}"]`));
+    ['course', 'civil_status'].forEach(field => appendField(field, `select[name="${field}"]`));
+    formData.append('total_price', $('#totalPrice').val());
+
+    $('.request-row').each(function() {
+        const docName = $(this).find('select[name="document_name[]"]').val();
+        const reqType = $(this).find('input[type="radio"][name$="request_type"]:checked').val();
+        const purpose = $(this).find('input[type="radio"][name$="purpose"]:checked').val();
+        const copies = $(this).find('input[name="copies[]"]').val();
+        if (docName && copies) {
+            formData.append('document_name[]', docName);
+            if (reqType) {
+                formData.append('request_type[]', reqType);
+            }
+            if (purpose) {
+                formData.append('purpose[]', purpose);
+            }
+            formData.append('copies[]', copies);
+        }
+    });
+
+    appendFile('photo_attachment[]', 'input[name="photo_attachment[]"]');
+
+    // AJAX submission
+    $.ajax({
+        url: '../init/controllers/add_request.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            const res = JSON.parse(response);
+            if (res.status === 'success') {
+                // Display success pop-up
+                showSuccessPopup('Thank You!', 'Your details have been successfully submitted. Thanks!');
+                setTimeout(() => window.location.reload(), 4000);
+            } else {
+                $('#message').html(`<div class="alert alert-danger">${res.message || (res.errors || ['An error occurred.']).join('<br>')}</div>`);
+                window.scrollTo(0, 0);
+            }
+        },
+        error: () => {
+            $('#message').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
+        },
+    });
+});
+
 
     function showSuccessPopup(title, message) {
         // Create and show the success popup

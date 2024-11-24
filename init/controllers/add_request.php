@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required.';
-    if (empty($purposes)) $errors[] = 'Purpose is required.';
+
     if (empty($civil_status)) $errors[] = 'Civil Status is required.';
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address.';
     if (!is_numeric($total_price)) $errors[] = 'Invalid total price.';
