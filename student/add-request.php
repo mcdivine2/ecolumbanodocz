@@ -227,7 +227,7 @@
 
 
                             <!-- Purpose Section -->
-                          <!--  <div class="form-group mt-4">
+                            <div class="form-group mt-4">
                                 <h4 class="section-title">Purpose</h4>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -240,7 +240,7 @@
                                 <div class="col-lg-5">
                                     <input type="text" id="docsPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
                                 </div>
-                            </div> -->
+                            </div>
 
                             <!-- Submission Section -->
                             <div class="form-group mt-4 text-right">

@@ -62,9 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } else {
-        if (in_array("Transcript of Records", $document_names)) {
-            $errors[] = 'Recent image is required for "Transcript of Records".';
-        }
         if (in_array("Honorable Dismissal", $document_names)) {
             $errors[] = 'Recent image is required for "Honorable Dismissal".';
         }
