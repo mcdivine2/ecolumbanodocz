@@ -43,7 +43,7 @@ include('left_sidebar/sidebar.php');
                                         <th>Student ID</th>
                                         <th>Document Name</th>
                                         <th>Date Request</th>
-                                        <th>Date Releasing</th>
+                                        <th>Date Released</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>

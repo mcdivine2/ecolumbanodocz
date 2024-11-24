@@ -54,9 +54,24 @@
                                 $request_id = $_GET['request'];
                                 $student_id = $_GET['student-number'];
 
+
                                 // Instantiate the class and fetch the specific document request
                                 $conn = new class_model();
                                 $document = $conn->fetch_document_by_id($student_id, $request_id);
+                                if ($document) {
+                                    // Display student details at the top
+                                    echo "<h4>Student Name: " . htmlspecialchars($document['first_name']) . " " . htmlspecialchars($document['last_name']) . "</h4>";
+                                    echo "<p>Control Number: " . htmlspecialchars($document['control_no']) . "</p>";
+                                    echo "<p>Document Requested: " . htmlspecialchars($document['document_name']) . "</p>";
+
+                                    // Check if document matches the criteria and display recent image
+                                    if (preg_match("/Honorable Dismissal/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
+                                        echo '<div class="form-group">';
+                                        echo '<label for="recent_image_preview">Recent Image:</label>';
+                                        echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
+                                        echo '</div>';
+                                    }
+                                }
 
                                 // Check if data is retrieved
                                 if ($document) {
@@ -85,8 +100,8 @@
                                             case "Waiting for Payment":
                                                 echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
                                                 break;
-                                            case "Processing":
-                                                echo '<span class="badge bg-success text-white">Processing</span>';
+                                            case "Releasing":
+                                                echo '<span class="badge bg-success text-white">Releasing</span>';
                                                 break;
                                             case "Paid":
                                                 echo '<span class="badge bg-success text-white">Paid</span>';
@@ -101,7 +116,7 @@
                                                 echo '<span class="badge bg-danger text-white">Declined</span>';
                                                 break;
                                             default:
-                                                echo '<span class="badge bg-secondary text-white">Unknown Status</span>';
+                                                echo '<span class="badge bg-warning text-white">TO BE ASSIGN</span>';
                                         }
 
                                         echo '</div>';

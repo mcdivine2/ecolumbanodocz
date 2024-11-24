@@ -534,30 +534,51 @@ class class_model
 	}
 
 
-	public function edit_request($control_no, $studentID_no, $document_name, $date_request, $date_releasing, $registrar_status, $request_id)
+	public function edit_request($control_no, $studentID_no, $document_name, $date_request, $date_releasing, $registrar_status, $custodian_status, $library_status, $dean_status, $accounting_status, $request_id)
 	{
 		$sql = "UPDATE `tbl_documentrequest` 
-            SET `control_no` = ?, `studentID_no` = ?, `document_name` = ?, `date_request` = ?, 
-                `date_releasing` = ?, `registrar_status` = ? 
-            WHERE request_id = ?";
+            SET `control_no` = ?, 
+                `studentID_no` = ?, 
+                `document_name` = ?, 
+                `date_request` = ?, 
+                `date_releasing` = ?, 
+                `registrar_status` = ?, 
+                `custodian_status` = ?, 
+                `library_status` = ?, 
+                `dean_status` = ?, 
+                `accounting_status` = ?
+            WHERE `request_id` = ?";
 		$stmt = $this->conn->prepare($sql);
 		if (!$stmt) {
-			// Handle error if prepare() fails
 			die("Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error);
 		}
 
-		$stmt->bind_param("ssssssi", $control_no, $studentID_no, $document_name, $date_request, $date_releasing, $registrar_status, $request_id);
+		$stmt->bind_param(
+			"ssssssssssi",
+			$control_no,
+			$studentID_no,
+			$document_name,
+			$date_request,
+			$date_releasing,
+			$registrar_status,
+			$custodian_status,
+			$library_status,
+			$dean_status,
+			$accounting_status,
+			$request_id
+		);
 
 		if ($stmt->execute()) {
 			$stmt->close();
 			return true;
 		} else {
-			// Handle error if execute() fails
 			error_log("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 			$stmt->close();
 			return false;
 		}
 	}
+
+
 
 	public function get_statuses($request_id)
 	{

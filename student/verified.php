@@ -52,6 +52,8 @@
                                         <th scope="col">Student EDP</th>
                                         <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
+                                        <th scope="col">Release On</th>
+                                        <th scope="col">Queue Number</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Clearance</th>
                                     </tr>
@@ -71,7 +73,8 @@
                                             <td><?= $row['studentID_no']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            
+                                            <td><?= $row['date_releasing']; ?></td>
+                                            <td><?= $row['queue_number']; ?></td>
                                             <td>
                                                 <?php
                                                 if ($row['registrar_status'] === "Pending") {
@@ -82,6 +85,8 @@
                                                     echo '<span class="badge bg-danger text-white">Waiting for Payment</span>';
                                                 } else if ($row['registrar_status'] === "Verified") {
                                                     echo '<span class="badge bg-success text-white">Verified</span>';
+                                                } else if ($row['registrar_status'] === "Releasing") {
+                                                    echo '<span class="badge bg-success text-white">Releasing</span>';
                                                 }
                                                 ?>
                                             </td>

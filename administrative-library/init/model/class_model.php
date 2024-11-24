@@ -544,7 +544,7 @@ class class_model
 
 	public function count_numberoftotalrequest()
 	{
-		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest";
+		$sql = "SELECT COUNT(request_id) as count_request FROM tbl_documentrequest WHERE library_status IN ('Verified', 'Pending', 'Declined')";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
