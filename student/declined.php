@@ -48,11 +48,10 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Control No.</th>
-                                        <th scope="col">Student ID</th>
+                                        <th scope="col">Student EDP</th>
                                         <th scope="col">Document Name</th>
                                         <th scope="col">Date Request</th>
                                         <th scope="col">Date Declined</th>
-                                        <th scope="col">Processing Officer</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
@@ -65,11 +64,10 @@
                                     foreach ($docrequest as $row) { ?>
                                         <tr>
                                             <td><?= $row['control_no']; ?></td>
-                                            <td><?= $row['student_id']; ?></td>
+                                            <td><?= $row['studentID_no']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= !empty($row['date_releasing']) ? date("M d, Y", strtotime($row['date_releasing'])) : ""; ?></td>
-                                            <td><?= $row['processing_officer']; ?></td>
                                             <td>
                                                 <?php 
                                                 $statusClasses = [

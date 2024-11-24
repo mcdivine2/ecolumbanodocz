@@ -49,7 +49,7 @@
                                     <tr>
                                         <th scope="col">Date Requested</th>
                                         <th scope="col">Control No.</th>
-                                        <th scope="col">Student ID</th>
+                                        <th scope="col">Student EDP</th>
                                         <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
                                         <th scope="col">Status</th>
@@ -68,7 +68,7 @@
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
 
                                             <td><?= $row['control_no']; ?></td>
-                                            <td><?= $row['student_id']; ?></td>
+                                            <td><?= $row['studentID_no']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             

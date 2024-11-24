@@ -40,11 +40,11 @@ include('left_sidebar/sidebar.php');
                                 <thead>
                                     <tr>
                                         <th>Control No.</th>
-                                        <th>Student ID</th>
+                                        <th>Student EDP</th>
                                         <th>Document Name</th>
                                         <th>Date Request</th>
                                         <th>Date Releasing</th>
-                                        <th>Processing Officer</th>
+                                        
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -58,13 +58,12 @@ include('left_sidebar/sidebar.php');
                                     foreach ($docrequest as $row): ?>
                                     <tr>
                                         <td><?= $row['control_no']; ?></td>
-                                        <td><?= $row['student_id']; ?></td>
+                                        <td><?= $row['studentID_no']; ?></td>
                                         <td><?= $row['document_name']; ?></td>
                                         <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                         <td>
                                             <?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?>
                                         </td>
-                                        <td><?= $row['processing_officer']; ?></td>
                                         <td>
                                             <?php 
                                             $statusClass = [
