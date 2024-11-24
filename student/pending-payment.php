@@ -89,65 +89,98 @@
 
         <!-- Payment Modal -->
         <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="paymentModalLabel">Confirm Payment</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="paymentModalLabel">Payment Confirmation</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center font-weight-bold">Please review your details before proceeding.</p>
+                <form action="process_payment.php" method="POST" id="paymentForm" enctype="multipart/form-data">
+                    <input type="hidden" name="student_id" value="<?= $_SESSION['student_id']; ?>">
+
+                    <!-- Payment Option with Guide Button -->
+                    <div class="form-row align-items-center">
+                        <div class="form-group col-md-8">
+                            <label for="modeof_payment" class="highlight-label">Payment Option</label>
+                            <select class="form-control" id="modeof_payment" name="modeof_payment" onchange="togglePaymentFields()" required>
+                                <option value="" disabled selected>Select Payment Option</option>
+                                <option value="PalawanPay">Palawan Pay</option>
+                                <option value="Onsite Pay">Cash</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 text-center">
+                            <label class="d-block">&nbsp;</label>
+                            <button type="button" class="btn btn-info btn-block" onclick="showGuide()">
+                                <i class="fas fa-info-circle"></i> Payment Guide
+                            </button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to proceed with the payment for this request?</p>
-                        <form action="process_payment.php" method="POST" id="paymentForm" enctype="multipart/form-data">
-                            <input type="hidden" name="student_id" value="<?= $_SESSION['student_id']; ?>">
 
-                            <!-- Mode of Payment and Guide Button -->
-                            <div class="form-group d-flex align-items-center">
-                                <div style="flex: 1; margin-right: 10px;">
-                                    <label for="mode_of_payment">Mode of Payment</label>
-                                    <select class="form-control" id="mode_of_payment" name="mode_of_payment" required>
-                                        <option value="">Select Payment Method</option>
-                                        <option value="PalawanPay">PalawanPay</option>
-                                        <option value="Onsite Pay">Onsite Pay</option>
-                                    </select>
+                    <!-- Palawan Pay Fields -->
+                    <div id="palawanFields" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="trace_no" class="highlight-label">Trace No.</label>
+                                <input type="text" class="form-control" id="trace_no" name="trace_no" placeholder="Enter trace number">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="ref_no" class="highlight-label">Ref. No.</label>
+                                <input type="text" class="form-control" id="ref_no" name="ref_no" placeholder="Enter reference number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cash Fields -->
+                    <div id="cashFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="or_no" class="highlight-label">Receipt Number</label>
+                            <input class="form-control" id="or_no" name="or_no" placeholder="Enter cash payment details (e.g., receipt number)" rows="1"></input>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="control_no" class="highlight-label">Control No.</label>
+                            <input type="text" class="form-control" id="control_no" name="control_no" readonly>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="total_amount" class="highlight-label">Amount to Pay (₱)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">₱</span>
                                 </div>
-                                <div>
-                                    <label class="d-block">&nbsp;</label>
-                                    <button type="button" class="btn btn-info btn-sm" id="guideButton">Guide</button>
-                                </div>
-                            </div>
-
-                            <!-- Dynamic Fields -->
-                            <div id="dynamic_fields"></div>
-
-                            <!-- Common Fields -->
-                            <div class="form-group">
-                                <label for="control_no">Control No.</label>
-                                <input type="text" class="form-control" id="control_no" name="control_no" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="document_name">Documents</label>
-                                <input type="text" class="form-control" id="document_name" name="document_name" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="total_amount">Amount to Pay</label>
                                 <input type="text" class="form-control" id="total_amount" name="total_amount" readonly>
                             </div>
-                            <div class="form-group">
-                                <label for="proof_ofpayment">Upload Proof of Payment</label>
-                                <input type="file" class="form-control" id="proof_ofpayment" name="proof_ofpayment" accept=".jpeg, .jpg, .png, .gif" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="hidden" id="date_ofpayment" name="date_ofpayment">
-                            </div>
-                        </form>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" form="paymentForm">Confirm Payment</button>
+
+                    <div class="form-group">
+                        <label for="document_name" class="highlight-label">Documents</label>
+                        <input type="text" class="form-control" id="document_name" name="document_name" readonly>
                     </div>
-                </div>
+
+                    <div class="form-group">
+                        <label for="proof_ofpayment" class="highlight-label">Upload Proof of Payment</label>
+                        <input type="file" class="form-control-file" id="proof_ofpayment" name="proof_ofpayment" accept=".jpeg, .jpg, .png, .gif" required>
+                        <small class="form-text text-muted">Accepted formats: .jpeg, .jpg, .png, .gif</small>
+                    </div>
+
+                    <input type="hidden" id="date_ofpayment" name="date_ofpayment">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" form="paymentForm">
+                    <i class="fas fa-check-circle"></i> Confirm Payment
+                </button>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Guide Modal -->
         <div class="modal fade" id="guideModal" tabindex="-1" role="dialog" aria-labelledby="guideModalLabel" aria-hidden="true">
@@ -181,6 +214,39 @@
         </div>
     </div>
 
+    <!-- Payment Success Modal -->
+<div class="modal fade" id="paymentSuccessModal" tabindex="-1" role="dialog" aria-labelledby="paymentSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="paymentSuccessModalLabel">
+                    <i class="fas fa-check-circle"></i> Payment Successful
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <h4 class="text-success font-weight-bold">Payment successful</h4>
+                <div class="mt-4">
+                    <p><strong>Payment Type:</strong> <span id="confirm_payment_type"></span></p>
+                    <p><strong>Control Number:</strong> <span id="confirm_control_no"></span></p>
+                    <p><strong>Amount Paid:</strong> ₱<span id="confirm_amount_paid"></span></p>
+                    <p><strong>Transaction Reference:</strong> <span id="confirm_transaction_ref"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" id="downloadReceipt">
+                    <i class="fas fa-download"></i> Download Receipt
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times-circle"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Scripts -->
     <script src="../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
     <script src="../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
@@ -189,127 +255,171 @@
     <script src="../asset/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            // Set initials in profile image
-            const initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
-            $('#profileImage').text(initials);
+    $(document).ready(function () {
+    // Set initials in profile image
+    const initials = $('#firstName').text().charAt(0) + $('#lastName').text().charAt(0);
+    $('#profileImage').text(initials);
 
-            // Payment Modal Event
-            $('#paymentModal').on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget);
-                const modal = $(this);
-                modal.find('#control_no').val(button.data('control-no'));
-                modal.find('#total_amount').val(button.data('total-amount'));
-                modal.find('#document_name').val(button.data('document-name'));
+    // Payment Modal Event
+    $('#paymentModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const modal = $(this);
+        modal.find('#control_no').val(button.data('control-no'));
+        modal.find('#total_amount').val(button.data('total-amount'));
+        modal.find('#document_name').val(button.data('document-name'));
 
-                const today = new Date();
-                modal.find('#date_ofpayment').val(today.toISOString().slice(0, 10));
-            });
+        const today = new Date();
+        modal.find('#date_ofpayment').val(today.toISOString().slice(0, 10));
+    });
 
-            // Payment Form Submission
-            $('#paymentForm').on('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(this);
-                $.ajax({
-                    url: '../init/controllers/add_payment.php',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        $('#message').html(response);
-                        $('#paymentModal').modal('hide');
-                    },
-                    error: function(xhr) {
-                        console.error("Error: " + xhr.responseText);
-                    }
-                });
-            });
-            $('#paymentForm').on('submit', function(event) {
-                const modeOfPayment = document.getElementById('mode_of_payment').value;
-                if (modeOfPayment === 'PalawanPay' && (!$('#trace_no').val() || !$('#ref_no').val())) {
-                    event.preventDefault();
-                    alert('Please fill in both Trace No. and Ref. No. for PalawanPay.');
-                } else if (modeOfPayment === 'Onsite Pay' && !$('#or_no').val()) {
-                    event.preventDefault();
-                    alert('Please fill in the OR # for Onsite Pay.');
+    // Validate Payment Form
+    $('#paymentForm').on('submit', function (event) {
+        const modeOfPayment = document.getElementById('modeof_payment').value;
+        if (modeOfPayment === 'PalawanPay' && (!$('#trace_no').val() || !$('#ref_no').val())) {
+            event.preventDefault();
+            alert('Please fill in both Trace No. and Ref. No. for PalawanPay.');
+        } else if (modeOfPayment === 'Onsite Pay' && !$('#or_no').val()) {
+            event.preventDefault();
+            alert('Please fill in the OR # for Onsite Pay.');
+        } else {
+            // Submit form via AJAX to prevent default refresh and handle response
+            event.preventDefault();
+            const formData = new FormData(this);
+            
+            $.ajax({
+                url: '../init/controllers/add_payment.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log('Payment processed successfully:', response);
+                    $('#paymentModal').modal('hide');
+
+                    // Trigger the payment success modal
+                    const paymentData = {
+                        modeof_payment: $('#modeof_payment').val(),
+                        control_no: $('#control_no').val(),
+                        total_amount: $('#total_amount').val(),
+                        transaction_ref: $('#trace_no').val() || $('#ref_no').val() || $('#or_no').val() // Use appropriate transaction ID
+                    };
+                    
+                    // Show the payment success modal with data
+                    showPaymentSuccessModal(paymentData);
+                },
+                error: function (xhr) {
+                    console.error('Payment processing error:', xhr.responseText);
+                    alert('An error occurred while processing the payment. Please try again.');
                 }
             });
-            $('#paymentForm').on('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(this);
-                for (const [key, value] of formData.entries()) {
-                    console.log(`${key}: ${value}`);
-                }
-            });
+        }
+    });
 
+    // Function to show the payment success modal with data
+    function showPaymentSuccessModal(paymentData) {
+        // Populate the modal with payment details
+        $('#confirm_payment_type').text(paymentData.modeof_payment);
+        $('#confirm_control_no').text(paymentData.control_no);
+        $('#confirm_amount_paid').text(paymentData.total_amount);
+        $('#confirm_transaction_ref').text(paymentData.transaction_ref);
 
+        // Show the modal
+        $('#paymentSuccessModal').modal('show');
 
-            // Load Unseen Notifications
-            function load_unseen_notification(view = '') {
-                $.post("../init/controllers/fetch.php", {
-                    view
-                }, function(data) {
-                    $('.dropdown-menu_1').html(data.notification);
-                    if (data.unseen_notification > 0) $('.count').html(data.unseen_notification);
-                }, 'json');
-            }
-
-            load_unseen_notification();
-            $('.dropdown-toggle').on('click', function() {
-                $('.count').html('');
-                load_unseen_notification('yes');
-            });
-
-            setInterval(load_unseen_notification, 5000);
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Dynamic Fields for Payment Modes
-            const modeOfPayment = document.getElementById('mode_of_payment');
-            const dynamicFields = document.getElementById('dynamic_fields');
-
-            modeOfPayment.addEventListener('change', function() {
-                const selectedMode = this.value;
-
-                if (selectedMode === 'PalawanPay') {
-                    dynamicFields.innerHTML = `
-                <div class="form-group">
-                    <label for="ref_no">Trace. No.</label>
-                    <input type="text" class="form-control" id="trace_no" name="trace_no" placeholder="Enter Reference number" required>
-                </div>
-                <div class="form-group">
-                    <label for="ref_no">Ref. No.</label>
-                    <input type="text" class="form-control" id="ref_no" name="ref_no" placeholder="Enter Reference number" required>
-                </div>
+        // Handle download receipt button click
+        $('#downloadReceipt').off('click').on('click', function () {
+            const receiptContent = `
+                Payment Receipt\n
+                --------------------------\n
+                Payment Type: ${paymentData.modeof_payment}\n
+                Control Number: ${paymentData.control_no}\n
+                Amount Paid: ₱${paymentData.total_amount}\n
+                Transaction Reference: ${paymentData.transaction_ref}\n
+                --------------------------\n
+                Thank you for your payment!
             `;
-                } else if (selectedMode === 'Onsite Pay') {
-                    dynamicFields.innerHTML = `
-                <div class="form-group">
-                    <label for="or_no">OR #</label>
-                    <input type="text" class="form-control" id="or_no" name="or_no" placeholder="Enter OR number" required>
-                </div>
-            `;
-                } else {
-                    dynamicFields.innerHTML = ''; // Clear fields if no mode is selected
-                }
-            });
-
-            // Guide Button Event
-            const guideButton = document.getElementById('guideButton');
-            guideButton.addEventListener('click', function() {
-                $('#guideModal').modal('show');
-            });
-
-            // Auto-populate date_ofpayment
-            const dateOfPayment = document.getElementById('date_ofpayment');
-            if (dateOfPayment) {
-                dateOfPayment.value = new Date().toISOString().slice(0, 10);
-            }
+            const blob = new Blob([receiptContent], { type: 'text/plain' });
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = 'payment_receipt.txt';
+            downloadLink.click();
         });
-    </script>
+
+        // Refresh page when closing the success modal
+        $('#paymentSuccessModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+            location.reload(); // Reload the page to reflect changes
+        });
+    }
+
+    // Load Unseen Notifications
+    function load_unseen_notification(view = '') {
+        $.post("../init/controllers/fetch.php", {
+            view
+        }, function (data) {
+            $('.dropdown-menu_1').html(data.notification);
+            if (data.unseen_notification > 0) $('.count').html(data.unseen_notification);
+        }, 'json');
+    }
+
+    load_unseen_notification();
+    $('.dropdown-toggle').on('click', function () {
+        $('.count').html('');
+        load_unseen_notification('yes');
+    });
+
+    setInterval(load_unseen_notification, 5000);
+});
+
+    function togglePaymentFields() {
+        const paymentOption = document.getElementById("modeof_payment").value;
+        const palawanFields = document.getElementById("palawanFields");
+        const cashFields = document.getElementById("cashFields");
+
+        if (paymentOption === "PalawanPay") {
+            palawanFields.style.display = "block";
+            cashFields.style.display = "none";
+        } else if (paymentOption === "Onsite Pay") {
+            palawanFields.style.display = "none";
+            cashFields.style.display = "block";
+        } else {
+            palawanFields.style.display = "none";
+            cashFields.style.display = "none";
+        }
+    }
+
+    function showGuide() {
+        const paymentOption = document.getElementById("modeof_payment").value;
+
+        if (paymentOption === "PalawanPay") {
+            // Display Palawan Pay guide image
+            const guideModal = new bootstrap.Modal(document.getElementById('guideModal'));
+            document.getElementById('guideImage').src = "../asset/images/palawanPay.png";
+            guideModal.show();
+        } else if (paymentOption === "Onsite Pay") {
+            alert("Guide for Cash Payment: \n1. Visit the cashier.\n2. Provide your control number.\n3. Pay the amount and attach the receipt here.");
+        } else {
+            alert("Please select a payment option to view the guide.");
+        }
+    }
+</script>
+
+    <!-- Guide Modal -->
+<div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Set modal to large size -->
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="guideModalLabel">Payment Guide</h5>
+                <button type="button" class="btn-close text-white" data-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="guideImage" src="" alt="Payment Guide" class="img-fluid guide-img"> <!-- Added custom class for larger images -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     </body>
 
