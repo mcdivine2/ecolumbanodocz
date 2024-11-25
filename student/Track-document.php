@@ -36,109 +36,178 @@
         <!-- end pageheader -->
         <!-- ============================================================== -->
 
-        <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="card influencer-profile-data">
-                    <div class="card-body">
-                        <div id="message"></div>
-                        <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
-                            <div class="form-group row">
-                                <label class="col-12 col-sm-2 col-form-label text-sm-left"><i class="fa fa-building"></i> Departments</label>
-                                <label class="col-12 col-sm-1 col-form-label text-sm-right"><i class="fa fa-file"></i> Status</label>
-                                <label class="col-12 col-sm-2 col-form-label text-sm-right"><i class="fa fa-comment"></i> Comment</label>
-                            </div>
+        <div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="card influencer-profile-data">
+        <div class="card-body">
+          <h3 class="text-center mb-4" style="background-color: #5069e7; color: white; padding: 10px;">Document Request Status</h3>
+          <div id="message"></div>
+          <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
+            <?php
+              // Check if request and student ID are passed in URL
+              if (isset($_GET['request']) && isset($_GET['student-number'])) {
+                  $request_id = $_GET['request'];
+                  $student_id = $_GET['student-number'];
 
-                            <?php
-                            // Check if request and student ID are passed in URL
-                            if (isset($_GET['request']) && isset($_GET['student-number'])) {
-                                $request_id = $_GET['request'];
-                                $student_id = $_GET['student-number'];
+                  // Instantiate the class and fetch the specific document request
+                  $conn = new class_model();
+                  $document = $conn->fetch_document_by_id($student_id, $request_id);
+                  if ($document) {
+                      // Display student details at the top
+                      echo "<h4>Student Name: " . htmlspecialchars($document['first_name']) . " " . htmlspecialchars($document['last_name']) . "</h4>";
+                      echo "<p>Control Number: " . htmlspecialchars($document['control_no']) . "</p>";
+                      echo "<p>Document Requested: " . htmlspecialchars($document['document_name']) . "</p>";
 
+                      // Check if document matches the criteria and display recent image
+                      if (preg_match("/Honorable Dismissal/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
+                          echo '<div class="form-group">';
+                          echo '<label for="recent_image_preview">Recent Image:</label>';
+                          echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
+                          echo '</div>';
+                      }
+                  }
 
-                                // Instantiate the class and fetch the specific document request
-                                $conn = new class_model();
-                                $document = $conn->fetch_document_by_id($student_id, $request_id);
-                                if ($document) {
-                                    // Display student details at the top
-                                    echo "<h4>Student Name: " . htmlspecialchars($document['first_name']) . " " . htmlspecialchars($document['last_name']) . "</h4>";
-                                    echo "<p>Control Number: " . htmlspecialchars($document['control_no']) . "</p>";
-                                    echo "<p>Document Requested: " . htmlspecialchars($document['document_name']) . "</p>";
-
-                                    // Check if document matches the criteria and display recent image
-                                    if (preg_match("/Honorable Dismissal/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
-                                        echo '<div class="form-group">';
-                                        echo '<label for="recent_image_preview">Recent Image:</label>';
-                                        echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
-                                        echo '</div>';
-                                    }
-                                }
-
-                                // Check if data is retrieved
-                                if ($document) {
-                                    // Display each department's status
-                                    $departments = [
-                                        'library' => 'LIBRARY',
-                                        'custodian' => 'CUSTODIAN',
-                                        // 'dean' => 'DEAN',
-                                        'accounting' => 'ACCOUNTING',
-                                        'registrar' => 'REGISTRAR'
-                                    ];
-                                    if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
-                                        $departments['dean'] = 'DEAN';
-                                    }
-
-                                    foreach ($departments as $key => $label) {
-                                        echo '<div class="form-group row">';
-                                        echo '<label class="col-12 col-sm-2 col-form-label text-sm-left">' . $label . ':</label>';
-                                        echo '<div class="col-12 col-form-label col-sm-1 col-sm-1">';
-
-                                        $status = $document[$key . '_status'];
-                                        switch ($status) {
-                                            case "Pending":
-                                                echo '<span class="badge bg-warning text-white">Pending</span>';
-                                                break;
-                                            case "Waiting for Payment":
-                                                echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
-                                                break;
-                                            case "Releasing":
-                                                echo '<span class="badge bg-success text-white">Releasing</span>';
-                                                break;
-                                            case "Paid":
-                                                echo '<span class="badge bg-success text-white">Paid</span>';
-                                                break;
-                                            case "Verified":
-                                                echo '<span class="badge bg-success text-white">Verified</span>';
-                                                break;
-                                            case "Released":
-                                                echo '<span class="badge bg-success text-white">Released</span>';
-                                                break;
-                                            case "Declined":
-                                                echo '<span class="badge bg-danger text-white">Declined</span>';
-                                                break;
-                                            default:
-                                                echo '<span class="badge bg-warning text-white">TO BE ASSIGN</span>';
-                                        }
-
-                                        echo '</div>';
-                                        echo '<div class="col-12 col-sm-6 ml-5">';
-                                        echo '<input data-parsley-type="alphanum" type="text" value="Your request for ' . htmlspecialchars($document['document_name']) . ' is ' . htmlspecialchars($status) . ', please comply." name="subject" required="" class="form-control" readonly>';
-                                        echo '</div>';
-                                        echo '</div>';
-                                    }
-                                } else {
-                                    echo '<p>No document found!</p>';
-                                }
-                            } else {
-                                echo '<p>Invalid request!</p>';
-                            }
-                            ?>
-                        </form>
-                    </div>
+                 
+                  
+              } else {
+                  echo '<p>Invalid request!</p>';
+              }
+            ?>
+          </form>
+          <div class="row justify-content-center">
+            <!-- LIBRARY -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <i class="fa fa-building fa-3x mb-3" style="color: #5069e7;"></i>
+                  <h5 class="card-title">LIBRARY</h5>
+                  <span class="badge bg-warning text-white mb-3" style="font-size: 1.2em;">Pending</span>
+                  <p class="card-text">Request: Honorable Dismissal (x1)<br>Diploma (x1)</p>
+                  <p class="card-text">Status: Pending</p>
+                  <p class="text-muted">Please comply with the necessary requirements to proceed further.</p>
                 </div>
+              </div>
             </div>
+
+            <!-- CUSTODIAN -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <i class="fa fa-building fa-3x mb-3" style="color: #5069e7;"></i>
+                  <h5 class="card-title">CUSTODIAN</h5>
+                  <span class="badge bg-warning text-white mb-3" style="font-size: 1.2em;">Pending</span>
+                  <p class="card-text">Request: Honorable Dismissal (x1)<br>Diploma (x1)</p>
+                  <p class="card-text">Status: Pending</p>
+                  <p class="text-muted">Please comply with the necessary requirements to proceed further.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ACCOUNTING -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <i class="fa fa-building fa-3x mb-3" style="color: #5069e7;"></i>
+                  <h5 class="card-title">ACCOUNTING</h5>
+                  <span class="badge bg-success text-white mb-3" style="font-size: 1.2em;">Paid</span>
+                  <p class="card-text">Request: Honorable Dismissal (x1)<br>Diploma (x1)</p>
+                  <p class="card-text">Status: Paid</p>
+                  <p class="text-muted">Please comply with the necessary requirements to proceed further.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- REGISTRAR -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <i class="fa fa-building fa-3x mb-3" style="color: #5069e7;"></i>
+                  <h5 class="card-title">REGISTRAR</h5>
+                  <span class="badge bg-success text-white mb-3" style="font-size: 1.2em;">Verified</span>
+                  <p class="card-text">Request: Honorable Dismissal (x1)<br>Diploma (x1)</p>
+                  <p class="card-text">Status: Verified</p>
+                  <p class="text-muted">Please comply with the necessary requirements to proceed further.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+
+
+<style>
+    .container-fluid {
+        padding: 20px;
+    }
+    .card {
+        border-radius: 20px;
+    }
+    .status-card {
+        background-color: #ffffff;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e3e6f0;
+        transition: all 0.3s;
+        height: 100%;
+    }
+    .status-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .department-name {
+        font-size: 1.4rem;
+        color: #333;
+    }
+    .badge {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+    }
+    .badge-lg {
+        font-size: 1.3rem;
+    }
+    .comment-section {
+        font-size: 1rem;
+        color: #555;
+    }
+    .alert {
+        margin-top: 20px;
+        font-size: 1.3rem;
+    }
+    .card-header {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+    .department-icon {
+        color: #007bff;
+    }
+    @media (max-width: 768px) {
+        .department-name {
+            font-size: 1.3rem;
+        }
+        .badge {
+            font-size: 1.1rem;
+        }
+        .comment-section {
+            font-size: 1rem;
+        }
+    }
+    @media (max-width: 576px) {
+        .department-name {
+            font-size: 1.2rem;
+        }
+        .badge {
+            font-size: 1rem;
+        }
+        .comment-section {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+
 <!-- ============================================================== -->
 <!-- end main wrapper -->
 <!-- ============================================================== -->
