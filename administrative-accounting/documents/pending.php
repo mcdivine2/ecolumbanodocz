@@ -73,8 +73,8 @@
                                             <td><?= $row['document_name']; ?></td>
                                             <td>
                                                 <?php
-                                                if ($row['library_status'] === "Pending") {
-                                                    echo '<span class="badge bg-warning text-white">Pending</span>';
+                                                if ($row['accounting_status'] === "Waiting for Payment") {
+                                                    echo '<span class="badge bg-warning text-white">Waiting for Payment</span>';
                                                 }
                                                 ?>
                                             </td>

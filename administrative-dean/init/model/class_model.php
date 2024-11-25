@@ -258,7 +258,7 @@ class class_model
 	public function fetchAll_newrequest()
 	{
 		// Fetch requests where dean_status is either 'Verified' or 'Declined'
-		$sql = "SELECT * FROM tbl_documentrequest WHERE dean_status IN ('Verified', 'Declined', 'Pending')";
+		$sql = "SELECT * FROM tbl_documentrequest WHERE dean_status IN ('Pending')";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -283,9 +283,9 @@ class class_model
 		return $data;
 	}
 
-	public function fetchAll_released()
+	public function fetchAll_request()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE dean_status = 'Released' ";
+		$sql = "SELECT * FROM tbl_documentrequest WHERE dean_status IN ('Verified', 'Pending', 'Declined')";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
