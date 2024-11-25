@@ -179,7 +179,7 @@
                const documentName = document.getElementById("documentName").value;
                const controlNo = document.getElementById("controlNo").value;
 
-               let message = "Hello, This is a test! ";
+               let message = "Hello, This is a test!";
 
                switch (status) {
                    case "Pending":
