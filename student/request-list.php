@@ -194,6 +194,9 @@
                                                        <?php
                                                         if ($row['registrar_status'] === "Released") {
                                                             echo '<span class="badge bg-success text-white">Released</span>';
+                                                        } elseif ($row['registrar_status'] === "To Be Release") {
+                                                            echo '<span class="badge bg-success text-white">To Be Release</span>';
+                                                        } elseif ($row['registrar_status'] === "Releasing") {
                                                         } elseif ($row['registrar_status'] === "Waiting for Payment") {
                                                             echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
                                                         } elseif ($row['registrar_status'] === "Releasing") {
@@ -203,7 +206,7 @@
                                                         } elseif ($row['registrar_status'] === "Declined") {
                                                             echo '<span class="badge bg-danger text-white">Declined</span>';
                                                         } elseif ($row['registrar_status'] === "Verified") {
-                                                            echo '<span class="badge bg-info text-white">Verified</span>';
+                                                            echo '<span class="badge bg-success text-white">Verified</span>';
                                                         }
                                                         ?>
                                                    </td>

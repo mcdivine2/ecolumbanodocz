@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$custodian_status = "Verified";
 		$library_status = "Verified";
 		$dean_status = "Verified";
-		$accounting_status = "Completed";
+		$accounting_status = "Verified";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been marked as <b>Released</b>.<br>";
 		$body .= "Please collect it on or after <b>$date_releasing</b>. Reference number: <b>$control_no</b>.<br><br>Thank you.";
 	} elseif ($status === "Verified") {
@@ -41,6 +41,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$accounting_status = "Pending";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been <b>Verified</b>.<br>";
 		$body .= "You will receive further updates regarding its processing. Reference number: <b>$control_no</b>.<br><br>Thank you.";
+	} elseif ($status === "Processing") {
+		$registrar_status = "Processing";
+		$custodian_status = "Verified";
+		$library_status = "Verified";
+		$dean_status = $dean_status;
+		$accounting_status = "Verified";
+		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been <b>Processing</b>.<br>";
+		$body .= "You will receive further updates regarding its processing. Reference number: <b>$control_no</b>.<br><br>Thank you.";
+	} elseif ($status === "To Be Release") {
+		$registrar_status = "To Be Release";
+
+		// Fetch the maximum queue number for the same releasing date
+		$sql_fetch_queue = "SELECT MAX(queue_number) AS max_queue FROM tbl_documentrequest WHERE date_releasing = ?";
+		$stmt_fetch_queue = $conn->conn->prepare($sql_fetch_queue);
+		$stmt_fetch_queue->bind_param("s", $date_releasing);
+		$stmt_fetch_queue->execute();
+		$result_queue = $stmt_fetch_queue->get_result();
+		$queue_data = $result_queue->fetch_assoc();
+
+		$max_queue = isset($queue_data['max_queue']) ? $queue_data['max_queue'] : 0;
+		$queue_number = $max_queue + 1; // Increment for the next queue number
+
+		// Update the queue number in the database
+		$sql_update_queue = "UPDATE tbl_documentrequest SET queue_number = ? WHERE request_id = ?";
+		$stmt_update_queue = $conn->conn->prepare($sql_update_queue);
+		$stmt_update_queue->bind_param("ii", $queue_number, $request_id);
+		$stmt_update_queue->execute();
+
+		// Set statuses and prepare the email body
+		$custodian_status = "Verified";
+		$library_status = "Verified";
+		$dean_status = $dean_status;
+		$accounting_status = "Verified";
+		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been marked as <b>To Be Release</b>.<br>";
+		$body .= "Your queue number is <b>$queue_number</b> for release on <b>$date_releasing</b>.<br>";
+		$body .= "Reference number: <b>$control_no</b>.<br><br>Thank you.";
 	} else {
 		$registrar_status = $status;
 		$body = "Hello,<br><br>The status of your request for <b>$document_name</b> has been updated to <b>$status</b>.<br>";

@@ -102,8 +102,8 @@
                                             case "Waiting for Payment":
                                                 echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
                                                 break;
-                                            case "Releasing":
-                                                echo '<span class="badge bg-success text-white">Releasing</span>';
+                                            case "To Be Release":
+                                                echo '<span class="badge bg-success text-white">To Be Release</span>';
                                                 break;
                                             case "Paid":
                                                 echo '<span class="badge bg-success text-white">Paid</span>';

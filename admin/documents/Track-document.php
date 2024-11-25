@@ -78,7 +78,7 @@
                                         "Processing" => "bg-success",
                                         "Verified" => "bg-success",
                                         "Released" => "bg-success",
-                                        "Releasing" => "bg-success",
+                                        "To Be Release" => "bg-success",
                                         "Pending Request" => "bg-warning",
                                         "Declined" => "bg-danger"
                                     ];

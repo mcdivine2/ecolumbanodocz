@@ -80,7 +80,7 @@
 
         <!-- new request and processing -->
         <div class="row">
-            <!-- metric -->
+            <!-- New Request -->
             <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -102,54 +102,7 @@
                     <a href="new-request.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <?php
-                        $conn = new class_model();
-                        $cstudent = $conn->count_numberofverified();
-                        ?>
-                        <?php foreach ($cstudent as $row): ?>
-                            <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Clearance Processing</b></h5>
-                                <h2 class="mb-0"><?= $row['count_verified']; ?></h2>
-                            </div>
-                            <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <a href="processing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
-                </div>
-            </div>
-            <!-- /. metric -->
-        </div>
-
-        <!-- complete and decline -->
-        <div class="row ">
-            <!-- metric -->
-            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <?php
-                        $conn = new class_model();
-                        $cstudent = $conn->count_numberoftotalreleasing();
-                        ?>
-                        <?php foreach ($cstudent as $row): ?>
-                            <div class="d-inline-block">
-                                <h5 class="text-muted"><b>Releasing</b></h5>
-                                <h2 class="mb-0"><?= $row['count_releasing']; ?></h2>
-                            </div>
-                            <div class="float-right icon-circle-medium  icon-box-lg  mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-bell fa-fw fa-sm text-info" style="color: white !important"></i>
-                            </div>
-                        <?php endforeach; ?>
-
-                    </div>
-                    <a href="releasing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
-                </div>
-            </div>
-
+            <!-- Declined Request -->
             <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -170,8 +123,71 @@
                     <a href="declined.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
-        </div>
-        <div class="row">
+            <!-- Clearance Processing -->
+            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $conn = new class_model();
+                        $cstudent = $conn->count_numberofverified();
+                        ?>
+                        <?php foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted"><b>Clearance Processing</b></h5>
+                                <h2 class="mb-0"><?= $row['count_verified']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="processing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+            <!-- Document Processing -->
+            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $conn = new class_model();
+                        $cstudent = $conn->count_numberoftotalprocessing();
+                        ?>
+                        <?php foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted"><b>Document Processing</b></h5>
+                                <h2 class="mb-0"><?= $row['count_processing']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color:white !important"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="document-processing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+            <!-- To Be Release -->
+            <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $conn = new class_model();
+                        $cstudent = $conn->count_numberoftotalreleasing();
+                        ?>
+                        <?php foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted"><b>To Be Release</b></h5>
+                                <h2 class="mb-0"><?= $row['count_releasing']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-bell fa-fw fa-sm text-info" style="color: white !important"></i>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+                    <a href="releasing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+            <!-- Complete -->
             <div class="col-xl-6 col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -193,8 +209,6 @@
                 </div>
             </div>
 
-
-            <!-- /. metric -->
         </div>
         <div class="container-fluid dashboard-content">
 

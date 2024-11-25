@@ -371,6 +371,19 @@ class class_model
 		}
 		return $data;
 	}
+	public function fetchAll_tobereleasedocument($student_id)
+	{
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'To Be Release' ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $student_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
 	public function fetchAll_declined($student_id)
 	{
 		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Declined' ";
@@ -384,9 +397,9 @@ class class_model
 		}
 		return $data;
 	}
-	public function fetchAll_verified($student_id)
+	public function fetchAll_documentprocessing($student_id)
 	{
-		$sql = "SELECT * FROM tbl_documentrequest WHERE `student_id` = ? AND (registrar_status = 'Verified' OR registrar_status = 'Releasing')";
+		$sql = "SELECT * FROM tbl_documentrequest WHERE `student_id` = ? AND (registrar_status = 'Verified' OR registrar_status = 'Processing')";
 		$stmt = $this->conn->prepare($sql);
 
 		if (!$stmt) {
@@ -559,6 +572,19 @@ class class_model
 	public function count_numberofreleased($student_id)
 	{
 		$sql = "SELECT COUNT(request_id) as count_released FROM tbl_documentrequest WHERE student_id = ? AND registrar_status = 'Released'";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param("i", $student_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function count_numberofreleasing($student_id)
+	{
+		$sql = "SELECT COUNT(request_id) as count_toBeRelease FROM tbl_documentrequest WHERE student_id = ? AND registrar_status = 'To Be Release'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();

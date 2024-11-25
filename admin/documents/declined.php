@@ -34,7 +34,6 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
-                                        <th>Processing Officer</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -60,7 +59,6 @@
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <!-- <td><?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?></td> -->
-                                            <td><?= $row['processing_officer']; ?></td>
                                             <td>
                                                 <?php
                                                 $status_badges = [
