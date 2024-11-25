@@ -105,109 +105,111 @@
     }
 </style>
 
-<div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="card influencer-profile-data">
-                    <div class="card-body">
-                        <div id="message"></div>
-                        <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
-                            <div class="form-group row">
-                                <label class="col-12 col-sm-2 col-form-label text-sm-left"><i class="fa fa-building"></i> Departments</label>
-                                <label class="col-12 col-sm-1 col-form-label text-sm-right"><i class="fa fa-file"></i> Status</label>
-                                <label class="col-12 col-sm-2 col-form-label text-sm-right"><i class="fa fa-comment"></i> Comment</label>
-                            </div>
+<div class="container-fluid my-5">
+    <div class="card shadow-lg border-0 rounded-xl">
+        <div class="card-header bg-primary text-white text-center py-4 rounded-top">
+            <h2 class="font-weight-bold">Document Request Status</h2>
+        </div>
+        <div class="card-body p-5">
+            <div id="message"></div>
+            <form id="validationform" name="docu_forms" data-parsley-validate="" novalidate="" method="POST">
+                <?php
+                if (isset($_GET['request']) && isset($_GET['student-number'])) {
+                    $request_id = $_GET['request'];
+                    $student_id = $_GET['student-number'];
 
-                            <?php
-                            // Check if request and student ID are passed in URL
-                            if (isset($_GET['request']) && isset($_GET['student-number'])) {
-                                $request_id = $_GET['request'];
-                                $student_id = $_GET['student-number'];
+                    $conn = new class_model();
+                    $document = $conn->fetch_document_by_id($student_id, $request_id);
 
+                    if ($document) {
+                        // Display student details at the top
+                        echo '<div class="student-details mb-5">';
+                        echo '<div class="card p-4 mb-5 shadow-sm rounded-lg bg-light">';
+                        echo '<h4 class="font-weight-bold mb-3 text-center">Student Information</h4>';
+                        echo '<div class="row">';
+                        echo '<div class="col-md-6 mb-3">';
+                        echo '<p><strong>Name:</strong> ' . htmlspecialchars($document['first_name']) . ' ' . htmlspecialchars($document['last_name']) . '</p>';
+                        echo '</div>';
+                        echo '<div class="col-md-6 mb-3">';
+                        echo '<p><strong>Control Number:</strong> ' . htmlspecialchars($document['control_no']) . '</p>';
+                        echo '</div>';
+                        echo '<div class="col-md-12 mb-3">';
+                        echo '<p><strong>Document Requested:</strong> ' . htmlspecialchars($document['document_name']) . '</p>';
+                        echo '</div>';
+                        echo '</div>';
 
-                                // Instantiate the class and fetch the specific document request
-                                $conn = new class_model();
-                                $document = $conn->fetch_document_by_id($student_id, $request_id);
-                                if ($document) {
-                                    // Display student details at the top
-                                    echo "<h4>Student Name: " . htmlspecialchars($document['first_name']) . " " . htmlspecialchars($document['last_name']) . "</h4>";
-                                    echo "<p>Control Number: " . htmlspecialchars($document['control_no']) . "</p>";
-                                    echo "<p>Document Requested: " . htmlspecialchars($document['document_name']) . "</p>";
+                        // Check if document matches the criteria and display recent image
+                        if (preg_match("/Honorable Dismissal/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
+                            echo '<div class="form-group text-center">';
+                            echo '<label for="recent_image_preview"><strong>Recent Image:</strong></label>';
+                            echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" class="img-thumbnail mt-3" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
+                            echo '</div>';
+                        }
+                        echo '</div>';
 
-                                    // Check if document matches the criteria and display recent image
-                                    if (preg_match("/Honorable Dismissal/i", $document['document_name']) && !empty($document['recent_image']) && $document['recent_image'] !== "Not Required") {
-                                        echo '<div class="form-group">';
-                                        echo '<label for="recent_image_preview">Recent Image:</label>';
-                                        echo '<div><img src="../../' . htmlspecialchars($document['recent_image']) . '" alt="Recent Image Preview" style="max-width:200px; max-height:200px; cursor:pointer;" onclick="toggleModal(this)"/></div>';
-                                        echo '</div>';
-                                    }
-                                }
+                        // Display each department's status
+                        $departments = [
+                            'library' => 'Library',
+                            'custodian' => 'Custodian',
+                            'accounting' => 'Accounting',
+                            'registrar' => 'Registrar'
+                        ];
+                        if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+                            $departments['dean'] = 'Dean';
+                        }
 
-                                // Check if data is retrieved
-                                if ($document) {
-                                    // Display each department's status
-                                    $departments = [
-                                        'library' => 'LIBRARY',
-                                        'custodian' => 'CUSTODIAN',
-                                        // 'dean' => 'DEAN',
-                                        'accounting' => 'ACCOUNTING',
-                                        'registrar' => 'REGISTRAR'
-                                    ];
-                                    if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
-                                        $departments['dean'] = 'DEAN';
-                                    }
+                        echo '<div class="row">';
+                        foreach ($departments as $key => $label) {
+                            $status = $document[$key . '_status'];
+                            echo '<div class="col-md-6 col-lg-4 mb-4">';
+                            echo '    <div class="card status-card h-100 p-4 rounded-lg text-center">';
+                            echo '        <h5 class="department-name text-uppercase font-weight-bold mb-3">' . $label . '</h5>';
 
-                                    foreach ($departments as $key => $label) {
-                                        echo '<div class="form-group row">';
-                                        echo '<label class="col-12 col-sm-2 col-form-label text-sm-left">' . $label . ':</label>';
-                                        echo '<div class="col-12 col-form-label col-sm-1 col-sm-1">';
-
-                                        $status = $document[$key . '_status'];
-                                        switch ($status) {
-                                            case "Pending":
-                                                echo '<span class="badge bg-warning text-white">Pending</span>';
-                                                break;
-                                            case "Waiting for Payment":
-                                                echo '<span class="badge bg-info text-white">Waiting for Payment</span>';
-                                                break;
-                                            case "Releasing":
-                                                echo '<span class="badge bg-success text-white">Releasing</span>';
-                                                break;
-                                            case "Paid":
-                                                echo '<span class="badge bg-success text-white">Paid</span>';
-                                                break;
-                                            case "Verified":
-                                                echo '<span class="badge bg-success text-white">Verified</span>';
-                                                break;
-                                            case "Released":
-                                                echo '<span class="badge bg-success text-white">Released</span>';
-                                                break;
-                                            case "Declined":
-                                                echo '<span class="badge bg-danger text-white">Declined</span>';
-                                                break;
-                                            default:
-                                                echo '<span class="badge bg-warning text-white">TO BE ASSIGN</span>';
-                                        }
-
-                                        echo '</div>';
-                                        echo '<div class="col-12 col-sm-6 ml-5">';
-                                        echo '<input data-parsley-type="alphanum" type="text" value="Your request for ' . htmlspecialchars($document['document_name']) . ' is ' . htmlspecialchars($status) . ', please comply." name="subject" required="" class="form-control" readonly>';
-                                        echo '</div>';
-                                        echo '</div>';
-                                    }
-                                } else {
-                                    echo '<p>No document found!</p>';
-                                }
-                            } else {
-                                echo '<p>Invalid request!</p>';
+                            switch ($status) {
+                                case "Pending":
+                                    echo '<span class="badge bg-warning text-white mb-3">Pending</span>';
+                                    break;
+                                case "Waiting for Payment":
+                                    echo '<span class="badge bg-info text-white mb-3">Waiting for Payment</span>';
+                                    break;
+                                case "Releasing":
+                                    echo '<span class="badge bg-success text-white mb-3">Releasing</span>';
+                                    break;
+                                case "Paid":
+                                    echo '<span class="badge bg-success text-white mb-3">Paid</span>';
+                                    break;
+                                case "Verified":
+                                    echo '<span class="badge bg-success text-white mb-3">Verified</span>';
+                                    break;
+                                case "Released":
+                                    echo '<span class="badge bg-success text-white mb-3">Released</span>';
+                                    break;
+                                case "Declined":
+                                    echo '<span class="badge bg-danger text-white mb-3">Declined</span>';
+                                    break;
+                                default:
+                                    echo '<span class="badge bg-secondary text-white mb-3">To Be Assigned</span>';
                             }
-                            ?>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                            echo '<div class="comment-section mt-3">';
+                            echo '<label><strong>Comment:</strong></label>';
+                            echo '<textarea class="form-control mt-2" readonly>Request for ' . htmlspecialchars($document['document_name']) . ' is ' . htmlspecialchars($status) . ', please comply with the requirements to proceed further.</textarea>';
+                            echo '</div>';
+                            echo '    </div>';
+                            echo '</div>';
+                        }
+                        echo '</div>';
+                    } else {
+                        echo '<div class="alert alert-danger text-center">No document found!</div>';
+                    }
+                } else {
+                    echo '<div class="alert alert-danger text-center">Invalid request!</div>';
+                }
+                ?>
+            </form>
         </div>
     </div>
 </div>
+
 
 
 <script src="../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
