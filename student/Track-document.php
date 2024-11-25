@@ -36,6 +36,75 @@
         <!-- end pageheader -->
         <!-- ============================================================== -->
 
+
+        <style>
+    .container-fluid {
+        padding: 20px;
+    }
+    .card {
+        border-radius: 20px;
+    }
+    .status-card {
+        background-color: #ffffff;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e3e6f0;
+        transition: all 0.3s;
+        height: 100%;
+    }
+    .status-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .department-name {
+        font-size: 1.4rem;
+        color: #333;
+    }
+    .badge {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+    }
+    .badge-lg {
+        font-size: 1.3rem;
+    }
+    .comment-section {
+        font-size: 1rem;
+        color: #555;
+    }
+    .alert {
+        margin-top: 20px;
+        font-size: 1.3rem;
+    }
+    .card-header {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+    .department-icon {
+        color: #007bff;
+    }
+    @media (max-width: 768px) {
+        .department-name {
+            font-size: 1.3rem;
+        }
+        .badge {
+            font-size: 1.1rem;
+        }
+        .comment-section {
+            font-size: 1rem;
+        }
+    }
+    @media (max-width: 576px) {
+        .department-name {
+            font-size: 1.2rem;
+        }
+        .badge {
+            font-size: 1rem;
+        }
+        .comment-section {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
         <div class="container">
   <div class="row">
     <div class="col-12">
@@ -139,73 +208,21 @@
 </div>
 
 
-<style>
-    .container-fluid {
-        padding: 20px;
-    }
-    .card {
-        border-radius: 20px;
-    }
-    .status-card {
-        background-color: #ffffff;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        border: 1px solid #e3e6f0;
-        transition: all 0.3s;
-        height: 100%;
-    }
-    .status-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
-    .department-name {
-        font-size: 1.4rem;
-        color: #333;
-    }
-    .badge {
-        font-size: 1.2rem;
-        padding: 10px 15px;
-    }
-    .badge-lg {
-        font-size: 1.3rem;
-    }
-    .comment-section {
-        font-size: 1rem;
-        color: #555;
-    }
-    .alert {
-        margin-top: 20px;
-        font-size: 1.3rem;
-    }
-    .card-header {
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-    }
-    .department-icon {
-        color: #007bff;
-    }
-    @media (max-width: 768px) {
-        .department-name {
-            font-size: 1.3rem;
-        }
-        .badge {
-            font-size: 1.1rem;
-        }
-        .comment-section {
-            font-size: 1rem;
-        }
-    }
-    @media (max-width: 576px) {
-        .department-name {
-            font-size: 1.2rem;
-        }
-        .badge {
-            font-size: 1rem;
-        }
-        .comment-section {
-            font-size: 0.9rem;
-        }
-    }
-</style>
+<script src="../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../asset/vendor/slimscroll/jquery.slimscroll.js"></script>
+<script src="../asset/vendor/charts/charts-bundle/Chart.bundle.js"></script>
+<script src="../asset/vendor/charts/charts-bundle/chartjs.js"></script>
+<script src="../asset/libs/js/main-js.js"></script>
+<script src="../asset/libs/js/dashboard-sales.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var firstName = $('#firstName').text();
+        var lastName = $('#lastName').text();
+        var initials = firstName.charAt(0) + lastName.charAt(0);
+        $('#profileImage').text(initials);
+    });
+</script>
 
 
 <!-- ============================================================== -->
