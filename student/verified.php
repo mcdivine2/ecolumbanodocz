@@ -52,8 +52,7 @@
                                         <th scope="col">Student EDP</th>
                                         <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
-                                        <th scope="col">Release On</th>
-                                        <th scope="col">Queue Number</th>
+                                        <th scope="col">Estimated Release Date</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Clearance</th>
                                     </tr>
@@ -61,26 +60,24 @@
                                 <tbody>
                                     <?php
                                     $conn = new class_model();
-                                    $docrequest = $conn->fetchAll_verified($student_id);
+                                    $docrequest = $conn->fetchAll_documentprocessing($student_id);
                                     ?>
                                     <?php foreach ($docrequest as $row) {
 
                                     ?>
                                         <tr>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
-
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['studentID_no']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            <td><?= $row['date_releasing']; ?></td>
-                                            <td><?= $row['queue_number']; ?></td>
+                                            <td><?= date("M d, Y", strtotime($row['date_releasing'])); ?></td>
                                             <td>
                                                 <?php
                                                 if ($row['registrar_status'] === "Pending") {
                                                     echo '<span class="badge bg-info text-white">Pending</span>';
-                                                } else if ($row['registrar_status'] === "Received") {
-                                                    echo '<span class="badge bg-warning text-white">Received</span>';
+                                                } else if ($row['registrar_status'] === "Processing") {
+                                                    echo '<span class="badge bg-info text-white">Processing</span>';
                                                 } else if ($row['registrar_status'] === "Waiting for Payment") {
                                                     echo '<span class="badge bg-danger text-white">Waiting for Payment</span>';
                                                 } else if ($row['registrar_status'] === "Verified") {
