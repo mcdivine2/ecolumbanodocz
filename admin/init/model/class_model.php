@@ -485,7 +485,19 @@ class class_model
 
 	public function fetchAll_releasing()
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'Releasing' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'To Be Release' ";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function fetchAll_processing()
+	{
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE registrar_status = 'Processing' ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -871,7 +883,19 @@ class class_model
 	}
 	public function count_numberoftotalreleasing()
 	{
-		$sql = "SELECT COUNT(request_id) as count_releasing FROM tbl_documentrequest WHERE registrar_status = 'Releasing'";
+		$sql = "SELECT COUNT(request_id) as count_releasing FROM tbl_documentrequest WHERE registrar_status = 'To Be Release'";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		return $data;
+	}
+	public function count_numberoftotalprocessing()
+	{
+		$sql = "SELECT COUNT(request_id) as count_processing FROM tbl_documentrequest WHERE registrar_status = 'Processing'";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 		$result = $stmt->get_result();

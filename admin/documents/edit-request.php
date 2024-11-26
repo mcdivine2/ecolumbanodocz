@@ -121,7 +121,9 @@
                                                    <option value="Pending">Pending</option>
                                                    <option value="Declined">Declined</option>
                                                    <option value="Verified">Verified</option>
+                                                   <option value="Processing">Processing</option>
                                                    <option value="Released">Released</option>
+                                                   <option value="To Be Release">To Be Release</option>
                                                </select>
                                            </div>
                                        </div>
@@ -179,7 +181,7 @@
                const documentName = document.getElementById("documentName").value;
                const controlNo = document.getElementById("controlNo").value;
 
-               let message = "Hello, This is a test! ";
+               let message = "Hello, This is a test!";
 
                switch (status) {
                    case "Pending":

@@ -34,7 +34,7 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
-                                        <th>Processing Officer</th>
+                                        <th>Request Type</th>
                                         <th>Status</th>
                                         <th>Clearance</th>
                                         <th>Action</th>
@@ -60,7 +60,7 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            <td><?= $row['processing_officer']; ?></td>
+                                            <td><?= $row['request_type']; ?></td>
                                             <td>
                                                 <?php
                                                 $status_badges = [

@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// Update release date and registrar status
 			$release_update = $conn->update_release_date($request_id, $date_of_releasing);
 			if ($release_update) {
-				$conn->update_registrar_status($request_id, "Releasing");
+				$conn->update_registrar_status($request_id, "Processing");
 
 				// Fetch the updated queue number for the release date
 				$sql_fetch_queue = "SELECT queue_number FROM tbl_documentrequest WHERE request_id = ?";

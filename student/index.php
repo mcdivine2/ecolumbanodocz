@@ -48,7 +48,44 @@
                     <a href="pending-request.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
-
+            <!-- Declined -->
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $cstudent = $conn->count_declined($student_id);
+                        foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted">Declined</h5>
+                                <h2 class="mb-0"><?= $row['count_declined']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color: white;"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="declined.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
+            <!-- Document Processing -->
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $cstudent = $conn->count_verified($student_id);
+                        foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted">Document Processing</h5>
+                                <h2 class="mb-0"><?= $row['count_verified']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color: white;"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="verified.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
             <!-- Waiting for Payment -->
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="card">
@@ -68,7 +105,25 @@
                     <a href="pending-payment.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
-
+            <!-- To Be Release -->
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php
+                        $cstudent = $conn->count_numberofreleasing($student_id);
+                        foreach ($cstudent as $row): ?>
+                            <div class="d-inline-block">
+                                <h5 class="text-muted">To Be Release</h5>
+                                <h2 class="mb-0"><?= $row['count_toBeRelease']; ?></h2>
+                            </div>
+                            <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
+                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color: white;"></i>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="releasing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                </div>
+            </div>
             <!-- Completed -->
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="card">
@@ -85,45 +140,11 @@
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <a href="releasing.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
+                    <a href="released.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
                 </div>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <?php
-                        $cstudent = $conn->count_declined($student_id);
-                        foreach ($cstudent as $row): ?>
-                            <div class="d-inline-block">
-                                <h5 class="text-muted">Declined</h5>
-                                <h2 class="mb-0"><?= $row['count_declined']; ?></h2>
-                            </div>
-                            <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color: white;"></i>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <a href="declined.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
-                </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <?php
-                        $cstudent = $conn->count_verified($student_id);
-                        foreach ($cstudent as $row): ?>
-                            <div class="d-inline-block">
-                                <h5 class="text-muted">Processing</h5>
-                                <h2 class="mb-0"><?= $row['count_verified']; ?></h2>
-                            </div>
-                            <div class="float-right icon-circle-medium icon-box-lg mt-1" style="background-color:#1269AF">
-                                <i class="fa fa-calendar-check fa-fw fa-sm text-info" style="color: white;"></i>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <a href="verified.php" class="btn btn-primary" style="background-color:#1269AF">View</a>
-                </div>
-            </div>
+
+
         </div>
 
     </div> <!-- End Container Fluid -->

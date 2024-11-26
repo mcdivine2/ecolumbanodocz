@@ -44,8 +44,7 @@ include('left_sidebar/sidebar.php');
                                         <th>Document Name</th>
                                         <th>Request Type</th>
                                         <th>Date Request</th>
-                                        <th>To Be Released On</th>
-                                        <th>Queue Number</th>
+                                        <th>Date Released</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -54,7 +53,7 @@ include('left_sidebar/sidebar.php');
                                     <?php
                                     $student_id = $_SESSION['student_id'];
                                     $conn = new class_model();
-                                    $docrequest = $conn->fetchAll_tobereleasedocument($student_id);
+                                    $docrequest = $conn->fetchAll_releaseddocument($student_id);
 
                                     foreach ($docrequest as $row): ?>
                                         <tr>
@@ -66,12 +65,13 @@ include('left_sidebar/sidebar.php');
                                             <td>
                                                 <?= $row['date_releasing'] ? date("M d, Y", strtotime($row['date_releasing'])) : ''; ?>
                                             </td>
-                                            <td><?= $row['queue_number']; ?></td>
                                             <td>
                                                 <?php
                                                 $statusClass = [
-                                                    "To Be Release" => "success",
-
+                                                    "Pending Request" => "info",
+                                                    "Processing" => "danger",
+                                                    "Released" => "success",
+                                                    "Received" => "warning"
                                                 ];
                                                 $status = $row['registrar_status'];
                                                 echo "<span class='badge bg-{$statusClass[$status]} text-white'>{$status}</span>";
