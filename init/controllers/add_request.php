@@ -105,21 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date_request
     );
 
-    if ($request) {
-        // After inserting the request, update dean_status if request_types contain "CBE BOARD EXAM"
-        foreach ($request_types as $request_type) {
-            // Normalize request_type by replacing <br> with spaces
-            $normalized_request_type = str_replace("<br>", " ", $request_type);
-
-            if (stripos($normalized_request_type, "Honorable Dismissal w/ TOR for evaluation") !== false) {
-                $update_sql = "UPDATE tbl_documentrequest SET dean_status = 'Pending' WHERE control_no = ?";
-                $stmt = $conn->conn->prepare($update_sql);
-                $stmt->bind_param("s", $control_no);
-                $stmt->execute();
-                break; // No need to check further once condition is met
-            }
-        }
-    }
 
     echo json_encode([
         'status' => $request ? 'success' : 'error',
