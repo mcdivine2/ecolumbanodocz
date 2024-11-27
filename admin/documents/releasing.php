@@ -49,7 +49,7 @@
                                         // Check if all required statuses are verified
                                         $all_verified = (
                                             $row['library_status'] === 'Verified' &&
-                                            ($row['dean_status'] === 'Verified' || $row['dean_status'] === 'Not Included') && // Add this condition
+                                            ($row['dean_status'] === 'Verified' || $row['dean_status'] === 'Pending') && // Add this condition
                                             $row['custodian_status'] === 'Verified' &&
                                             $row['registrar_status'] === 'To Be Release' &&
                                             $row['accounting_status'] === 'Verified'
