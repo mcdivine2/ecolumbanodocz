@@ -36,7 +36,9 @@
         <!-- end pageheader -->
         <!-- ============================================================== -->
 
-        <div class="row">
+
+
+<div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card influencer-profile-data">
                     <div class="card-body">
@@ -139,6 +141,26 @@
         </div>
     </div>
 </div>
+
+
+
+<script src="../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../asset/vendor/slimscroll/jquery.slimscroll.js"></script>
+<script src="../asset/vendor/charts/charts-bundle/Chart.bundle.js"></script>
+<script src="../asset/vendor/charts/charts-bundle/chartjs.js"></script>
+<script src="../asset/libs/js/main-js.js"></script>
+<script src="../asset/libs/js/dashboard-sales.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var firstName = $('#firstName').text();
+        var lastName = $('#lastName').text();
+        var initials = firstName.charAt(0) + lastName.charAt(0);
+        $('#profileImage').text(initials);
+    });
+</script>
+
+
 <!-- ============================================================== -->
 <!-- end main wrapper -->
 <!-- ============================================================== -->
