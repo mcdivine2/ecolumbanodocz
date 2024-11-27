@@ -45,6 +45,7 @@
                 $result = $stmt->get_result();
                 while ($row = $result->fetch_assoc()) {
                 ?>
+                
 
                    <div class="row">
                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -127,8 +128,13 @@
                                            </div>
                                        </div>
 
+                                       <?php
+                                            // Remove <br> tags from the database value before using it in the HTML
+                                            $document_name_cleaned = preg_replace('/<br\s*\/?>/i', '', $row['document_name']);
+                                        ?>
+
                                        <!-- Hidden Fields to Store PHP Data for JavaScript -->
-                                       <input type="hidden" id="documentName" value="<?= $row['document_name']; ?>">
+                                       <input type="hidden" id="documentName" value="<?= $document_name_cleaned; ?>">
                                        <input type="hidden" id="controlNo" value="<?= $row['control_no']; ?>">
 
                                        <!-- Email Form Section -->
@@ -141,7 +147,7 @@
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Subject:</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
-                                               <input type="text" value="Request Update for <?= $row['document_name']; ?>" name="subject" class="form-control">
+                                               <input type="text" value="Request Update for <?= $document_name_cleaned; ?>" name="subject" class="form-control">
                                            </div>
                                        </div>
 
@@ -175,7 +181,7 @@
                const documentName = document.getElementById("documentName").value;
                const controlNo = document.getElementById("controlNo").value;
 
-               let message = "Hello, This is a test! ";
+               let message = "Hello, This is a test!";
 
                switch (status) {
                    case "Pending":

@@ -105,18 +105,13 @@
                                         <input type="text" name="complete_address" value="<?= $getstudno['complete_address']; ?>" class="form-control" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Civil Status</label>
-                                        <select name="civil_status" class="form-control" required>
-                                            <option value="" disabled selected>&larr; Select Civil Status &rarr;</option>
-                                            <option value="Single">Single</option>
-                                            <option value="Married">Married</option>
-                                            <option value="Widow">Widow</option>
-                                        </select>
+                                        <label>Email Address</label>
+                                        <input type="email" name="email_address" value="<?= $getstudno['email_address']; ?>" class="form-control">
                                     </div>
                                 </div>
 
                                 <div class="row mt-2">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label>Course</label>
 
                                         <select name="course" id="course" class="form-control" required>
@@ -130,10 +125,20 @@
                                             ?>
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label>Email Address</label>
-                                        <input type="email" name="email_address" value="<?= $getstudno['email_address']; ?>" class="form-control">
+                                    <div class="col-md-4">
+                                        <label>Civil Status</label>
+                                        <select name="civil_status" class="form-control" required>
+                                            <option value="" disabled selected>&larr; Select Civil Status &rarr;</option>
+                                            <option value="Single">Single</option>
+                                            <option value="Married">Married</option>
+                                            <option value="Widow">Widow</option>
+                                        </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label>Last term</label>
+                                        <input type="date" name="last_term" class="form-control" placeholder="dd/mm/yyyy" required>
+                                    </div>
+                                   
                                 </div>
                                 <script>
                                     document.getElementById('courseSearch').addEventListener('input', function() {
@@ -224,23 +229,6 @@
                                     </button>
                                 </div>
                             </div>
-
-
-                            <!-- Purpose Section -->
-                            <!--<div class="form-group mt-4">
-                                <h4 class="section-title">Purpose</h4>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Select Purpose</label><br>
-                                        <input type="checkbox" name="purpose[]" value="Evaluation"> Evaluation <br>
-                                        <input type="checkbox" name="purpose[]" value="Employment"> Employment <br>
-                                        <input type="checkbox" id="otherPurposeCheckbox" value="Other"> Other (specify) <br>
-                                    </div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <input type="text" id="docsPurposeInput" name="purpose[]" placeholder="Enter purpose" style="display:none;">
-                                </div>
-                            </div>-->
 
                             <!-- Submission Section -->
                             <div class="form-group mt-4 text-right">
@@ -437,7 +425,7 @@
                     };
 
                     let additionalInputs = '';
-                    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification', 'Honorable Dismissal'].includes(documentName)) {
+                    if (['Special Order', 'Diploma', 'Transcript of Records', 'Certification', 'Honorable Dismissal w/ TOR for evaluation'].includes(documentName)) {
                         const copiesField = createInputField('Copies', 'copies[]', 'number', 1);
                         const cancelButton = `<button type="button" class="btn btn-danger btn-sm cancel-row-btn" style="width: 100%;">Cancel</button>`;
                         const docNameField = `<p style="font-size: 14px; margin: 0;">${documentName}</p>`;
@@ -448,17 +436,16 @@
                             requestTypeField = createInputField('Request Type', `${documentName[0]}request_type`, 'radio', '', ['1st request', 'Re-Issuance']);
                         } else if (documentName === 'Transcript of Records') {
                             requestTypeField = `
-                ${createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request - CBE BOARD EXAM', '1st request - Others (Specify)', 'Re-Issuance - Others (Specify)'])}
+                ${createInputField('Request Type', 'TOR_request_type', 'radio', '', ['1st request - CPA BOARD EXAM', '1st request - Others (Specify)', 'Re-Issuance - Others (Specify)'])}
                 <input type="text" id="TOR_1st_request_input" name="TOR_request_type" placeholder="1st request Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
                 <input type="text" id="TOR_reissuance_input" name="TOR_request_type" placeholder="Re-Issuance Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
             `;
                         } else if (documentName === 'Certification') {
                             requestTypeField = `${createInputField('Request Type', 'certification_request_type', 'radio', '', ['Unit Earned', 'As Graduate', 'Other'])}
                 <input type="text" id="certOtherInput" name="certification_purpose_other" placeholder="Please specify" class="form-control" style="margin-top: 10px; display: none;">`;
-                        } else if (documentName === 'Honorable Dismissal') {
+                        } else if (documentName === 'Honorable Dismissal w/ TOR for evaluation') {
                             requestTypeField = `
-                ${createInputField('Request Type', 'HDpurpose_request_type', 'radio', '', ['Student Transferring','Other'])}
-                <input type="text" id="otherPurposeInput" name="HDpurpose_request_type" placeholder="Specify here" class="form-control" style="display:none; margin-top: 10px; font-size: 13px; padding: 5px; width: 100%;">
+                ${createInputField('Request Type', 'HDpurpose_request_type', 'radio', '', ['Student Transferring'])}
                 <input type="file" name="photo_attachment[]" accept="image/*" class="form-control-file" style="display: none; margin-top: 10px;">`;
                         }
                         additionalInputs = `
@@ -518,18 +505,10 @@
                         });
                     }
 
-                    if (documentName === 'Honorable Dismissal') {
+                    if (documentName === 'Honorable Dismissal w/ TOR for evaluation') {
                         parentRow.on('change', 'input[name="HDpurpose_request_type"]', function() {
-                            const otherPurposeInput = parentRow.find('#otherPurposeInput');
                             const photoAttachmentInput = parentRow.find('input[name="photo_attachment[]"]');
                             const value = $(this).val();
-
-                            // Show/hide and set required attribute for "Other Purpose" input
-                            if (value === 'Other') {
-                                otherPurposeInput.show().prop('required', true);
-                            } else {
-                                otherPurposeInput.hide().val('').prop('required', false);
-                            }
                         });
 
                         // Ensure the photo attachment input is visible and required for "Honorable Dismissal"
@@ -675,7 +654,7 @@
                 }
 
                 // Append other form data
-                ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address', 'control_no', 'student_id']
+                ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address','last_term', 'control_no', 'student_id']
                 .forEach(field => appendField(field, `input[name="${field}"]`));
                 ['course', 'civil_status'].forEach(field => appendField(field, `select[name="${field}"]`));
                 formData.append('total_price', $('#totalPrice').val());

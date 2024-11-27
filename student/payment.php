@@ -19,42 +19,23 @@
                <!-- ============================================================== -->
 
                <style>
-    .modal-body .row {
-        align-items: flex-start; /* Align text and image at the top */
-    }
+    
+                    .modal-body {
+                        padding: 0; /* Remove padding for a full-sized image display */
+                    }
+                    @media (max-width: 767.98px) {
+                        /* Ensures the text and image stack vertically on smaller screens */
+                        .modal-body .row.no-gutters {
+                            display: flex;
+                            flex-direction: column;
+                        }
 
-    .img-fluid {
-        max-height: 300px; /* Limit the height of the image */
-        object-fit: contain; /* Ensure the image fits within the allocated space */
-    }
-
-    .col-md-6 {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start; /* Ensure alignment starts at the top */
-    }
-
-    .pr-3 {
-        padding-right: 1rem; /* Add padding to separate text from image */
-    }
-
-    .modal-lg {
-        max-width: 45%; /* Widen modal for better layout */
-    }
-
-    .modal-xl {
-        max-width: 80%; /* Make the modal occupy almost the full width of the screen */
-    }
-
-    .modal-body img {
-        max-height: 80vh; /* Limit the image height to 90% of the viewport height */
-        width: auto; /* Maintain aspect ratio */
-    }
-
-    .modal-body {
-        padding: 0; /* Remove padding for a full-sized image display */
-    }
-</style>
+                        /* Adds some bottom margin to the image for better spacing */
+                        .modal-body img {
+                            margin-bottom: 1rem;
+                        }
+                    }
+                </style>
 
                
                <div class="row">
@@ -264,7 +245,7 @@
             <div class="modal-body">
                 <div class="row no-gutters"> <!-- No extra spacing between text and image -->
                     <!-- Text Container -->
-                    <div class="col-md-6 mb-3 pr-3"> <!-- Added padding-right -->
+                    <div class="col-12 col-md-6 mb-3 pr-md-3"> <!-- Responsive padding for larger screens -->
                         <p><strong>Student EDP:</strong> <span id="modal-student-id"></span></p>
                         <p><strong>Student Name:</strong> <span id="modal-student-name"></span></p>
                         <p><strong>Control No:</strong> <span id="modal-control-no"></span></p>
@@ -276,9 +257,9 @@
                     </div>
 
                     <!-- Image Container -->
-                    <div class="col-md-6 text-center"> <!-- Adjusted width -->
-                        <img id="modal-proof-of-payment" class="img-fluid rounded border" src="" alt="Proof of Payment" data-toggle="modal" data-target="#largeImageModal">
-                        <p class="mt-2 text-muted">Click to view full-size image.</p>
+                    <div class="col-12 col-md-6 text-center"> <!-- Adjusted width to be responsive -->
+                        <img id="modal-proof-of-payment" class="img-fluid rounded border mb-3" src="" alt="Proof of Payment" data-toggle="modal" data-target="#largeImageModal">
+                        <p class="text-muted">Click to view full-size image.</p>
                     </div>
                 </div>
             </div>
@@ -288,14 +269,16 @@
 
 <!-- Large Image Modal -->
 <div class="modal fade" id="largeImageModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-xl" role="document"> <!-- Use modal-xl for extra-large modal -->
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
+            <div class="modal-header">
                 <h5 class="modal-title">Proof of Payment</h5>
-                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body text-center">
-                <img id="large-proof-of-payment" src="" alt="Proof of Payment" class="img-fluid rounded" style="width: 100%; height: auto; max-height: 90vh;">
+                <img id="large-proof-of-payment" class="img-fluid rounded" src="" alt="Large Proof of Payment">
             </div>
         </div>
     </div>

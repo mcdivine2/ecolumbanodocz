@@ -7,7 +7,7 @@ $conn = new class_model(); // Initialize your model class with the database conn
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get data from POST request and sanitize inputs
     $control_no = isset($_POST['control_no']) ? trim($_POST['control_no']) : '';
-    $modeof_payment = isset($_POST['mode_of_payment']) ? trim($_POST['mode_of_payment']) : '';
+    $modeof_payment = isset($_POST['modeof_payment']) ? trim($_POST['modeof_payment']) : '';
     $or_no = isset($_POST['or_no']) ? trim($_POST['or_no']) : 'Not Included'; // Default value
     $trace_no = isset($_POST['trace_no']) ? trim($_POST['trace_no']) : 'Not Included'; // Default value
     $ref_no = isset($_POST['ref_no']) ? trim($_POST['ref_no']) : 'Not Included'; // Default value

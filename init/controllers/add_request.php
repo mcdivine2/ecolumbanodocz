@@ -14,9 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $middle_name = sanitize($_POST['middle_name']);
     $last_name = sanitize($_POST['last_name']);
     $complete_address = sanitize($_POST['complete_address']);
+    $email_address = sanitize($_POST['email_address']);
     $course = sanitize($_POST['course']);
     $civil_status = sanitize($_POST['civil_status']);
-    $email_address = sanitize($_POST['email_address']);
+    $last_term = sanitize($_POST['last_term']);
     $control_no = sanitize($_POST['control_no']);
     $student_id = sanitize($_POST['student_id']);
     $total_price = filter_var(str_replace('₱', '', $_POST['total_price']), FILTER_VALIDATE_FLOAT);
@@ -36,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
     if (empty($course)) $errors[] = 'Course is required.';
     if (empty($civil_status)) $errors[] = 'Civil Status is required.';
+    if (empty($last_term)) $errors[] = 'Last Term is required.';
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address.';
     if (!is_numeric($total_price)) $errors[] = 'Invalid total price.';
 
@@ -62,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } else {
-        if (in_array("Honorable Dismissal", $document_names)) {
-            $errors[] = 'Recent image is required for "Honorable Dismissal".';
+        if (in_array("Honorable Dismissal w/ TOR for evaluation", $document_names)) {
+            $errors[] = 'Recent image is required for "Honorable Dismissal w/ TOR for evaluation".';
         }
     }
 
@@ -87,9 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $middle_name,
         $last_name,
         $complete_address,
+        $email_address,
         $course,
         $civil_status,
-        $email_address,
+        $last_term,
         $control_no,
         implode("<br>", $documents),
         $price,
