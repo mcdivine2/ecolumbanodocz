@@ -38,7 +38,7 @@
 
 
 
-<div class="row">
+        <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card influencer-profile-data">
                     <div class="card-body">
@@ -85,7 +85,7 @@
                                         'accounting' => 'ACCOUNTING',
                                         'registrar' => 'REGISTRAR'
                                     ];
-                                    if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+                                    if (preg_match("/CPA BOARD EXAM/i", $document['request_type'])) {
                                         $departments['dean'] = 'DEAN';
                                     }
 

@@ -138,7 +138,7 @@
                                         <label>Last term</label>
                                         <input type="date" name="last_term" class="form-control" placeholder="dd/mm/yyyy" required>
                                     </div>
-                                   
+
                                 </div>
                                 <script>
                                     document.getElementById('courseSearch').addEventListener('input', function() {
@@ -654,7 +654,7 @@
                 }
 
                 // Append other form data
-                ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address','last_term', 'control_no', 'student_id']
+                ['studentID_no', 'first_name', 'middle_name', 'last_name', 'complete_address', 'email_address', 'last_term', 'control_no', 'student_id']
                 .forEach(field => appendField(field, `input[name="${field}"]`));
                 ['course', 'civil_status'].forEach(field => appendField(field, `select[name="${field}"]`));
                 formData.append('total_price', $('#totalPrice').val());

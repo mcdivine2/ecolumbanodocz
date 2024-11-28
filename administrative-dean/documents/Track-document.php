@@ -92,10 +92,9 @@
                                         'accounting' => 'ACCOUNTING',
                                         'registrar' => 'REGISTRAR'
                                     ];
-                                    if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+                                    if (preg_match("/CPA BOARD EXAM/i", $document['request_type'])) {
                                         $departments['dean'] = 'DEAN';
                                     }
-
                                     foreach ($departments as $key => $label) {
                                         echo '<div class="form-group row">';
                                         echo '<label class="col-12 col-sm-2 col-form-label text-sm-left">' . $label . ':</label>';

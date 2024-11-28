@@ -67,7 +67,7 @@
                                 'registrar' => 'REGISTRAR'
                             ];
 
-                            if (preg_match("/Honorable Dismissal w\/ TOR for evaluation/i", $document['document_name'])) {
+                            if (preg_match("/CPA BOARD EXAM/i", $document['request_type'])) {
                                 $departments['dean'] = 'DEAN';
                             }
 
