@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dean_status,
         $library_status,
         $accounting_status,
-        implode(", ", $purposes),
+        implode("<br>", $purposes),
         $student_id,
         $recent_image,
         $date_request

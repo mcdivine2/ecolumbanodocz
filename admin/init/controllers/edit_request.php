@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$subject = "Request Update for $document_name";
 
 	// Determine the dean_status based on the request_type
-	$dean_status = (preg_match("/CBE BOARD EXAM/i", $request_type)) ? "Pending" : "Not Included";
+	$dean_status = (preg_match("/CPA BOARD EXAM/i", $request_type)) ? "Pending" : "Not Included";
 
 	// Initialize default statuses
 	$custodian_status = null;

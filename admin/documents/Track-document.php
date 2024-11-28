@@ -79,7 +79,7 @@
                                         "Verified" => "bg-success",
                                         "Released" => "bg-success",
                                         "To Be Release" => "bg-success",
-                                        "Pending Request" => "bg-warning",
+                                        "Not Included" => "bg-warning",
                                         "Declined" => "bg-danger"
                                     ];
                                     $badge_class = $badge_classes[$status] ?? 'bg-secondary';
