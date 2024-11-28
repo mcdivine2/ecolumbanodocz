@@ -689,8 +689,8 @@ class class_model
 		}
 
 		// Ensure dean_status logic is consistent
-		if (stripos($document_name, "Honorable Dismissal w/ TOR for evaluation") !== false) {
-			$dean_status = "Pending";
+		if (stripos($request_type, "CPA BOARD EXAM") !== false) {
+			$dean_status = "TBA";
 		} else {
 			$dean_status = "Not Included";
 		}
@@ -717,7 +717,7 @@ class class_model
 			$first_name,          // 1
 			$middle_name,         // 2
 			$last_name,           // 3
-			$complete_address, 
+			$complete_address,
 			$email_address,   // 4
 			$course,              // 6
 			$civil_status,              // 6 

@@ -45,7 +45,7 @@
                 $result = $stmt->get_result();
                 while ($row = $result->fetch_assoc()) {
                 ?>
-                
+
 
                    <div class="row">
                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -68,7 +68,6 @@
                                                <input type="text" value="<?= $row['studentID_no']; ?>" name="studentID_no" class="form-control" readonly>
                                            </div>
                                        </div>
-                                       <input type="text" name="request_type" value="<?= $row['request_type']; ?>" hidden>
                                        <div class="form-group row">
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Student Name</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
@@ -79,6 +78,12 @@
                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Document Name</label>
                                            <div class="col-12 col-sm-8 col-lg-6">
                                                <input type="text" value="<?= $row['document_name']; ?>" name="document_name" class="form-control" readonly>
+                                           </div>
+                                       </div>
+                                       <div class="form-group row">
+                                           <label class="col-12 col-sm-3 col-form-label text-sm-right">Request Type</label>
+                                           <div class="col-12 col-sm-8 col-lg-6">
+                                               <input type="text" value="<?= $row['request_type']; ?>" name="request_type" class="form-control" readonly>
                                            </div>
                                        </div>
                                        <div class="form-group row">
@@ -129,12 +134,14 @@
                                        </div>
 
                                        <?php
-                                            // Remove <br> tags from the database value before using it in the HTML
-                                            $document_name_cleaned = preg_replace('/<br\s*\/?>/i', '', $row['document_name']);
+                                        // Remove <br> tags from the database value before using it in the HTML
+                                        $document_name_cleaned = preg_replace('/<br\s*\/?>/i', '', $row['document_name']);
+                                        $document_name_cleaned2 = preg_replace('/<br\s*\/?>/i', '', $row['request_type']);
                                         ?>
 
                                        <!-- Hidden Fields to Store PHP Data for JavaScript -->
                                        <input type="hidden" id="documentName" value="<?= $document_name_cleaned; ?>">
+                                       <input type="hidden" id="documentName2" value="<?= $document_name_cleaned2; ?>">
                                        <input type="hidden" id="controlNo" value="<?= $row['control_no']; ?>">
 
                                        <!-- Email Form Section -->
@@ -235,6 +242,7 @@
                    const control_no = document.querySelector('input[name=control_no]').value;
                    const student_id = document.querySelector('input[name=studentID_no]').value;
                    const document_name = document.querySelector('input[name=document_name]').value;
+                   const request_type = document.querySelector('input[name=request_type]').value;
                    const date_request = document.querySelector('input[name=date_request]').value;
                    const date_releasing = document.querySelector('input[name=date_releasing]').value;
                    const processing_officer = document.querySelector('input[name=processing_officer]').value;
@@ -246,6 +254,7 @@
                    data.append('control_no', control_no);
                    data.append('studentID_no', studentID_no);
                    data.append('document_name', document_name);
+                   data.append('request_type', request_type);
                    data.append('date_request', date_request);
                    data.append('date_releasing', date_releasing);
                    data.append('status', status);
@@ -256,6 +265,7 @@
                    if ($.trim(control_no) === '' ||
                        $.trim(studentID_no) === '' ||
                        $.trim(document_name) === '' ||
+                       $.trim(request_type) === '' ||
                        $.trim(date_request) === '' ||
                        $.trim(date_releasing) === '' ||
                        $.trim(processing_officer) === '') {
