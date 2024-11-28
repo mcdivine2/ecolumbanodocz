@@ -108,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date_request
     );
 
+
     echo json_encode([
         'status' => $request ? 'success' : 'error',
         'message' => $request ? 'Request added successfully!' : 'Failed to add request. Please try again.'
