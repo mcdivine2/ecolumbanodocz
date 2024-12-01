@@ -287,8 +287,9 @@
 
                                // Add a 3-second delay before taking further action
                                setTimeout(function() {
-                                   // Redirect or any other desired action after delay
-                                   $('#message').html('Edit Successfuly'); // Clear the message after 3 seconds (optional)
+                                   // Clear the message (optional) or perform other actions
+                                   $('#message').html('');
+                                   window.history.go(-1);
                                }, 3000); // 3 seconds = 3000ms
                            },
                            error: function(xhr, status, error) {
@@ -296,11 +297,8 @@
                                $('#message').html('<div class="alert alert-danger">An error occurred while processing your request. Please try again later.</div>');
                                window.scrollTo(0, 0); // Ensure user sees the error message
                            }
-
                        });
                    }
-
-
                });
            });
        </script>

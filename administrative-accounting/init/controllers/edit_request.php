@@ -26,28 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$statuses['library_status'] === "Verified" &&
 			$statuses['custodian_status'] === "Verified"
 		) {
-			// Fetch the maximum days_to_process from tbl_document
-			$max_days_to_process = $conn->get_max_days_to_process($student_id, $request_id);
+			// Clean and process document names
+			$cleaned_documents = extract_document_names($document_name);
 
-			// Calculate the date of release
-			$date_of_releasing = calculate_release_date($max_days_to_process);
+			// Calculate the maximum days to process
+			$max_days_to_process = $conn->get_max_days_to_process($student_id, $cleaned_documents);
 
-			// Update release date and registrar status
-			$release_update = $conn->update_release_date($request_id, $date_of_releasing);
-			if ($release_update) {
-				$conn->update_registrar_status($request_id, "Processing");
+			if ($max_days_to_process > 0) {
+				$date_of_releasing = calculate_release_date($max_days_to_process);
 
-				// Fetch the updated queue number for the release date
-				$sql_fetch_queue = "SELECT queue_number FROM tbl_documentrequest WHERE request_id = ?";
-				$stmt_fetch_queue = $conn->conn->prepare($sql_fetch_queue);
-				$stmt_fetch_queue->bind_param("i", $request_id);
-				$stmt_fetch_queue->execute();
-				$result_queue = $stmt_fetch_queue->get_result();
-				$queue_data = $result_queue->fetch_assoc();
+				$release_update = $conn->update_release_date($request_id, $date_of_releasing);
+				if ($release_update) {
+					$conn->update_registrar_status($request_id, "Processing");
 
-				$queue_number = isset($queue_data['queue_number']) ? $queue_data['queue_number'] : 'N/A';
-
-				echo "Date of Release: $date_of_releasing #$queue_number";
+					echo "Date of Release: $date_of_releasing";
+				} else {
+					error_log("Failed to update release date for request_id: $request_id");
+				}
+			} else {
+				error_log("Invalid max_days_to_process for request_id: $request_id");
 			}
 		} else {
 			error_log("Not all statuses are verified or meet conditions for request_id: $request_id");
@@ -79,4 +76,25 @@ function calculate_release_date($max_days)
 	}
 
 	return $current_date;
+}
+
+/**
+ * Function to clean and extract document names
+ * 
+ * @param string $document_name The raw document name string
+ * @return array An array of cleaned document names
+ */
+function extract_document_names($document_name)
+{
+	// Replace newlines, tabs, and <br> tags with a consistent delimiter
+	$document_name = preg_replace('/[\n\r\t]+/', '<br>', $document_name); // Replace \n, \r, and tabs with <br>
+	$document_name = str_replace('<br>', ',', $document_name); // Use commas as a consistent delimiter
+
+	// Remove (xN) patterns
+	$document_name = preg_replace('/\(x\d+\)/', '', $document_name);
+
+	// Split by the consistent delimiter (comma in this case)
+	$documents = array_map('trim', explode(',', $document_name));
+
+	return $documents;
 }

@@ -399,26 +399,16 @@ class class_model
 	}
 	public function fetchAll_documentprocessing($student_id)
 	{
-		$sql = "SELECT * FROM tbl_documentrequest WHERE `student_id` = ? AND (registrar_status = 'Verified' OR registrar_status = 'Processing')";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Verified' OR registrar_status = 'Processing' ";
 		$stmt = $this->conn->prepare($sql);
-
-		if (!$stmt) {
-			die("SQL Error: " . $this->conn->error);
-		}
-
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
-
 		$result = $stmt->get_result();
 		$data = array();
-
 		while ($row = $result->fetch_assoc()) {
 			$data[] = $row;
 		}
-
-		$stmt->close(); // Release resources
-
-		return empty($data) ? null : $data; // Return null if no results found
+		return $data;
 	}
 
 	public function fetchAll_payments($student_id)

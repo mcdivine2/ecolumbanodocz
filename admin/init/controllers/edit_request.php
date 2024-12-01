@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// Display appropriate messages based on email sending status
 		if ($emailSent) {
 			echo '<div class="alert alert-success" style="text-align: center; margin-top: 100px; font-size: 20px;"><b>Request updated and email sent successfully!</b></div>';
-			echo '<script> setTimeout(function() { window.history.go(-1); }, 1000); </script>';
+			echo '<script> setTimeout(function() { window.history.go(-2); }, 1000); </script>';
 		} else {
 			echo '<div class="alert alert-danger" style="text-align: center; margin-top: 100px; font-size: 20px;"><b>Request updated but failed to send email. Please try again.</b></div>';
 		}
