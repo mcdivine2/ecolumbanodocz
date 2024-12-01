@@ -1,4 +1,3 @@
-
 <?php
 require_once "../model/class_model.php";
 
@@ -46,16 +45,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$registrar_status = "Processing";
 		$custodian_status = "Verified";
 		$library_status = "Verified";
-		$dean_status = $dean_status;
+		$dean_status = "Verified";
 		$accounting_status = "Verified";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been <b>Processing</b>.<br>";
 		$body .= "You will receive further updates regarding its processing. Reference number: <b>$control_no</b>.<br><br>Thank you.";
 	} elseif ($status === "To Be Release") {
 		$registrar_status = "To Be Release";
 
+
 		// Debugging variables
 		error_log("date_releasing: " . $date_releasing);
 		error_log("request_id: " . $request_id);
+		// Check if date_releasing is set
+		if (empty($date_releasing)) {
+			die("Error: 'date_releasing' is required.");
+		}
+
 
 		// Fetch the maximum queue number for the same releasing date
 		$sql_fetch_queue = "SELECT MAX(queue_number) AS max_queue FROM tbl_documentrequest WHERE date_releasing = ?";
