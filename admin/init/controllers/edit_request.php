@@ -1,3 +1,4 @@
+
 <?php
 require_once "../model/class_model.php";
 
@@ -52,24 +53,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	} elseif ($status === "To Be Release") {
 		$registrar_status = "To Be Release";
 
+		// Debugging variables
+		error_log("date_releasing: " . $date_releasing);
+		error_log("request_id: " . $request_id);
+
 		// Fetch the maximum queue number for the same releasing date
 		$sql_fetch_queue = "SELECT MAX(queue_number) AS max_queue FROM tbl_documentrequest WHERE date_releasing = ?";
 		$stmt_fetch_queue = $conn->conn->prepare($sql_fetch_queue);
-		$stmt_fetch_queue->bind_param("s", $date_releasing);
-		$stmt_fetch_queue->execute();
-		$result_queue = $stmt_fetch_queue->get_result();
-		$queue_data = $result_queue->fetch_assoc();
+		if (!$stmt_fetch_queue) {
+			die("Prepare Error: " . $conn->conn->error);
+		}
 
+		$stmt_fetch_queue->bind_param("s", $date_releasing);
+		if (!$stmt_fetch_queue->execute()) {
+			die("Execute Error: " . $stmt_fetch_queue->error);
+		}
+
+		$result_queue = $stmt_fetch_queue->get_result();
+		if (!$result_queue) {
+			die("Result Error: " . $stmt_fetch_queue->error);
+		}
+
+		$queue_data = $result_queue->fetch_assoc();
 		$max_queue = isset($queue_data['max_queue']) ? $queue_data['max_queue'] : 0;
-		$queue_number = $max_queue + 1; // Increment for the next queue number
+		$queue_number = $max_queue + 1;
+
+		// Debugging queue number
+		error_log("Queue number: " . $queue_number);
 
 		// Update the queue number in the database
 		$sql_update_queue = "UPDATE tbl_documentrequest SET queue_number = ? WHERE request_id = ?";
 		$stmt_update_queue = $conn->conn->prepare($sql_update_queue);
-		$stmt_update_queue->bind_param("ii", $queue_number, $request_id);
-		$stmt_update_queue->execute();
+		if (!$stmt_update_queue) {
+			die("Prepare Error (Update): " . $conn->conn->error);
+		}
 
-		// Set statuses and prepare the email body
+		$stmt_update_queue->bind_param("ii", $queue_number, $request_id);
+		if (!$stmt_update_queue->execute()) {
+			die("Execute Error (Update): " . $stmt_update_queue->error);
+		}
+
 		$custodian_status = "Verified";
 		$library_status = "Verified";
 		$dean_status = $dean_status;
@@ -77,11 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been marked as <b>To Be Release</b>.<br>";
 		$body .= "Your queue number is <b>$queue_number</b> for release on <b>$date_releasing</b>.<br>";
 		$body .= "Reference number: <b>$control_no</b>.<br><br>Thank you.";
-	} else {
-		$registrar_status = $status;
-		$body = "Hello,<br><br>The status of your request for <b>$document_name</b> has been updated to <b>$status</b>.<br>";
-		$body .= "Reference number: <b>$control_no</b>.<br><br>Thank you.";
 	}
+
 
 	// Call the edit_request function with the required parameters
 	$requestUpdated = $conn->edit_request(

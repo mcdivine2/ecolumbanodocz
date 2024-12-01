@@ -47,7 +47,7 @@
                                     foreach ($docrequest as $row) {
                                         // Check if all required statuses are verified
                                         $all_verified = ($row['library_status'] === 'Verified' &&
-                                            ($row['dean_status'] === 'Verified' || $row['dean_status'] === 'Pending') && // Add this condition
+                                            ($row['dean_status'] === 'Verified' || $row['dean_status'] === 'Not Included') && // Add this condition
                                             $row['custodian_status'] === 'Verified' &&
                                             $row['accounting_status'] === 'Verified');
 
