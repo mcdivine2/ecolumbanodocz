@@ -50,8 +50,8 @@
                                         <th scope="col">Control No.</th>
                                         <th scope="col">Student EDP</th>
                                         <th scope="col">Document Name</th>
+                                        <th scope="col">Request Type</th>
                                         <th scope="col">Date Request</th>
-                                        <th scope="col">Date Declined</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
@@ -72,8 +72,8 @@
                                                 <?php
                                                 $statusClasses = [
                                                     "Pending Request" => "bg-info",
-                                                    "Processing" => "bg-danger",
-                                                    "Releasing" => "bg-success",
+                                                    "Processing" => "bg-success",
+                                                    "Verified" => "bg-success",
                                                     "Received" => "bg-warning"
                                                 ];
                                                 echo '<span class="badge ' . ($statusClasses[$row['registrar_status']] ?? 'bg-secondary') . ' text-white">' . $row['registrar_status'] . '</span>';
