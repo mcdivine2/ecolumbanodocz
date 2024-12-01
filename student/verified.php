@@ -51,7 +51,7 @@
                                         <th scope="col">Student EDP</th>
                                         <th scope="col">Document Name</th>
                                         <th scope="col">Request Type</th>
-                                        <th scope="col">Date Request</th>
+                                        <th scope="col">Estemated Date of Process</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>

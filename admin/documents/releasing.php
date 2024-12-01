@@ -34,7 +34,7 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
-                                        <th>Estemated Date of Process</th>
+                                        <th>Date Releasing</th>
                                         <th>Que Number</th>
                                         <th>Status</th>
                                         <th>Clearance</th>
