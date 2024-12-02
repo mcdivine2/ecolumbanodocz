@@ -67,13 +67,21 @@
                                             <td><?= $row['studentID_no']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
-                                            <td><?= !empty($row['date_releasing']) ? date("M d, Y", strtotime($row['date_releasing'])) : ""; ?></td>
+                                            <td>
+                                                <?php
+                                                if (empty($row['date_releasing'])) {
+                                                    echo '<span class="badge bg-warning text-dark">Payment is on Process</span>';
+                                                } else {
+                                                    echo '<span class="badge bg-success text-white">Document is on Process</span>';
+                                                }
+                                                ?>
+                                            </td>
                                             <td>
                                                 <?php
                                                 $statusClasses = [
                                                     "Pending Request" => "bg-info",
                                                     "Processing" => "bg-success",
-                                                    "Verified" => "bg-success",
+                                                    "Verified" => "bg-info",
                                                     "Received" => "bg-warning"
                                                 ];
                                                 echo '<span class="badge ' . ($statusClasses[$row['registrar_status']] ?? 'bg-secondary') . ' text-white">' . $row['registrar_status'] . '</span>';
