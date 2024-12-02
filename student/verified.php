@@ -72,7 +72,7 @@
                                                 if (empty($row['date_releasing'])) {
                                                     echo '<span class="badge bg-warning text-dark">Payment is on Process</span>';
                                                 } else {
-                                                    echo '<span class="badge bg-success text-white">Document is on Process</span>';
+                                                    echo '<span class="badge bg-success text-white">Document is on Process ' . date("M d, Y", strtotime($row['date_releasing'])) . '</span>';
                                                 }
                                                 ?>
                                             </td>
@@ -81,7 +81,7 @@
                                                 $statusClasses = [
                                                     "Pending Request" => "bg-info",
                                                     "Processing" => "bg-success",
-                                                    "Verified" => "bg-info",
+                                                    "Verified" => "bg-success",
                                                     "Received" => "bg-warning"
                                                 ];
                                                 echo '<span class="badge ' . ($statusClasses[$row['registrar_status']] ?? 'bg-secondary') . ' text-white">' . $row['registrar_status'] . '</span>';
