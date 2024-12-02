@@ -16,8 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$email = trim($_POST['email_address']);
 	$subject = "Request Update for $document_name";
 
-	// Determine the dean_status based on the request_type
-	$dean_status = (preg_match("/CPA BOARD EXAM/i", $request_type)) ? "Pending" : "Not Included";
+
 
 	// Initialize default statuses
 	$custodian_status = null;
@@ -37,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$registrar_status = "Verified";
 		$custodian_status = "Pending";
 		$library_status = "Pending";
-		$dean_status = $dean_status;
+		// Determine the dean_status based on the request_type
+		$dean_status = (preg_match("/CPA BOARD EXAM/i", $request_type)) ? "Pending" : "Not Included";
 		$accounting_status = "Pending";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been <b>Verified</b>.<br>";
 		$body .= "You will receive further updates regarding its processing. Reference number: <b>$control_no</b>.<br><br>Thank you.";
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		$custodian_status = "Verified";
 		$library_status = "Verified";
-		$dean_status = $dean_status;
+		$dean_status = (preg_match("/CPA BOARD EXAM/i", $request_type)) ? "Verified" : "Not Included";
 		$accounting_status = "Verified";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been marked as <b>To Be Release</b>.<br>";
 		$body .= "Your queue number is <b>$queue_number</b> for release on <b>$date_releasing</b>.<br>";
