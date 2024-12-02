@@ -70,9 +70,9 @@
                                             <td>
                                                 <?php
                                                 if (empty($row['date_releasing'])) {
-                                                    echo '<span class="badge bg-warning text-dark">Payment is on Process</span>';
+                                                    echo '<span>Payment is on Process</span>';
                                                 } else {
-                                                    echo '<span class="badge bg-success text-white">Document is on Process ' . date("M d, Y", strtotime($row['date_releasing'])) . '</span>';
+                                                    echo '<span">Document is on Process ' . date("M d, Y", strtotime($row['date_releasing'])) . '</span>';
                                                 }
                                                 ?>
                                             </td>
