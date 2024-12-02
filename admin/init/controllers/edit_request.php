@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$registrar_status = "Released";
 		$custodian_status = "Verified";
 		$library_status = "Verified";
-		$dean_status = "Verified";
+		$dean_status = (preg_match("/CPA BOARD EXAM/i", $request_type)) ? "Verified" : "Not Included";
 		$accounting_status = "Verified";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been marked as <b>Released</b>.<br>";
 		$body .= "Please collect it on or after <b>$date_releasing</b>. Reference number: <b>$control_no</b>.<br><br>Thank you.";
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$registrar_status = "Processing";
 		$custodian_status = "Verified";
 		$library_status = "Verified";
-		$dean_status = "Verified";
+		$dean_status = (preg_match("/CPA BOARD EXAM/i", $request_type)) ? "Verified" : "Not Included";
 		$accounting_status = "Verified";
 		$body = "Hello,<br><br>Your request for <b>$document_name</b> has been <b>Processing</b>.<br>";
 		$body .= "You will receive further updates regarding its processing. Reference number: <b>$control_no</b>.<br><br>Thank you.";
