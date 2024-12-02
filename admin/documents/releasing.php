@@ -34,6 +34,7 @@
                                         <th>Student ID</th>
                                         <th>Student Name</th>
                                         <th>Document Name</th>
+                                        <th>Request Type</th>
                                         <th>Date Releasing</th>
                                         <th>Que Number</th>
                                         <th>Status</th>
@@ -65,6 +66,7 @@
                                             <td><?= $row['student_id']; ?></td>
                                             <td><?= $row['first_name'] . " " . $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
+                                            <td><?= $row['request_type']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_releasing'])); ?></td>
                                             <td><?= $row['queue_number']; ?></td>
                                             <td>
