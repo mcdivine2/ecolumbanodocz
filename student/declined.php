@@ -49,6 +49,7 @@
                                     <tr>
                                         <th scope="col">Control No.</th>
                                         <th scope="col">Student EDP</th>
+                                        <th scope="col">Student Name</th>
                                         <th scope="col">Document Name</th>
                                         <th scope="col">Date Request</th>
                                         <th scope="col">Date Declined</th>
@@ -65,6 +66,7 @@
                                         <tr>
                                             <td><?= $row['control_no']; ?></td>
                                             <td><?= $row['studentID_no']; ?></td>
+                                            <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
                                             <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
                                             <td><?= !empty($row['date_releasing']) ? date("M d, Y", strtotime($row['date_releasing'])) : ""; ?></td>

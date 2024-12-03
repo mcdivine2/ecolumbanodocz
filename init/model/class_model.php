@@ -399,7 +399,7 @@ class class_model
 	}
 	public function fetchAll_documentprocessing($student_id)
 	{
-		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND registrar_status = 'Verified' OR registrar_status = 'Processing' ";
+		$sql = "SELECT * FROM  tbl_documentrequest WHERE `student_id` = ? AND (registrar_status = 'Verified' OR registrar_status = 'Processing') ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
@@ -547,7 +547,7 @@ class class_model
 
 	public function count_verified($student_id)
 	{
-		$sql = "SELECT COUNT(request_id) as count_verified FROM tbl_documentrequest WHERE student_id = ? AND registrar_status = 'Verified' OR registrar_status = 'Processing' ";
+		$sql = "SELECT COUNT(request_id) as count_verified FROM tbl_documentrequest WHERE student_id = ? AND (registrar_status = 'Verified' OR registrar_status = 'Processing') ";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param("i", $student_id);
 		$stmt->execute();
