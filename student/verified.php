@@ -68,7 +68,7 @@
                                             <td><?= $row['studentID_no']; ?></td>
                                             <td><?= $row['first_name']; ?> <?= $row['last_name']; ?></td>
                                             <td><?= $row['document_name']; ?></td>
-                                            <td><?= date("M d, Y", strtotime($row['date_request'])); ?></td>
+                                            <td><?= $row['request_type']; ?></td>
                                             <td>
                                                 <?php
                                                 if (empty($row['date_releasing'])) {
