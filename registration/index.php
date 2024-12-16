@@ -74,7 +74,7 @@
                                 <!-- EDP Number -->
                                 <div class="form-group col-md-6">
                                     <label for="studentID_no"><i class="fa fa-id-card"></i> EDP Number</label>
-                                    <input type="text" name="studentID_no" class="form-control" placeholder="Enter EDP Number (Optional)">
+                                    <input type="number" name="studentID_no" class="form-control" placeholder="Enter EDP Number (Optional)">
                                 </div>
 
                                 <!-- First Name -->
@@ -116,7 +116,7 @@
                                 <!-- Mobile Number -->
                                 <div class="form-group col-md-6">
                                     <label for="mobile_number"><i class="fa fa-phone"></i> Mobile Number</label>
-                                    <input type="text" name="mobile_number" class="form-control" required minlength="11" maxlength="11" data-parsley-required-message="Mobile number is required" placeholder="Enter your mobile number">
+                                    <input type="number" name="mobile_number" class="form-control" required minlength="11" maxlength="11" data-parsley-required-message="Mobile number is required" placeholder="Enter your mobile number">
                                 </div>
                             </div>
 
